@@ -50,7 +50,7 @@ frames.
 ```
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
-<img src="TUTORIAL/IMG/tut5.svg.png">
+<img src="TUTORIAL/IMG/tut5.svg.png" width="500">
 
 This illustrates that excessive bending of the inter-domain linker results in a rejection of the
 majority of the conformers and would be thus associated with significant entropic penalty.
@@ -63,7 +63,7 @@ python GlycoTRAJ-0.1.py --maxframe 1172 –outname merged trajectory --pdblist A
 ```
 where the first argument takes the desired number of glycan conformers and third is the root
 name of the output.
-<img src="TUTORIAL/IMG/fullgly.png">
+<img src="TUTORIAL/IMG/fullgly.png" width="500">
 23A simple MD pipeline to generate realistic glycoprotein models
 Trajectories containing multiple conformations of single glycans can be used to calculate the
 shielding score using “GlycoSASA.py”. Using the example above, syntax should be:
@@ -78,4 +78,4 @@ ing has been encoded in the column holding the beta factor information. Here, 0.
 the probe radius used for SASA calculation. An occupancy value of 1 marks residues acces-
 sible in the absence of the glycans, and 0 if a given site is not accessible at all. Such PDB file
 can be then displayed e.g. in VMD:
-<img src="TUTORIAL/IMG/tut3.svg.png" width="200">
+<img src="TUTORIAL/IMG/tut3.svg.png" width="500">
