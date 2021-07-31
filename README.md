@@ -39,7 +39,14 @@ python GlycoSHIELD-0.1.py --protpdb EC4_EC5.pdb --protxtc EC4_EC5.xtc --inputfil
 --ignorewarn ensures the grafting continues even if no conformers can be grafted, --dryrun
 disables production of an output trajectory and instead only displays the number of accepted
 frames.
-
+```
+0 2645 2214 1695 
+1 2645 2214 881 
+2 2645 2214 633 
+3 2645 2214 519 
+4 2644 2210 179 
+5 2645 2197 208
+```
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
 
