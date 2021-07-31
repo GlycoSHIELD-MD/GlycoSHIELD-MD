@@ -2,6 +2,9 @@
 A simple MD pipeline to generate realistic glycoprotein models
 
 ## GlycoSHIELD tutorial
+
+Tutorial should be run from within the "TUTORIAL" folder to access all neccessary files.
+
 Tutorial files include a N-cadherin EC5 domain (EC5.pdb), which natively contains three gly-
 cosylation sites at positions 463, 492 and 533. In the tutorial, we will glycosylate the protein
 with high-mannose N-glycans (Man5) and visualise the span and shielding of the resulting
