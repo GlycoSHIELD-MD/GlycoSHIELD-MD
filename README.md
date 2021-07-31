@@ -64,6 +64,7 @@ python GlycoTRAJ-0.1.py --maxframe 1172 –outname merged trajectory --pdblist A
 ```
 where the first argument takes the desired number of glycan conformers and third is the root
 name of the output.
+<img src="TUTORIAL/IMG/fullgly.png">
 23A simple MD pipeline to generate realistic glycoprotein models
 Trajectories containing multiple conformations of single glycans can be used to calculate the
 shielding score using “GlycoSASA.py”. Using the example above, syntax should be:
