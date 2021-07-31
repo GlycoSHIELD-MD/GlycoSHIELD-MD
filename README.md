@@ -50,7 +50,7 @@ frames.
 ```
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
-
+<img src="TUTORIAL/IMG/tut5.svg.png">
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
 This illustrates that excessive bending of the inter-domain linker results in a rejection of the
