@@ -27,6 +27,7 @@ tion sites:
 In addition, A_463.pdb,... and A_463.xtc,... files are created, each containing protein struc-
 ture and a given number of glycan conformers, which can be readily visualised e.g. using
 VMD:
+<img src="TUTORIAL/IMG/tut1.svg.png">
 If multiple conformations of the same protein are available, GlycoSHIELD can be used to
 estimate the entropic cost of geometrically blocking certain glycan conformers in each protein
 conformer. An artificial trajectory EC4_EC5.xtc with corresponding PDB file EC4_EC5.pdb
