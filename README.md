@@ -11,15 +11,12 @@ and include Man5.pdb (reference file) and Man5_dt1000.xtc (conformer library sam
 local directory and unzipped prior to use.
 Prepared input file (EC5_input) manages the glycan grafting:
 ```
-A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_463.pdb
-A_463.xtc
-A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_492.pdb
-A_492.xtc
+A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_463.pdb A_463.xtc
+A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_492.pdb A_492.xtc
 ```
 To graft glycans at the selected positions, run:
 ```
-python GlycoSHIELD-0.1.py --protpdb EC5.pdb --inputfile EC5_input --threshold 3.5 --mode CG
---shuffle-sugar
+python GlycoSHIELD-0.1.py --protpdb EC5.pdb --inputfile EC5_input --threshold 3.5 --mode CG --shuffle-sugar
 ```
 The program prints out the number of protein conformer (unless protein XTC file was given, it
 will be always 0) and a number of grafted glycan conformers for each of the three glycosyla-
@@ -37,39 +34,15 @@ can be used to visualise this functionality. In each consecutive frame, the angl
 two domains is decreased. To monitor the number of accepted conformations, following
 command should be issued:
 ```
-python GlycoSHIELD-0.1.py --protpdb EC4_EC5.pdb --protxtc EC4_EC5.xtc --inputfile EC5_input
---threshold 3.5 --mode CG --shuffle-sugar --ignorewarn --dryrun
---ignorewarn ensures the grafting continues even if no conformers can be grafted, --dryrun
+python GlycoSHIELD-0.1.py --protpdb EC4_EC5.pdb --protxtc EC4_EC5.xtc --inputfile EC5_input --threshold 3.5 --mode CG --shuffle-sugar --ignorewarn --dryrun 
 ```
+--ignorewarn ensures the grafting continues even if no conformers can be grafted, --dryrun
 disables production of an output trajectory and instead only displays the number of accepted
 frames.
-22A simple MD pipeline to generate realistic glycoprotein models
+
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
-0
-1
-2
-3
-4
-5
-2645
-2645
-2645
-2645
-2644
-2645
-2214
-2214
-2214
-2214
-2210
-2197
-1695
-881
-633
-519
-179
-208
+
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
 This illustrates that excessive bending of the inter-domain linker results in a rejection of the
@@ -79,9 +52,7 @@ formers has to be adjusted to be the same across all glycosylation sites, here 1
 largest number of conformers present on all sites. This can be done using the script “Glyco-
 TRAJ.py”:
 ```
-python GlycoTRAJ-0.1.py --maxframe 1172 –outname merged trajectory --pdblist
-A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.xtc,A_492.xtc,A_533.xtc --chainlist A,A,A --
-reslist 463,492,533
+python GlycoTRAJ-0.1.py --maxframe 1172 –outname merged trajectory --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.xtc,A_492.xtc,A_533.xtc --chainlist A,A,A --reslist 463,492,533
 ```
 where the first argument takes the desired number of glycan conformers and third is the root
 name of the output.
@@ -89,8 +60,7 @@ name of the output.
 Trajectories containing multiple conformations of single glycans can be used to calculate the
 shielding score using “GlycoSASA.py”. Using the example above, syntax should be:
 ```
-python GlycoSASA-0.1.py --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist
-A_463.xtc,A_492.xtc,A_533.xtc --probelist 0.14,0.25 --endframe 1172 --plottrace
+python GlycoSASA-0.1.py --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.xtc,A_492.xtc,A_533.xtc --probelist 0.14,0.25 --endframe 1172 --plottrace
 ```
 This will use 1172 conformers of each glycan to calculate the shielding score. As an output,
 user obtains a plot of shielding score along the protein sequence:
