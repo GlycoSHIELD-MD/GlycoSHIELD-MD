@@ -27,7 +27,9 @@ tion sites:
 In addition, A_463.pdb,... and A_463.xtc,... files are created, each containing protein struc-
 ture and a given number of glycan conformers, which can be readily visualised e.g. using
 VMD:
+
 <img src="TUTORIAL/IMG/tut1.svg.png" width="500">
+
 If multiple conformations of the same protein are available, GlycoSHIELD can be used to
 estimate the entropic cost of geometrically blocking certain glycan conformers in each protein
 conformer. An artificial trajectory EC4_EC5.xtc with corresponding PDB file EC4_EC5.pdb
@@ -50,6 +52,7 @@ frames.
 ```
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
+
 <img src="TUTORIAL/IMG/tut5.svg.png" width="500">
 
 This illustrates that excessive bending of the inter-domain linker results in a rejection of the
@@ -63,7 +66,9 @@ python GlycoTRAJ-0.1.py --maxframe 1172 –outname merged trajectory --pdblist A
 ```
 where the first argument takes the desired number of glycan conformers and third is the root
 name of the output.
+
 <img src="TUTORIAL/IMG/fullgly.png" width="500">
+
 23A simple MD pipeline to generate realistic glycoprotein models
 Trajectories containing multiple conformations of single glycans can be used to calculate the
 shielding score using “GlycoSASA.py”. Using the example above, syntax should be:
@@ -72,10 +77,13 @@ python GlycoSASA-0.1.py --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.
 ```
 This will use 1172 conformers of each glycan to calculate the shielding score. As an output,
 user obtains a plot of shielding score along the protein sequence:
+
 <img src="TUTORIAL/IMG/tut4.svg.png" width="500">
+
 In addition, a PDB file is created named “maxResidueSASA_probe_0.14.pdb”, where shield-
 ing has been encoded in the column holding the beta factor information. Here, 0.14 denotes
 the probe radius used for SASA calculation. An occupancy value of 1 marks residues acces-
 sible in the absence of the glycans, and 0 if a given site is not accessible at all. Such PDB file
 can be then displayed e.g. in VMD:
+
 <img src="TUTORIAL/IMG/tut3.svg.png" width="500">
