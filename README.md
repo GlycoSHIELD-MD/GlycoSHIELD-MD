@@ -78,3 +78,4 @@ ing has been encoded in the column holding the beta factor information. Here, 0.
 the probe radius used for SASA calculation. An occupancy value of 1 marks residues acces-
 sible in the absence of the glycans, and 0 if a given site is not accessible at all. Such PDB file
 can be then displayed e.g. in VMD:
+<img src="TUTORIAL/IMG/tut3.svg.png">
