@@ -1,0 +1,4 @@
+# --protchain  --protsequonresid --sugarsequonresid --sugarpdb --sugarxtc pdbout xtcout
+A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_463.pdb A_463.xtc
+A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_492.pdb A_492.xtc
+A 532,533,534 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc A_533.pdb A_533.xtc
