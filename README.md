@@ -51,8 +51,7 @@ frames.
 Knowing the number of all available frames (3000) the number of rejected frames can be
 then plotted:
 <img src="TUTORIAL/IMG/tut5.svg.png">
-Knowing the number of all available frames (3000) the number of rejected frames can be
-then plotted:
+
 This illustrates that excessive bending of the inter-domain linker results in a rejection of the
 majority of the conformers and would be thus associated with significant entropic penalty.
 In order to generate a single trajectory with all glycans mobile, the number of glycan con-
@@ -73,6 +72,7 @@ python GlycoSASA-0.1.py --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.
 ```
 This will use 1172 conformers of each glycan to calculate the shielding score. As an output,
 user obtains a plot of shielding score along the protein sequence:
+<img src="TUTORIAL/IMG/tut4.svg.png">
 In addition, a PDB file is created named “maxResidueSASA_probe_0.14.pdb”, where shield-
 ing has been encoded in the column holding the beta factor information. Here, 0.14 denotes
 the probe radius used for SASA calculation. An occupancy value of 1 marks residues acces-
