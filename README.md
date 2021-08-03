@@ -62,8 +62,7 @@ This illustrates that excessive bending of the inter-domain linker results in a 
 majority of the conformers and would be thus associated with significant entropic penalty.
 In order to generate a single trajectory with all glycans mobile, the number of glycan con-
 formers has to be adjusted to be the same across all glycosylation sites, here 1172 is the
-largest number of conformers present on all sites. This can be done using the script “Glyco-
-TRAJ.py”:
+largest number of conformers present on all sites. This can be done using the script “GlycoTRAJ-0.1.py”:
 ```
 python ../GlycoTRAJ-0.1.py --maxframe 1172 --outname <merged trajectory> --pdblist A_463.pdb,A_492.pdb,A_533.pdb --xtclist A_463.xtc,A_492.xtc,A_533.xtc --chainlist A,A,A --reslist 463,492,533
 ```
