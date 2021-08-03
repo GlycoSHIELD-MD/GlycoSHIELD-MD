@@ -82,8 +82,8 @@ the user obtains a plot of shielding score along the protein sequence:
 <img src="TUTORIAL/IMG/tut4.svg.png" width="500">
 
 In addition, a PDB file is created named “maxResidueSASA_probe_0.14.pdb”, where shield-
-ing has been encoded in the column holding the beta factor information. Here, 0.14 denotes
-the probe radius used for SASA calculation. An occupancy value of 1 marks residues acces-
+ing has been encoded in the column holding the beta factor information. Here, 0.14 and 0.25 denote
+two different probe radii used for SASA calculation. An occupancy value of 1 marks residues acces-
 sible in the absence of the glycans, and 0 if a given site is not accessible at all. Such PDB file
 can be then displayed e.g. in VMD:
 
