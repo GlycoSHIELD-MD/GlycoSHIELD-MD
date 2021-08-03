@@ -102,7 +102,7 @@ def main2(protpdb,protxtc,inputfile,zmax,zmin,threshold,mode,dryrun,shuffle_suga
          
          # randomize sugar conformers
          if shuffle_sugar:
-            np.random.shuffle(sugarframes)
+            np.random.shuffle(list(sugarframes))
             
          for n_tp in sugarframes:
             _=usugar.trajectory[n_tp]
@@ -141,7 +141,7 @@ def main2(protpdb,protxtc,inputfile,zmax,zmin,threshold,mode,dryrun,shuffle_suga
                
                raise BaseException("No frames were accepted for residues {} in chain {}!\nChange threshold or check if the sequon location is accessible!".format(resids_on_protein,protchain))
             else:
-               print "WARNING!!!\nNo frames were accepted for residues {} in chain {}!\nThis means the sequon location is not accessible given the threshold\nYou decided to ignore this warning so we carry on!".format(resids_on_protein,protchain)
+               print("WARNING!!!\nNo frames were accepted for residues {} in chain {}!\nThis means the sequon location is not accessible given the threshold\nYou decided to ignore this warning so we carry on!".format(resids_on_protein,protchain))
                continue
          # If iterating over protein traj - make sure to modify coordinates.
          if protxtc is not None:
@@ -161,7 +161,7 @@ def main2(protpdb,protxtc,inputfile,zmax,zmin,threshold,mode,dryrun,shuffle_suga
          del usugar,glycoprotein
          
       # Main output printout
-      print protframe," ".join([str(i) for i in occupancies])
+      print(protframe," ".join([str(i) for i in occupancies]))
       
       # Increment frame counter
       protframe+=1
