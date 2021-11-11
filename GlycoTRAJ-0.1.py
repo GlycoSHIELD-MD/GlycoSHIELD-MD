@@ -12,7 +12,7 @@ from MDAnalysis.coordinates.memory import MemoryReader
 from MDAnalysis.analysis.base import AnalysisFromFunction
 import sys,glob
 import numpy as np
-
+from packaging import version
 from argparse import ArgumentParser
 
 
@@ -30,6 +30,15 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
 
    chains = []
    resids = []
+
+   resid_per_chain={}
+
+   for achain,aresid in zip(chainlist,reslist):
+      print achain,aresid
+      if achain not in resid_per_chain.keys():
+         resid_per_chain[achain]=[]
+      if aresid not in resid_per_chain[achain]:
+         resid_per_chain[achain].append(aresid)
 
    # Iterate over structures and trajs for single glycans to extract subtrajs
    for pdb,xtc,chain,resid in zip(pdblist,xtclist,chainlist,reslist):
@@ -53,7 +62,7 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
       
       
    chains=sorted(np.unique(chains))
-   resids=sorted(np.unique(resids))
+   #resids=sorted(np.unique(resids))
 
 
 
@@ -70,6 +79,10 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
    
    # trim
    coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(),protein).run().results
+   if version.parse(mda.__version__) >= version.parse("2.0.0"):
+      coordinates = coordinates["timeseries"] # This is only needed in certain MDAnalysis versions
+   
+   
    coordinates = coordinates[:maxframe,:,:]
    sels.append(protein)
    coords.append(coordinates)
@@ -81,7 +94,7 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
       # last residue is? we do it per chain
       lastres=protein.select_atoms("segid {}".format(chain)).resids[-1]
 
-      for resid in resids:
+      for resid in resid_per_chain[chain]:
          pdb = chain+"_"+str(resid)+"_glycan.pdb"
 
          xtc = pdb.replace(".pdb",".xtc")
@@ -90,16 +103,19 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
          sugar.segments.segids = chain
          # update residues
          sugar.residues.resids += lastres
-         
+      
          lastres += len(sugar.residues)
-         
+       
          coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(),sugar).run().results
+         if version.parse(mda.__version__) >= version.parse("2.0.0"):
+            coordinates = coordinates["timeseries"] # This is only needed in certain MDAnalysis versions
          coords.append(coordinates)
 
          sels.append(u1)
          
 
    # Concatenate and save
+   
    coords = np.column_stack(coords)
    u2=mda.Merge(*[i.atoms for i in sels])
    u2.load_new(coords, format=MemoryReader)
