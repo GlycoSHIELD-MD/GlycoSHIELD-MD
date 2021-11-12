@@ -19,7 +19,7 @@ import MDAnalysis.analysis.distances as distances
 #from __future__ import print_function
 import shlex
 import os,subprocess,glob
-from shutil import copyfile
+from shutil import copyfile,move
 import collections
 from argparse import ArgumentParser
 
@@ -164,6 +164,15 @@ def main(pdbfiles,xtcfiles,plottrace,probes,ndots,mode,keepoutput,endtime):
           sel_P=u.select_atoms('protein')
           sel_P.write(tmpbarepdb)
           
+          
+          # This is a dirty fix, to be corrected! Issue is that the CRYST1 is added by MDAnalysis and gmx sasa silently freezes on it
+          with open(tmpbarepdb) as fff:
+            with open('ggg','w') as ggg:
+               for line in fff:
+                  if "ATOM" in line:
+                     ggg.write(line)
+                     
+          move('ggg',tmpbarepdb)
           # If the protein is static, bare SASA does not matter. But if we just calc relative sasa then we average over trajectory
           with mda.coordinates.XTC.XTCWriter(tmpbarextc,n_atoms=sel_P.atoms.n_atoms) as w:
                for tp in u.trajectory:
@@ -188,6 +197,7 @@ def main(pdbfiles,xtcfiles,plottrace,probes,ndots,mode,keepoutput,endtime):
           # Now protein only, this will not change so we calc only once
           if iglycan==0:
               baresasatimes,baresasar,baresasaa,_ = get_SASA(tmpbarepdb,tmpbarextc,tmpindex,baresel,baresel,tmpsasa,tmpsasar,tmpsasaa,probe,ndots,endtime)
+              
               
               if keepoutput:
                  copyfile(tmpsasa,"bare_probe_{}.xvg".format(probe))
