@@ -35,7 +35,9 @@ for glycosite in k.split("key=Glycosylation\">")[1:]:
    print(glycosite.split("</a")[0])
 ' | while read line;  do xxx=$((${line}-1)); zzz=$((${line}+1)) ; sed 's/YYY/'${line}'/g' aaa1 | sed 's/XXX/'${xxx}'/g'|sed 's/ZZZ/'${zzz}'/g' ; done > input
 
-if [ -s "$input" ]
+
+
+if [ -s "input" ]
 then 
    :
 else
@@ -44,5 +46,5 @@ else
 fi
 
 out=$(python GlycoSHIELD-0.1.py --inputfile input --protpdb $infile --mode CG --threshold 3.5)
-smallestcommon=$(echo $out | tr ' ' '\n' | sort -n | awk '{if(NR==2){print $1}}')
+smallestcommon=$(echo ${out[@]} | tr ' ' '\n' | sort -n | awk '{if(NR==2){print $1}}')
 python GlycoTRAJ-0.1.py --maxframe $smallestcommon --pdblist $(ls -v A_*.pdb | tr '\n' '\,' | sed 's/,*$//g') --xtclist $(ls -v A_*.xtc | tr '\n' '\,' | sed 's/,*$//g') --chainlist $(cat input | while read line; do echo "A"; done | tr '\n' '\,' | sed 's/,*$//g') --reslist $(cat input | while read line; do echo $line | awk '{split($2,a,","); print a[2]}'; done | tr '\n' '\,' | sed 's/,*$//g') --outname traj_$smallestcommon
