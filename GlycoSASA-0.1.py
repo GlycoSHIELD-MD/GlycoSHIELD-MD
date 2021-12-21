@@ -9,8 +9,10 @@ __status__ = "Development"
 
 
 import numpy as np
-import MDAnalysis as mda
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import MDAnalysis as mda
 from MDAnalysis.analysis import align
 from MDAnalysis.analysis.rms import rmsd
 from MDAnalysis.analysis.rms import RMSF
