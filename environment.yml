@@ -11,3 +11,5 @@ dependencies:
   - gromacs
   - pocl
   - nglview
+  - pip
+    - -e .
