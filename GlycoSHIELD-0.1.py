@@ -7,6 +7,11 @@ __maintainer__ = "Matt Sikora"
 __email__ = "masikora@biophys.mpg.de"
 __status__ = "Development"
 
+# demonstration of the import of the newly created glycoshield module
+import glycoshield
+# call a function from the glycoshield module
+glycoshield.say_ok()
+
 import sys
 import numpy as np
 import MDAnalysis as mda
