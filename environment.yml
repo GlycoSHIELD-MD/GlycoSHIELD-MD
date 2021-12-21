@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python
+  - python=3.8
   - numpy
   - scipy
   - matplotlib
@@ -12,4 +12,5 @@ dependencies:
   - pocl
   - nglview
   - pip
+  - pip:
     - -e .
