@@ -1,0 +1,13 @@
+name: glycoshield
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python
+  - numpy
+  - scipy
+  - matplotlib
+  - mdanalysis
+  - gromacs
+  - pocl
+  - nglview
