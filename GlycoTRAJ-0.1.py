@@ -34,7 +34,7 @@ def main(maxframe,outname,pdblist,xtclist,chainlist,reslist):
    resid_per_chain={}
 
    for achain,aresid in zip(chainlist,reslist):
-      print achain,aresid
+      print(achain,aresid)
       if achain not in resid_per_chain.keys():
          resid_per_chain[achain]=[]
       if aresid not in resid_per_chain[achain]:
