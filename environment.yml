@@ -8,7 +8,7 @@ dependencies:
   - scipy
   - matplotlib
   - mdanalysis
-  - gromacs
+  - gromacs=2021.3
   - pocl
   - nglview
   - pip
