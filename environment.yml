@@ -3,14 +3,19 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  # base packages for command line usage
   - python=3.8
+  - pip
   - numpy
   - scipy
   - matplotlib
   - mdanalysis
   - gromacs=2021.3
+  # support for interactive jupyter notebooks
   - pocl
+  - jupyterlab
   - nglview
-  - pip
+  - ipywidgets
+  # finally, install the present package in editable mode
   - pip:
     - -e .
