@@ -1,6 +1,7 @@
 import nglview
 import MDAnalysis as mda
 import numpy as np
+import os
 # color interpolation from here https://bsouthga.dev/posts/color-gradients-with-python
 def hex_to_RGB(hex):
   ''' "#FFFFFF" -> [255,255,255] '''
@@ -86,17 +87,26 @@ class NGL:
     def build_representation(self):
         
         
-        
+        components=[]
         if len(self.sugarcolors)!=len(self.n_frames):
             # By now we know how many sugar types there are, so we can generate sugar colors,unless user provided colors
             lg = linear_gradient(start_hex=self.startsugarcolor, finish_hex=self.endsugarcolor, n=len(self.n_frames))
             sugarcolor=lg['hex']
-        v1 = nglview.show_structure_file(self.path+'tmp_prot.pdb',default_representation=False)
+            
+        v1 = nglview.NGLWidget()
+        component = v1.add_component(nglview.FileStructure(os.path.join(self.path, 'tmp_prot.pdb')),default_representation=False)
+        components.append(component)
+        
+        
         v1.add_cartoon(selection='protein',color=self.proteincolor,component=0)
         for isugar in range(len(self.n_frames)):
-            v1.add_component(self.path+'tmp_{}.pdb'.format(isugar),default_representation=False)
+            
+            component = v1.add_component(nglview.FileStructure(os.path.join(self.path, 'tmp_{}.pdb'.format(isugar))),default_representation=False)
+            components.append(component)
+            
+#             v1.add_component(self.path+'tmp_{}.pdb'.format(isugar),default_representation=False)
             v1.add_representation('licorice', selection='not protein',color=sugarcolor[isugar],component=isugar+1)    
-            print(sugarcolor[isugar],isugar+1)
+            print(sugarcolor[isugar],isugar+1,"A")
         v1.center()
         v1.control.zoom(-0.6)
         
