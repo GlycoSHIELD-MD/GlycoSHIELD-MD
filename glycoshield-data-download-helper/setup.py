@@ -8,7 +8,7 @@ def zenodo_downloader():
     doi="10.5281/zenodo.5337276"
     out=os.path.join(os.path.expanduser("~"), "GLYCAN_LIBRARY")
     if not os.path.exists(out):
-        os.mkdirs(out)
+        os.makedirs(out)
     cmd="zenodo_get --output-dir={} {} &>{}/zenodo_get.log".format(out, doi, out)
     subprocess.check_call(cmd, shell=True)
 
