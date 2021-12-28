@@ -18,4 +18,5 @@ dependencies:
   - ipywidgets
   # finally, install the present package in editable mode
   - pip:
+    - zenodo-get
     - -e .
