@@ -19,4 +19,6 @@ dependencies:
   # finally, install the present package in editable mode
   - pip:
     - zenodo-get
+    - -e ./glycoshield-data-download-helper/
     - -e .
+
