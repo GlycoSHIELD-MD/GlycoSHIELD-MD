@@ -111,3 +111,35 @@ class NGL:
         v1.control.zoom(-0.6)
         
         return v1      
+
+class NGLSASA:
+   def __init__(self,path, pdbfile,occupancy,residues):
+      self.path=path
+      self.pdbfile = pdbfile
+      self.proteincolor='gray'
+      
+      # Filter out residues to color gray
+      idx_inv = np.where(occupancy<1)
+      idx_vis = np.where(occupancy>0)
+      self.invisible = " ".join([str(i) for i in residues[idx_inv]])
+      self.visible = " ".join([str(i) for i in residues[idx_vis]])
+      
+      
+   def build_representation(self):
+      components=[]
+      v1 = nglview.NGLWidget()
+      component = v1.add_component(nglview.FileStructure(os.path.join(self.path, self.pdbfile)),default_representation=False)
+      components.append(component)
+      # Colors: https://nglviewer.org/ngl/api/classes/colormakerregistry.html
+      # types of the surface: https://nglviewer.org/ngl/api/manual/molecular-representations.html#surface
+      # av looks good
+      v1.add_representation('surface', selection=self.visible,color='bfactor',component=0,opacity=1,colorScale="OrRd",surfaceType='ms')
+      # residues not accessible to a given probe
+      v1.add_representation('surface', selection=self.invisible,color='gray',component=0,opacity=1,surfaceType='ms')
+
+      #~ v1.add_cartoon(selection='protein and occupancy>0',color=self.proteincolor,component=0)
+      v1.center()
+      scheme=nglview.color._ColorScheme([['red','400-500']],label="aaa")
+      
+      
+      return v1
