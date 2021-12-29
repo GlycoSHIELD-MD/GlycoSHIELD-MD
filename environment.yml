@@ -16,9 +16,10 @@ dependencies:
   - jupyterlab
   - nglview
   - ipywidgets
-  # finally, install the present package in editable mode
+  - voila
+  # finally, install the glycan data and the present package in editable mode
   - pip:
-    - zenodo-get
+    #- zenodo-get
     - -e ./glycoshield-data-download-helper/
     - -e .
 
