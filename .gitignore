@@ -1,0 +1,5 @@
+GlycoSHIELD.egg-info
+.ipynb_checkpoints
+.unison
+__pycache__
+*.egg-info
