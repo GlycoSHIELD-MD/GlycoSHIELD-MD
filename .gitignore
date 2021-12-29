@@ -1,3 +1,5 @@
+GLYCAN_LIBRARY/
+
 __pycache__/
 *.py[cod]
 *$py.class
