@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #python ../GlycoSHIELD-0.1.py --protpdb EC5.pdb --inputfile EC5_input --threshold 3.5 --mode CG --shuffle-sugar
 python ../GlycoSHIELD.py --protpdb EC5.pdb --inputfile EC5_input --threshold 3.5 --mode CG --shuffle-sugar
 
