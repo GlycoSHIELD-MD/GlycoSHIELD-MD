@@ -1,1 +1,1 @@
-from .lib import glycoshield, glycotraj, glycosasa
+from .lib import glycoshield, glycotraj, glycosasa, GMXTEST
