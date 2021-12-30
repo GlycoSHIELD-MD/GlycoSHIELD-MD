@@ -281,6 +281,7 @@ class glycoshield:
                     pdbout = l[5]
                     xtcout = l[6]
                     inputs.append([protchain, protsequonresid, sugarsequonresid, sugarpdb, sugarxtc, pdbout, xtcout])
+        print(np.array(inputs))
         return np.array(inputs)
 
 
