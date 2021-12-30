@@ -24,9 +24,7 @@ import shlex
 import os
 import subprocess
 import glob
-import sys
 from shutil import copyfile, move
-import collections
 from . import tables
 
 
