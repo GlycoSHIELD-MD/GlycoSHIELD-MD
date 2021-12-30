@@ -42,7 +42,7 @@ class glycoshield:
         self.verbose = verbose
         # where to store outputs
         self.path = path
-        
+
         self.protpdb = protpdb
         self.protxtc = protxtc
         self.inputfile = inputfile
@@ -166,8 +166,8 @@ class glycoshield:
 
                 # Cleanup
                 del self.usugar
-                
-            
+
+
             if self.verbose:
                # Main output printout
                print(protframe, " ".join([str(i) for i in occupancies]))
@@ -281,8 +281,7 @@ class glycoshield:
                     pdbout = l[5]
                     xtcout = l[6]
                     inputs.append([protchain, protsequonresid, sugarsequonresid, sugarpdb, sugarxtc, pdbout, xtcout])
-        print(np.array(inputs))
-        return np.array(inputs)
+        return np.array(inputs, dtype=object)
 
 
 def write_pdb_trajectory(universe, pdbtraj, pdbtrajframes):
