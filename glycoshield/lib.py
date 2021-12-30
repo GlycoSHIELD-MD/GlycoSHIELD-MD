@@ -303,7 +303,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     resid_per_chain = {}
 
     for achain, aresid in zip(chainlist, reslist):
-        print(achain, aresid)
+        #print(achain, aresid)
         if achain not in resid_per_chain.keys():
             resid_per_chain[achain] = []
         if aresid not in resid_per_chain[achain]:
@@ -311,12 +311,12 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     # Iterate over structures and trajs for single glycans to extract subtrajs
     for pdb, xtc, chain, resid in zip(pdblist, xtclist, chainlist, reslist):
-
-        newxtc = path + pdb.replace(".pdb", "_glycan.xtc")
-        newpdb = path + pdb.replace(".pdb", "_glycan.pdb")
-
+        
+        newxtc = pdb.replace(".pdb", "_glycan.xtc")
+        newpdb = pdb.replace(".pdb", "_glycan.pdb")
+      
         u = mda.Universe(pdb, xtc)
-
+        
         # Select glycan (assume this is the only non-protein object, can be made more specific, here we also exclude palmitoylated residues)
         sugarsel = u.select_atoms("not protein and not resname CYSP")
 
@@ -334,11 +334,9 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     sels = []
     coords = []
-
+    
     # open the protein frame and add to the trajectories
-    pdb = pdblist[0]
-    xtc = xtclist[0]
-    u = mda.Universe(pdb, xtc, in_memory=True)
+    u = mda.Universe(pdblist[0],xtclist[0], in_memory=True)
 
     # again - this selection can be made more specific
     protein = u.select_atoms('protein')
@@ -358,7 +356,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
         lastres = protein.select_atoms("segid {}".format(chain)).resids[-1]
 
         for resid in resid_per_chain[chain]:
-            pdb = chain + "_" + str(resid) + "_glycan.pdb"
+            pdb = path + chain + "_" + str(resid) + "_glycan.pdb"
 
             xtc = pdb.replace(".pdb", ".xtc")
             u1 = mda.Universe(pdb, xtc, in_memory=True)

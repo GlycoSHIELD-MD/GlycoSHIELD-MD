@@ -142,6 +142,6 @@ class NGLSASA:
 
         #~ v1.add_cartoon(selection='protein and occupancy>0',color=self.proteincolor,component=0)
         v1.center()
-        scheme = nglview.color._ColorScheme([['red', '400-500']], label="aaa")
+        #~ scheme = nglview.color._ColorScheme([['red', '400-500']], label="aaa")
 
         return v1
