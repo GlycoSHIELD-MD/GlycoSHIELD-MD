@@ -451,7 +451,9 @@ def GMXTEST():
             raise SystemExit("Gromacs not found, stopping...")
 
 
-def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, maxframe, path="./"):
+def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, maxframe, path="./",chainlist=None):
+    # Chainlist only needed for multichain proteins for plotting.
+    
     # GMX required, test if present
     GMXTEST()
     # Assumption is there is only a protein in the pdb file.
@@ -598,8 +600,34 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
         # make a per-residue plot of the sasa
         if plottrace:
+            # This is wrong:
             residues = np.unique(sel_P.resids)
-            fig = plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, path=path)
+            residues = sel_P.residues.resids
+            xticks = np.arange(len(residues)).astype(int)
+            xticklabels = residues
+            
+            # Get indices of sugars for each chain
+            ichain=0
+            for chain in np.unique(sel_P.segids):
+               idx=np.where(sel_P.residues.segids==chain)[0]
+               if ichain!=0:
+                  
+                  residues[idx]=residues[idx]-residues[idx][0]+lastresidfirstchain
+               else:
+                  lastresidfirstchain = residues[idx][-1]
+               ichain+=1
+               #~ 
+               #~ chain_residues = sel_P.residues[idx].resids
+               
+               
+               #~ chain_outrelativesasa = outrelativesasa[np.where(chainlist==chain)]
+               #~ print chain_residues.shape,chain_outrelativesasa.shape
+               
+               #~ chain_maxSASA = maxSASA[idx]
+               #~ chain_meanSASA = meanSASA[idx]
+               #~ fig = plot_SASA(chain_residues, chain_outrelativesasa, chain_maxSASA, chain_meanSASA, probe, path=path)
+            #~ print residues
+            fig = plot_SASA(xticks, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path=path)
 
         outputs.append([residues, outrelativesasa, maxSASA, meanSASA, probe, occupancy_r])
 
@@ -636,8 +664,22 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
     return outputs
 
 
-def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, path):
 
+        
+def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path):
+    from matplotlib.ticker import FuncFormatter
+    labels = {residues[i]:xticklabels[i] for i in range(len(residues))}
+    print labels
+    def MyTicks(x, pos):
+       'The two args are the value and tick position'
+       tick_locs=ax.xaxis.get_majorticklocs()      # Get the list of all tick locations
+       tl = tick_locs[1:-1]
+       if pos is not None:
+           if x in tl and x in labels.keys():
+               
+               return labels[x]
+           else:
+               return ''
     plt.clf()
     fig = plt.figure(figsize=(10, 7))
     ax = fig.add_subplot(111)
@@ -655,6 +697,9 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, path):
     ax.set_ylim(0, 1)
     ax.tick_params(axis='both', which='major', labelsize=14)
     ax.tick_params(axis='both', which='minor', labelsize=14)
-
+    
+    
+    formatter = FuncFormatter(MyTicks)
+    ax.xaxis.set_major_formatter(formatter)
     plt.savefig(path + 'ResidueSASA_probe_{}.pdf'.format(probe))
     plt.show()
