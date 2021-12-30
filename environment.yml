@@ -17,9 +17,11 @@ dependencies:
   - nglview
   - ipywidgets
   - voila
+  # support for creating the documentation
+  - sphinx
   # finally, install the glycan data and the present package in editable mode
   - pip:
     #- zenodo-get
+    - sphinx-rtd-theme
     - -e ./glycoshield-data-download-helper/
     - -e .
-
