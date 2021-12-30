@@ -11,6 +11,7 @@ __status__ = "Development"
 # ~ import matplotlib
 #~ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.lib.distances import distance_array
@@ -601,33 +602,18 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
         # make a per-residue plot of the sasa
         if plottrace:
             # This is wrong:
-            residues = np.unique(sel_P.resids)
+            #~ residues = np.unique(sel_P.resids)
             residues = sel_P.residues.resids
             xticks = np.arange(len(residues)).astype(int)
             xticklabels = residues
             
-            # Get indices of sugars for each chain
-            ichain=0
+            # chain boundaries for plotting
+            chainbounds = []
             for chain in np.unique(sel_P.segids):
                idx=np.where(sel_P.residues.segids==chain)[0]
-               if ichain!=0:
-                  
-                  residues[idx]=residues[idx]-residues[idx][0]+lastresidfirstchain
-               else:
-                  lastresidfirstchain = residues[idx][-1]
-               ichain+=1
-               #~ 
-               #~ chain_residues = sel_P.residues[idx].resids
-               
-               
-               #~ chain_outrelativesasa = outrelativesasa[np.where(chainlist==chain)]
-               #~ print chain_residues.shape,chain_outrelativesasa.shape
-               
-               #~ chain_maxSASA = maxSASA[idx]
-               #~ chain_meanSASA = meanSASA[idx]
-               #~ fig = plot_SASA(chain_residues, chain_outrelativesasa, chain_maxSASA, chain_meanSASA, probe, path=path)
-            #~ print residues
-            fig = plot_SASA(xticks, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path=path)
+               mychaincoords = xticks[idx]
+               chainbounds.append([chain,mychaincoords[0],mychaincoords[-1]])
+            fig = plot_SASA(xticks, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path=path,chainbounds = chainbounds)
 
         outputs.append([residues, outrelativesasa, maxSASA, meanSASA, probe, occupancy_r])
 
@@ -666,10 +652,12 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
 
         
-def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path):
-    from matplotlib.ticker import FuncFormatter
+def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path, chainbounds):
+   
+    # a dictionary to translate 0-1 coordinates back to the amino acids
     labels = {residues[i]:xticklabels[i] for i in range(len(residues))}
-    print labels
+    
+    # Formatter fction to draw it
     def MyTicks(x, pos):
        'The two args are the value and tick position'
        tick_locs=ax.xaxis.get_majorticklocs()      # Get the list of all tick locations
@@ -680,8 +668,10 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
                return labels[x]
            else:
                return ''
+               
+    # Fig
     plt.clf()
-    fig = plt.figure(figsize=(10, 7))
+    fig = plt.figure(figsize=(13, 7))
     ax = fig.add_subplot(111)
     i = 0
     for sasa in outrelativesasa:
@@ -693,7 +683,9 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     ax.plot(residues, maxSASA, c='k', ls='--', label='Max')
     ax.plot(residues, meanSASA, c='gray', ls='-', label='Mean')
 
-    ax.legend()
+    #~ ax.legend()
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
     ax.set_ylim(0, 1)
     ax.tick_params(axis='both', which='major', labelsize=14)
     ax.tick_params(axis='both', which='minor', labelsize=14)
@@ -701,5 +693,12 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     
     formatter = FuncFormatter(MyTicks)
     ax.xaxis.set_major_formatter(formatter)
+    
+    # Draw chains
+    yminb=0.90 # span of the bar above the plot
+    ymaxb=0.97
+    for (chain,begining,ending) in chainbounds:
+       ax.fill_between([begining,ending],yminb,ymaxb,alpha=0.2,color=np.random.rand(3,))
+       ax.text(0.5*(begining+ending),0.5*(yminb+ymaxb),"chain {}".format(chain),ha='center',va='center')
     plt.savefig(path + 'ResidueSASA_probe_{}.pdf'.format(probe))
     plt.show()
