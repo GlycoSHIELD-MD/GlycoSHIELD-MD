@@ -8,19 +8,22 @@ __email__ = "masikora@biophys.mpg.de"
 __status__ = "Development"
 
 
+import warnings
 from argparse import ArgumentParser
 from glycoshield import glycoshield
 
 
 def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn):
-    gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile)
-    occupancy_single = gs.run()
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile)
+        occupancy_single = gs.run()
     print(occupancy_single)
-    
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    
+
     parser.add_argument('--protpdb', dest='protpdb', help='pdb file for protein')
     parser.add_argument('--protxtc', dest='protxtc', help='xtc file for protein, optional if one needs multiple states of the protein')
     parser.add_argument('--inputfile', dest='inputfile', help='Input file with each line representing a sequon')
@@ -34,7 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--no-shuffle-sugar', dest='shuffle_sugar', action='store_false')
     parser.add_argument('--ignorewarn', dest='ignorewarn', action='store_true', help="Ignore cases when no sugar is implanted")
     parser.add_argument('--no-ignorewarn', dest='ignorewarn', action='store_false')
-    
+
     parser.set_defaults(dryrun=False)
     parser.set_defaults(ignorewarn=False)
     parser.set_defaults(protxtc=None)

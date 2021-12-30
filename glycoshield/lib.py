@@ -7,7 +7,7 @@ __maintainer__ = "Matt Sikora"
 __email__ = "masikora@biophys.mpg.de"
 __status__ = "Development"
 
-# here is where you would implement (move) the functionality of the 'glycoshield' Python modules
+
 # ~ import matplotlib
 #~ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -26,10 +26,6 @@ import subprocess
 import glob
 from shutil import copyfile, move
 from . import tables
-
-
-def say_ok():
-    print("OK!")
 
 
 class glycoshield:
