@@ -18,7 +18,8 @@ def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dr
         warnings.simplefilter('ignore')
         gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile)
         occupancy_single = gs.run()
-    print(occupancy_single)
+        print(occupancy_single)
+        print("OK")
 
 
 if __name__ == "__main__":
