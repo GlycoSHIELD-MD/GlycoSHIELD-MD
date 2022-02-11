@@ -28,4 +28,5 @@ MANIFEST
 .ipynb_checkpoints
 
 .unison/
+.vscode/
 

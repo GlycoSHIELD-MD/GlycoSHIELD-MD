@@ -86,11 +86,15 @@ class glycoshield:
             self.selprot = self.uprot.select_atoms("name CA")
             self.sugar_sel_suffix = 'name O5 or ( resname ANE5 and name O6 )'
 
-    def run(self):
+    def run(self, streamlit_progressbar=None):
 
         # will hold the number of grafted conformers per frame
         self.graftedconformers = []
         # Iterate over protein states
+
+        # progressbar
+        n_it = len(self.uprot.trajectory) * len(self.inputlines)
+        i_it = 0
 
         protframe = 0
         for prottp in self.uprot.trajectory:
@@ -140,7 +144,6 @@ class glycoshield:
                 coordinates = []
                 # scan all conformations for clashes and append non-clashing ones to the coordinates:
                 for n_tp in tqdm(sugarframes, desc="Structure {} residue {}".format(protframe, resids_on_protein[1])):
-
                     self.process_sugar_conformer(n_tp, tripep, sequon, coordinates)
                 coordinates = np.array(coordinates)
 
@@ -162,6 +165,10 @@ class glycoshield:
                 # Cleanup
                 del self.usugar
 
+                if streamlit_progressbar is not None:
+                    i_it = i_it + 1
+                    progress = float(i_it)/float(n_it)
+                    streamlit_progressbar.progress(progress)
 
             if self.verbose:
                # Main output printout
@@ -312,12 +319,12 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     # Iterate over structures and trajs for single glycans to extract subtrajs
     for pdb, xtc, chain, resid in zip(pdblist, xtclist, chainlist, reslist):
-        
+
         newxtc = pdb.replace(".pdb", "_glycan.xtc")
         newpdb = pdb.replace(".pdb", "_glycan.pdb")
-      
+
         u = mda.Universe(pdb, xtc)
-        
+
         # Select glycan (assume this is the only non-protein object, can be made more specific, here we also exclude palmitoylated residues)
         sugarsel = u.select_atoms("not protein and not resname CYSP")
 
@@ -335,7 +342,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     sels = []
     coords = []
-    
+
     # open the protein frame and add to the trajectories
     u = mda.Universe(pdblist[0],xtclist[0], in_memory=True)
 
@@ -454,7 +461,7 @@ def GMXTEST():
 
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, maxframe, path="./",chainlist=None):
     # Chainlist only needed for multichain proteins for plotting.
-    
+
     # GMX required, test if present
     GMXTEST()
     # Assumption is there is only a protein in the pdb file.
@@ -606,7 +613,7 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
             residues = sel_P.residues.resids
             xticks = np.arange(len(residues)).astype(int)
             xticklabels = residues
-            
+
             # chain boundaries for plotting
             chainbounds = []
             for chain in np.unique(sel_P.segids):
@@ -651,12 +658,12 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
 
 
-        
+
 def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path, chainbounds):
-   
+
     # a dictionary to translate 0-1 coordinates back to the amino acids
     labels = {residues[i]:xticklabels[i] for i in range(len(residues))}
-    
+
     # Formatter fction to draw it
     def MyTicks(x, pos):
        'The two args are the value and tick position'
@@ -664,11 +671,11 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
        tl = tick_locs[1:-1]
        if pos is not None:
            if x in tl and x in labels.keys():
-               
+
                return labels[x]
            else:
                return ''
-               
+
     # Fig
     plt.clf()
     fig = plt.figure(figsize=(13, 7))
@@ -689,11 +696,11 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     ax.set_ylim(0, 1)
     ax.tick_params(axis='both', which='major', labelsize=14)
     ax.tick_params(axis='both', which='minor', labelsize=14)
-    
-    
+
+
     formatter = FuncFormatter(MyTicks)
     ax.xaxis.set_major_formatter(formatter)
-    
+
     # Draw chains
     yminb=0.90 # span of the bar above the plot
     ymaxb=0.97
