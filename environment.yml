@@ -1,3 +1,4 @@
+# Conda environment recipe for GlycoSHIELD, to be used locally or with Binder
 name: glycoshield
 channels:
   - conda-forge
