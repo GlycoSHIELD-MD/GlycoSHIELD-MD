@@ -1,4 +1,0 @@
-#mkdir -p ~/.jupyter
-#cat <<EOF >>~/.jupyter/jupyter_notebook_config.py
-#c.NotebookApp.terminals_enabled = False
-#EOF
