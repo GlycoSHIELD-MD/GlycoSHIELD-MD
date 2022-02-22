@@ -364,7 +364,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
         lastres = protein.select_atoms("segid {}".format(chain)).resids[-1]
 
         for resid in resid_per_chain[chain]:
-            pdb = path + chain + "_" + str(resid) + "_glycan.pdb"
+            pdb = os.path.join(path, chain + "_" + str(resid) + "_glycan.pdb")
 
             xtc = pdb.replace(".pdb", ".xtc")
             u1 = mda.Universe(pdb, xtc, in_memory=True)
@@ -484,16 +484,16 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
             u = mda.Universe(pdb, xtc)
 
             # Define some temporary file names.
-            tmpindex = path + 'index0.ndx'
+            tmpindex = os.path.join(path, 'index0.ndx')
             tmpsel = 'prot; gly'
             tmpsys = 'system'
             baresel = 'prot'
-            tmpsasa = path + 'sasa1.xvg'
-            tmpsasar = path + 'sasar.xvg'
-            tmpsasaa = path + 'sasaa.xvg'
-            tmppdb = path + 'test1.pdb'
-            tmpbarepdb = path + 'test2.pdb'
-            tmpbarextc = path + 'test2.xtc'
+            tmpsasa = os.path.join(path, 'sasa1.xvg')
+            tmpsasar = os.path.join(path, 'sasar.xvg')
+            tmpsasaa = os.path.join(path, 'sasaa.xvg')
+            tmppdb = os.path.join(path, 'test1.pdb')
+            tmpbarepdb = os.path.join(path, 'test2.pdb')
+            tmpbarextc = os.path.join(path, 'test2.xtc')
 
             # remove all lines but ATOM from the PDB (otherwise gmx sasa freezes)
 
@@ -539,18 +539,18 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
             if keepoutput:
                 out1name = pdb.replace(".pdb", "")
-                copyfile(tmpsasa, path + "raw_{}_probe_{}.xvg".format(out1name, probe))
-                copyfile(tmpsasar, path + "raw_r_{}_probe_{}.xvg".format(out1name, probe))
-                copyfile(tmpsasaa, path + "raw_a_{}_probe_{}.xvg".format(out1name, probe))
+                copyfile(tmpsasa, os.path.join(path, "raw_{}_probe_{}.xvg".format(out1name, probe)))
+                copyfile(tmpsasar, os.path.join(path, "raw_r_{}_probe_{}.xvg".format(out1name, probe)))
+                copyfile(tmpsasaa, os.path.join(path, "raw_a_{}_probe_{}.xvg".format(out1name, probe)))
 
             # Now protein only, this will not change so we calc only once
             if iglycan == 0:
                 baresasatimes, baresasar, baresasaa, _ = get_SASA(tmpbarepdb, tmpbarextc, tmpindex, baresel, baresel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
 
                 if keepoutput:
-                    copyfile(tmpsasa, path + "bare_probe_{}.xvg".format(probe))
-                    copyfile(tmpsasar, path + "bare_r_probe_{}.xvg".format(probe))
-                    copyfile(tmpsasaa, path + "bare_a_probe_{}.xvg".format(probe))
+                    copyfile(tmpsasa, os.path.join(path, "bare_probe_{}.xvg".format(probe)))
+                    copyfile(tmpsasar, os.path.join(path, "bare_r_probe_{}.xvg".format(probe)))
+                    copyfile(tmpsasaa, os.path.join(path, "bare_a_probe_{}.xvg".format(probe)))
 
             # Calculate SASA relative to bare protein
 
@@ -586,7 +586,7 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
             os.remove(tmpsasa)
             os.remove(tmpsasar)
             os.remove(tmpsasaa)
-            for afile in glob.glob(path+"\#sasa*"):
+            for afile in glob.glob(os.path.join(path, "\#sasa*")):
                 os.remove(afile)
 
         outrelativesasa = np.array(outrelativesasa)
@@ -635,8 +635,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
                 sel_Pnw.residues[iresidue].atoms.tempfactors = meanSASA[iresidue] * 100
                 sel_Pnw.residues[iresidue].atoms.occupancies = occupancy_r[iresidue]
 
-            sel_Pnw.write(path + 'avgResidueSASA_probe_{}.pdb'.format(probe))
-            np.savetxt(path + 'avgResidueSASA_probe_{}.txt'.format(probe), meanSASA)
+            sel_Pnw.write(os.path.join(path, 'avgResidueSASA_probe_{}.pdb'.format(probe)))
+            np.savetxt(os.path.join(path, 'avgResidueSASA_probe_{}.txt'.format(probe)), meanSASA)
 
 
         if mode == "max":
@@ -645,8 +645,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
                 sel_Pnw.residues[iresidue].atoms.tempfactors = maxSASA[iresidue] * 100
                 sel_Pnw.residues[iresidue].atoms.occupancies = occupancy_r[iresidue]
 
-            sel_Pnw.write(path + 'maxResidueSASA_probe_{}.pdb'.format(probe))
-            np.savetxt(path + 'maxResidueSASA_probe_{}.txt'.format(probe), maxSASA)
+            sel_Pnw.write(os.path.join(path, 'maxResidueSASA_probe_{}.pdb'.format(probe)))
+            np.savetxt(os.path.join(path, 'maxResidueSASA_probe_{}.txt'.format(probe)), maxSASA)
 
 
 
@@ -707,5 +707,5 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     for (chain,begining,ending) in chainbounds:
        ax.fill_between([begining,ending],yminb,ymaxb,alpha=0.2,color=np.random.rand(3,))
        ax.text(0.5*(begining+ending),0.5*(yminb+ymaxb),"chain {}".format(chain),ha='center',va='center')
-    plt.savefig(path + 'ResidueSASA_probe_{}.pdf'.format(probe))
+    plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.pdf'.format(probe)))
     plt.show()
