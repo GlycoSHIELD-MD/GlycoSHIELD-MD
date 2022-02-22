@@ -26,6 +26,8 @@ dependencies:
   # finally, install the glycan data and the present package in editable mode
   - pip:
     #- zenodo-get
+    - py3Dmol
+    - stmol
     - sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
     - -e ../glycoshield-data-download-helper/

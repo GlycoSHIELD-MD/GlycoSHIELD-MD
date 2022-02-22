@@ -10,14 +10,19 @@ from glycoshield.lib import glycoshield, glycotraj, glycosasa
 # --- functions for configuration management ---
 def cfg_init():
     cfg = st.session_state
+    # set up directory and file names
     cfg["tutorial_dir"] = "TUTORIAL"
     cfg["work_dir"] = "webapp_work"
     cfg["output_dir"] = "webapp_output"
     pathlib.Path(cfg["work_dir"]).mkdir(exist_ok=True)
     pathlib.Path(cfg["output_dir"]).mkdir(exist_ok=True)
     cfg["output_zip"] = cfg["output_dir"] + ".zip"
+    # flags to implement a finite state machine for the various steps
+    cfg["glycoshield_done"] = False
+    cfg["glycotraj_done"] = False
+    cfg["glycosasa_done"] = False
     cfg["have_input"] = False
-    cfg["have_output"] = False
+    # 
     cfg["init"] = True
 
 def cfg_get():
@@ -39,9 +44,16 @@ def store_uploaded_files(uploaded_files):
         cfg["have_input"] = True
     uploaded_files.clear()
 
+def webapp_output_ready():
+    cfg = cfg_get()
+    if cfg["glycoshield_done"] and cfg["glycotraj_done"] and cfg["glycosasa_done"]:
+        return True
+    else:
+        return False
+
 def zip_webapp_output():
     cfg = cfg_get()
-    if cfg["have_output"]:
+    if webapp_output_ready():
         shutil.make_archive(
             os.path.join(cfg["work_dir"], cfg["output_zip"]).rstrip(".zip"),
             "zip",
@@ -50,7 +62,7 @@ def zip_webapp_output():
 
 def get_webapp_output():
     cfg = cfg_get()
-    if cfg["have_output"]:
+    if webapp_output_ready():
         zipfile = os.path.join(cfg["work_dir"], cfg["output_zip"])
         with open(zipfile, "rb") as f:
             data = f.read()
@@ -65,7 +77,7 @@ def store_inputs(inputs):
     with open(os.path.join(cfg["work_dir"], "input_sugaring"),'w') as f:
         f.write(inputs)
 
-def run_processing(bar):
+def run_glycoshield(bar):
     cfg = cfg_get()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
@@ -78,12 +90,101 @@ def run_processing(bar):
     )
     occ = gs.run(streamlit_progressbar=bar)
     st.write(occ)
-    cfg["have_output"] = True
+    cfg["gs"] = gs
+    cfg["occ"] = occ
+    cfg["glycoshield_done"] = True
+
+
+def check_glycoshield():
+    cfg = cfg_get()
+    if cfg["glycoshield_done"]:
+        st.write("Done!")
+    return cfg["glycoshield_done"]
+
+
+def run_glycotraj():
+    cfg = cfg_get()
+    gs = cfg["gs"]
+    occ = cfg["occ"]
+    path = cfg["output_dir"]
+    maxframe=np.min(occ[0])
+    pdblist=gs.pdblist
+    xtclist=gs.xtclist
+    chainlist=gs.chainlist
+    reslist=gs.reslist
+    outname=os.path.join(path, "merged_traj")
+    pdbtraj=os.path.join(path, "test_merged_pdb.pdb")
+    pdbtrajframes=30
+    glycotraj(
+        maxframe,
+        outname,
+        pdblist,
+        xtclist,
+        chainlist,
+        reslist,
+        pdbtraj,
+        pdbtrajframes,
+        path
+    )
+    cfg["glycotraj_done"] = True
+
+
+def check_glycotraj():
+    cfg = cfg_get()
+    if cfg["glycotraj_done"]:
+        st.write("Done!")
+
+
+def run_glycosasa():
+    cfg = cfg_get()
+    gs = cfg["gs"]
+    occ = cfg["occ"]
+    path = cfg["output_dir"]
+    maxframe=np.min(occ[0])
+    maxframe=10 # temporary
+    pdblist=gs.pdblist
+    xtclist=gs.xtclist
+    probelist=[0.14,0.70] # Possibly user will have an option to choose one value, makes it faster and easier to manage visualisation
+    plottrace=True
+    ndots=15
+    mode="max"
+    keepoutput=False
+    sasas = glycosasa(
+        pdblist=pdblist,
+        xtclist=xtclist,
+        plottrace=plottrace,
+        probelist=probelist,
+        ndots=ndots,
+        mode=mode,
+        keepoutput=keepoutput,
+        maxframe=maxframe,
+        path=path
+    )
+    cfg["sasas"] = sasas
+    cfg["glycosasa_done"] = True
+
+
+def check_glycosasa():
+    cfg = cfg_get()
+    if cfg["glycosasa_done"]:
+        st.write("Done!")
+
+
+def visualize(pdb_list):
+    from stmol import showmol
+    import py3Dmol
+    view = py3Dmol.view()
+    for pdb in pdb_list:
+        view.addModel(open(pdb, 'r').read(),'pdb')
+    view.setStyle({'cartoon':{'color':'spectrum'}})
+    view.zoomTo()
+    view.setBackgroundColor('white')
+    showmol(view, height = 400, width=600)
 
 
 # --- actual web application below ---
 st.set_page_config(layout="wide")
-st.title('GlycoSHIELD Web App')
+st.title('GlycoSHIELD Web Application')
 
 
 st.header("Upload")
@@ -104,18 +205,37 @@ inputs = st.text_area('Define inputs',
 store_inputs(inputs)
 
 
-st.header("Run")
+st.header("Run glycoSHIELD ...")
 bar = st.progress(0)
 if st.button("Run glycoSHIELD ..."):
-    run_processing(bar)
-    zip_webapp_output()
+    run_glycoshield(bar)
+
+if check_glycoshield():
+    pdb = [
+        os.path.join(cfg_get()["output_dir"], "A_492.pdb"),
+        os.path.join(cfg_get()["output_dir"], "A_463.pdb"),
+    ]
+    visualize(pdb_list=pdb)
+
+
+st.header("Run glycoTRAJ ...")
+if st.button("Run glycoTRAJ ..."):
+    run_glycotraj()
+check_glycotraj()
+
+
+st.header("Run glycoSASA ...")
+if st.button("Run glycoSASA ..."):
+    run_glycosasa()
+check_glycosasa()
 
 
 st.header("Download")
+zip_webapp_output()
 data, size = get_webapp_output()
 st.download_button(
-    label=f"Download ZIP ({size:.1f} MB)",
-    data=data,
-    file_name=cfg_get()["output_zip"],
-    mime="application/zip"
+   label=f"Download ZIP ({size:.1f} MB)",
+   data=data,
+   file_name=cfg_get()["output_zip"],
+   mime="application/zip"
 )
