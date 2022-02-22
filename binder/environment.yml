@@ -28,5 +28,5 @@ dependencies:
     #- zenodo-get
     - sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
-    - -e ./glycoshield-data-download-helper/
-    - -e .
+    - -e ../glycoshield-data-download-helper/
+    - -e ../
