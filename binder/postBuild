@@ -1,4 +1,4 @@
-# postBuild script for Binder, running before the Docker container launch
+# postBuild script for Binder, running right before the Docker container launch
 mkdir -p ~/.jupyter
 cat <<EOF >>~/.jupyter/jupyter_notebook_config.py
 c.NotebookApp.terminals_enabled = False

@@ -14,6 +14,7 @@ def cfg_init():
     cfg["tutorial_dir"] = "TUTORIAL"
     cfg["work_dir"] = "webapp_work"
     cfg["output_dir"] = "webapp_output"
+    cfg["pdb_input"] = ""
     pathlib.Path(cfg["work_dir"]).mkdir(exist_ok=True)
     pathlib.Path(cfg["output_dir"]).mkdir(exist_ok=True)
     cfg["output_zip"] = cfg["output_dir"] + ".zip"
@@ -40,9 +41,17 @@ def store_uploaded_files(uploaded_files):
         file_name = os.path.join(cfg["work_dir"], file.name)
         with open(file_name, "wb") as f:
             f.write(file.getbuffer())
+        cfg["pdb_input"].append(file_name)
     if len(uploaded_files) > 0:
         cfg["have_input"] = True
     uploaded_files.clear()
+
+def use_default_input():
+    cfg = cfg_get()
+    default_pdb = os.path.join(cfg["tutorial_dir"], "EC5.pdb")
+    cfg["pdb_input"] = default_pdb
+    cfg["have_input"] = True
+    st.write("Using {}".format(default_pdb))
 
 def webapp_output_ready():
     cfg = cfg_get()
@@ -82,7 +91,7 @@ def run_glycoshield(bar):
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
     gs = glycoshield(
-            protpdb=os.path.join(cfg["tutorial_dir"], "EC5.pdb"),
+            protpdb=cfg["pdb_input"],  # os.path.join(cfg["tutorial_dir"], "EC5.pdb"),
             protxtc=None,
             inputfile=os.path.join(cfg["work_dir"], "input_sugaring"),
             pdbtraj=pdbtraj,
@@ -193,10 +202,13 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True,
 )
 store_uploaded_files(uploaded_files)
+if st.button("Use default PDB"):
+    use_default_input()
 
 
+# TODO make input config interactive and easy to access!!
 st.header("Input")
-st.button("Add glycan ...")
+#st.button("Add glycan ...")
 inputs = st.text_area('Define inputs',
     '#\n'
     f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
