@@ -10,6 +10,7 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
+  - font-ttf-ubuntu
   - mdanalysis
   - gromacs=2021.3
   # support for interactive jupyter notebooks
