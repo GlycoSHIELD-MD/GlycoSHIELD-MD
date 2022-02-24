@@ -8,8 +8,12 @@ __email__ = "masikora@biophys.mpg.de"
 __status__ = "Development"
 
 
-# ~ import matplotlib
-#~ matplotlib.use('Agg')
+# temporary hack to switch to agg when streamlit is used
+import sys
+if 'streamlit' in sys.modules:
+    import matplotlib
+    matplotlib.use('Agg')
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import numpy as np
