@@ -23,7 +23,7 @@ def cfg_init():
     cfg["glycotraj_done"] = False
     cfg["glycosasa_done"] = False
     cfg["have_input"] = False
-    # 
+    #
     cfg["init"] = True
 
 def cfg_get():
@@ -33,18 +33,13 @@ def cfg_get():
 
 
 # --- functions defining the steps of the pipeline ---
-def store_uploaded_files(uploaded_files):
+def store_uploaded_file(uploaded_file):
     cfg = cfg_get()
-    for file in uploaded_files:
-        #bytes_data = file.read()
-        # st.write("filename:", file.name)
-        file_name = os.path.join(cfg["work_dir"], file.name)
-        with open(file_name, "wb") as f:
-            f.write(file.getbuffer())
-        cfg["pdb_input"].append(file_name)
-    if len(uploaded_files) > 0:
-        cfg["have_input"] = True
-    uploaded_files.clear()
+    file_name = os.path.join(cfg["work_dir"], uploaded_file.name)
+    with open(file_name, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    cfg["pdb_input"] = file_name
+    cfg["have_input"] = True
 
 def use_default_input():
     cfg = cfg_get()
@@ -193,15 +188,16 @@ def visualize(pdb_list):
 
 # --- actual web application below ---
 st.set_page_config(layout="wide")
-st.title('GlycoSHIELD Web Application')
+st.title('GlycoSHIELD Interactive Web Application')
 
 
 st.header("Upload")
-uploaded_files = st.file_uploader(
-    label="Upload input files for GlycoSHIELD",
-    accept_multiple_files=True,
+uploaded_file = st.file_uploader(
+    label="Upload PDB file",
+    accept_multiple_files=False,
 )
-store_uploaded_files(uploaded_files)
+if uploaded_file is not None:
+    store_uploaded_file(uploaded_file)
 if st.button("Use default PDB"):
     use_default_input()
 
