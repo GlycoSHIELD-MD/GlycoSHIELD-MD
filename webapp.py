@@ -12,6 +12,7 @@ def cfg_init():
     cfg = st.session_state
     # set up directory and file names
     cfg["tutorial_dir"] = "TUTORIAL"
+    cfg["glycan_library_dir"] = "GLYCAN_LIBRARY"
     cfg["work_dir"] = "webapp_work"
     cfg["output_dir"] = "webapp_output"
     cfg["pdb_input"] = ""
@@ -186,64 +187,77 @@ def visualize(pdb_list):
     showmol(view, height = 400, width=600)
 
 
+def get_glycan_library():
+    cfg = cfg_get()
+    lib = []
+    for _obj in os.listdir(cfg["glycan_library_dir"]):
+        obj = os.path.join(cfg["glycan_library_dir"], _obj)
+        if os.path.isfile(obj) and obj.endswith(('.pdb', '.xtc')):
+            lib.append(obj)
+    return lib
+
+
 # --- actual web application below ---
-st.set_page_config(layout="wide")
-st.title('GlycoSHIELD Interactive Web Application')
+
+if __name__ == "__main__":
+    st.set_page_config(layout="wide")
+    st.title('GlycoSHIELD Interactive Web Application')
 
 
-st.header("Upload")
-uploaded_file = st.file_uploader(
-    label="Upload PDB file",
-    accept_multiple_files=False,
-)
-if uploaded_file is not None:
-    store_uploaded_file(uploaded_file)
-if st.button("Use default PDB"):
-    use_default_input()
+    st.header("Upload")
+    uploaded_file = st.file_uploader(
+        label="Upload PDB file",
+        accept_multiple_files=False,
+    )
+    if uploaded_file is not None:
+        store_uploaded_file(uploaded_file)
+    if st.button("Use default PDB"):
+        use_default_input()
+
+    # print(get_glycan_library())
+
+    # TODO make input config interactive and easy to access!!
+    st.header("Input")
+    #st.button("Add glycan ...")
+    inputs = st.text_area('Define inputs',
+        '#\n'
+        f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
+        f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_492.pdb {cfg_get()["output_dir"]}/A_492.xtc\n'
+    )
+    store_inputs(inputs)
 
 
-# TODO make input config interactive and easy to access!!
-st.header("Input")
-#st.button("Add glycan ...")
-inputs = st.text_area('Define inputs',
-    '#\n'
-    f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
-    f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_492.pdb {cfg_get()["output_dir"]}/A_492.xtc\n'
-)
-store_inputs(inputs)
+    st.header("Run glycoSHIELD ...")
+    bar = st.progress(0)
+    if st.button("Run glycoSHIELD ..."):
+        run_glycoshield(bar)
+
+    if check_glycoshield():
+        pdb = [
+            os.path.join(cfg_get()["output_dir"], "A_492.pdb"),
+            os.path.join(cfg_get()["output_dir"], "A_463.pdb"),
+        ]
+        visualize(pdb_list=pdb)
 
 
-st.header("Run glycoSHIELD ...")
-bar = st.progress(0)
-if st.button("Run glycoSHIELD ..."):
-    run_glycoshield(bar)
-
-if check_glycoshield():
-    pdb = [
-        os.path.join(cfg_get()["output_dir"], "A_492.pdb"),
-        os.path.join(cfg_get()["output_dir"], "A_463.pdb"),
-    ]
-    visualize(pdb_list=pdb)
+    st.header("Run glycoTRAJ ...")
+    if st.button("Run glycoTRAJ ..."):
+        run_glycotraj()
+    check_glycotraj()
 
 
-st.header("Run glycoTRAJ ...")
-if st.button("Run glycoTRAJ ..."):
-    run_glycotraj()
-check_glycotraj()
+    st.header("Run glycoSASA ...")
+    if st.button("Run glycoSASA ..."):
+        run_glycosasa()
+    check_glycosasa()
 
 
-st.header("Run glycoSASA ...")
-if st.button("Run glycoSASA ..."):
-    run_glycosasa()
-check_glycosasa()
-
-
-st.header("Download")
-zip_webapp_output()
-data, size = get_webapp_output()
-st.download_button(
-   label=f"Download ZIP ({size:.1f} MB)",
-   data=data,
-   file_name=cfg_get()["output_zip"],
-   mime="application/zip"
-)
+    st.header("Download")
+    zip_webapp_output()
+    data, size = get_webapp_output()
+    st.download_button(
+    label=f"Download ZIP ({size:.1f} MB)",
+    data=data,
+    file_name=cfg_get()["output_zip"],
+    mime="application/zip"
+    )

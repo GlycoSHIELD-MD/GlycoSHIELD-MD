@@ -9,7 +9,7 @@ dependencies:
   - pip
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib=3.4.3
   - font-ttf-ubuntu
   - mdanalysis
   - gromacs=2021.3
