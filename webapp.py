@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import shutil
 import pathlib
@@ -24,6 +25,7 @@ def cfg_init():
     cfg["glycotraj_done"] = False
     cfg["glycosasa_done"] = False
     cfg["have_input"] = False
+    cfg["input_lines"] = ['#']
     #
     cfg["init"] = True
 
@@ -189,27 +191,29 @@ def visualize(pdb_list):
 
 def get_glycan_library():
     cfg = cfg_get()
+    # lib = {}
     lib = []
-    for _obj in os.listdir(cfg["glycan_library_dir"]):
-        obj = os.path.join(cfg["glycan_library_dir"], _obj)
-        if os.path.isfile(obj) and obj.endswith(('.pdb', '.xtc')):
-            lib.append(obj)
+    glycan_listdir = os.listdir(cfg["glycan_library_dir"])
+    glycan_listdir.sort()
+    for dir_raw in glycan_listdir:
+        dir_path = os.path.join(cfg["glycan_library_dir"], dir_raw)
+        if os.path.isdir(dir_path):
+            # files = os.listdir(dir_path)
+            # lib[dir_raw] = list(filter(lambda x: x.endswith(('.xtc', '.pdb')), files))
+            lib.append(dir_raw)
     return lib
 
 
 def get_chain_resids():
-    output={}
-
     cfg = cfg_get()
+    output={}
     if cfg["have_input"]:
         u=mda.Universe(cfg["pdb_input"])
         prot=u.select_atoms('protein')
         chains=np.unique(sorted(prot.atoms.segids))
-
         for chain in chains:
             sel=prot.select_atoms('segid '+chain)
             output[chain] = np.unique(sel.resids)
-
     return output
 
 
@@ -217,6 +221,53 @@ def quit_webapp_button():
     quit_webapp_md = '[Quit Web Application](../hub/logout)'
     st.markdown(quit_webapp_md, unsafe_allow_html=True)
 
+
+def create_input_line(chain, resid, glycan, dt1000):
+    cfg = cfg_get()
+    resid_m = int(resid)-1
+    resid_p = int(resid)+1
+    glycan_pdb = os.path.join(
+        os.path.join(cfg["glycan_library_dir"], glycan),
+        "production_merged_noW.pdb"
+    )
+    if dt1000:
+        dt_str = "_dt1000"
+    else:
+        dt_str = ""
+    glycan_xtc = os.path.join(
+        os.path.join(cfg["glycan_library_dir"], glycan),
+        f"production_merged_noW{dt_str}.xtc"
+    )
+    output_pdb = os.path.join(
+        cfg["output_dir"],
+        f"{chain}_{resid}.pdb"
+    )
+    output_xtc = os.path.join(
+        cfg["output_dir"],
+        f"{chain}_{resid}.xtc"
+    )
+    return f"{chain} {resid_m},{resid},{resid_p} 1,2,3 {glycan_pdb} {glycan_xtc} {output_pdb} {output_xtc}"
+    # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
+
+def add_input_line(line):
+    cfg = cfg_get()
+    if line not in cfg["input_lines"]:
+        cfg["input_lines"].append(line)
+
+def rem_input_line(line):
+    cfg = cfg_get()
+    try:
+        cfg["input_lines"].remove(line)
+    except:
+        pass
+
+def get_input_lines():
+    cfg = cfg_get()
+    return cfg["input_lines"]
+
+def clear_input_lines():
+    cfg = cfg_get()
+    cfg["input_lines"] = ['#']
 
 # --- actual web application below ---
 
@@ -239,26 +290,44 @@ if __name__ == "__main__":
     st.header("Input")
 
     chain_resids = get_chain_resids()
-    st.write(chain_resids)
+    # st.write(chain_resids)
     glycan_lib = get_glycan_library()
-    st.write(glycan_lib)
+    # st.write(glycan_lib)
 
     chain = st.selectbox("Chain", chain_resids.keys())
 
-    resid = st.selectbox("Residue [Selectbox]", chain_resids[chain])
+    if chain in chain_resids:
+        resids = chain_resids[chain]
+    else:
+        resids = []
+    resid = st.selectbox("Residue", resids)
 
-    resid_multi = st.multiselect("Residues [Multiselect]", chain_resids[chain])
+    glycan = st.selectbox("Glycan", glycan_lib)
+    dt1000 = st.checkbox("dt1000", value=False)
 
-    resid_range = st.select_slider("Residues [Select_Slider]",
-                    chain_resids[chain],
-                    value=(chain_resids[chain][0], chain_resids[chain][-1]))
+    new_line = create_input_line(chain, resid, glycan, dt1000)
 
-    #st.button("Add glycan ...")
-    inputs = st.text_area('Define inputs',
-        '#\n'
-        f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
-        f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_492.pdb {cfg_get()["output_dir"]}/A_492.xtc\n'
+    st.text_area('New input line', new_line)
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    if col1.button("Add"):
+        add_input_line(new_line)
+
+    if col2.button("Remove"):
+        rem_input_line(new_line)
+
+
+    inputs = st.text_area('All input lines',
+        "\n".join(get_input_lines())
+        # '#\n'
+        # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
+        # f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_492.pdb {cfg_get()["output_dir"]}/A_492.xtc\n'
     )
+
+    if st.button("Clear inputs"):
+        clear_input_lines()
+
     store_inputs(inputs)
 
 
