@@ -4,8 +4,8 @@ import shutil
 import pathlib
 import numpy as np
 import streamlit as st
+import MDAnalysis as mda
 from glycoshield.lib import glycoshield, glycotraj, glycosasa
-
 
 # --- functions for configuration management ---
 def cfg_init():
@@ -197,12 +197,32 @@ def get_glycan_library():
     return lib
 
 
+def get_chain_resids():
+    output={}
+
+    cfg = cfg_get()
+    if cfg["have_input"]:
+        u=mda.Universe(cfg["pdb_input"])
+        prot=u.select_atoms('protein')
+        chains=np.unique(sorted(prot.atoms.segids))
+
+        for chain in chains:
+            sel=prot.select_atoms('segid '+chain)
+            output[chain] = np.unique(sel.resids)
+
+    return output
+
+
+def quit_webapp_button():
+    quit_webapp_md = '[Quit Web Application](../hub/logout)'
+    st.markdown(quit_webapp_md, unsafe_allow_html=True)
+
+
 # --- actual web application below ---
 
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
     st.title('GlycoSHIELD Interactive Web Application')
-
 
     st.header("Upload")
     uploaded_file = st.file_uploader(
@@ -214,10 +234,25 @@ if __name__ == "__main__":
     if st.button("Use default PDB"):
         use_default_input()
 
-    # print(get_glycan_library())
 
     # TODO make input config interactive and easy to access!!
     st.header("Input")
+
+    chain_resids = get_chain_resids()
+    st.write(chain_resids)
+    glycan_lib = get_glycan_library()
+    st.write(glycan_lib)
+
+    chain = st.selectbox("Chain", chain_resids.keys())
+
+    resid = st.selectbox("Residue [Selectbox]", chain_resids[chain])
+
+    resid_multi = st.multiselect("Residues [Multiselect]", chain_resids[chain])
+
+    resid_range = st.select_slider("Residues [Select_Slider]",
+                    chain_resids[chain],
+                    value=(chain_resids[chain][0], chain_resids[chain][-1]))
+
     #st.button("Add glycan ...")
     inputs = st.text_area('Define inputs',
         '#\n'
@@ -261,3 +296,6 @@ if __name__ == "__main__":
     file_name=cfg_get()["output_zip"],
     mime="application/zip"
     )
+
+    st.header("Quit Web Application")
+    quit_webapp_button()
