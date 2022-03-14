@@ -89,9 +89,15 @@ class glycoshield:
         elif self.mode == "CG":
             self.selprot = self.uprot.select_atoms("name CA")
             self.sugar_sel_suffix = 'name O5 or ( resname ANE5 and name O6 )'
+            # This could be changed in the future if there are glycans that do not have this atom
             
         # The chopping of the trajectory. 1 means take all frames, 10 means take every 10th frame
         self.skip=skip
+        
+    def _test_sequon(self,resids_on_protein,protchain):
+        # test whether a sequon is in the 2:N-1 range
+        if resids_on_protein[1] >= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[-1] or resids_on_protein[1] <= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[0]:
+                  raise BaseException("Selected sequon {},{},{} lies outside of the residues if the chain {}!\nGrafting on the first/last residues is not supported.".format(resids_on_protein[0],resids_on_protein[1],resids_on_protein[2],protchain))        
         
     def run(self, streamlit_progressbar=None):
 
@@ -114,6 +120,10 @@ class glycoshield:
                 self.usugar = mda.Universe(sugarpdb, sugarxtc, in_memory=True, in_memory_step=self.skip)
                 # select (part of) the protein that is connected to the sugar
                 tripep = self.usugar.select_atoms('protein and resid {} and name N CA CO'.format(" ".join([str(i) for i in resids_on_sugar])))
+                
+                # Test whether sequon is in the 2:N-1 range:
+                self._test_sequon(resids_on_protein,protchain)
+                
                 # select sequon on protein
                 sequon = self.uprot.select_atoms('segid {} and resid {} and name N CA CO'.format(protchain, " ".join([str(i) for i in resids_on_protein])))
 
