@@ -34,7 +34,7 @@ from . import tables
 
 
 class glycoshield:
-    def __init__(self, protpdb, protxtc, inputfile, threshold=3.5, mode="CG", zmin=None, zmax=None, dryrun=False, shuffle_sugar=True, ignorewarn=False, pdbtraj=None, pdbtrajframes=0,verbose=False,path="./"):
+    def __init__(self, protpdb, protxtc, inputfile, threshold=3.5, mode="CG", zmin=None, zmax=None, dryrun=False, shuffle_sugar=True, ignorewarn=False, pdbtraj=None, pdbtrajframes=0,verbose=False,path="./", skip=1):
 
         # set vars
         # Print output?
@@ -89,7 +89,10 @@ class glycoshield:
         elif self.mode == "CG":
             self.selprot = self.uprot.select_atoms("name CA")
             self.sugar_sel_suffix = 'name O5 or ( resname ANE5 and name O6 )'
-
+            
+        # The chopping of the trajectory. 1 means take all frames, 10 means take every 10th frame
+        self.skip=skip
+        
     def run(self, streamlit_progressbar=None):
 
         # will hold the number of grafted conformers per frame
@@ -108,7 +111,7 @@ class glycoshield:
             # Iterate over sugars:
             for protchain, resids_on_protein, resids_on_sugar, sugarpdb, sugarxtc, pdbout, xtcout in self.inputlines:
                 # load sugar
-                self.usugar = mda.Universe(sugarpdb, sugarxtc, in_memory=True)
+                self.usugar = mda.Universe(sugarpdb, sugarxtc, in_memory=True, in_memory_step=self.skip)
                 # select (part of) the protein that is connected to the sugar
                 tripep = self.usugar.select_atoms('protein and resid {} and name N CA CO'.format(" ".join([str(i) for i in resids_on_sugar])))
                 # select sequon on protein

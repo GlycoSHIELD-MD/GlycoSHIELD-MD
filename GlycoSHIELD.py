@@ -13,14 +13,23 @@ from argparse import ArgumentParser
 from glycoshield import glycoshield
 
 
-def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn):
+def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip):
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile)
+        gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile,skip=skip)
         occupancy_single = gs.run()
         print(occupancy_single)
         print("OK")
 
+def check_positive(value):
+   "FROM https://stackoverflow.com/questions/64980270/how-to-allow-only-positive-integer-using-argparse"
+    try:
+        value = int(value)
+        if value <= 0:
+            raise argparse.ArgumentTypeError("{} is not a positive integer".format(value))
+    except ValueError:
+        raise Exception("{} is not an integer".format(value))
+    return value
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -38,7 +47,8 @@ if __name__ == "__main__":
     parser.add_argument('--no-shuffle-sugar', dest='shuffle_sugar', action='store_false')
     parser.add_argument('--ignorewarn', dest='ignorewarn', action='store_true', help="Ignore cases when no sugar is implanted")
     parser.add_argument('--no-ignorewarn', dest='ignorewarn', action='store_false')
-
+    parser.add_argument('--skip', dest='skip', help='skip frames from the glycan trajectory, default = 1', default=1, type=check_positive)
+    
     parser.set_defaults(dryrun=False)
     parser.set_defaults(ignorewarn=False)
     parser.set_defaults(protxtc=None)
@@ -57,5 +67,6 @@ if __name__ == "__main__":
     dryrun = args.dryrun
     shuffle_sugar = args.shuffle_sugar
     ignorewarn = args.ignorewarn
-
-    run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn)
+    skip = int(args.skip)
+    
+    run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip)
