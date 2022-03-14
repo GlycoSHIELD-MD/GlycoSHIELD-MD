@@ -223,7 +223,7 @@ def quit_binder_webapp():
     os.system("skill -u jovyan")
 
 
-def create_input_line(chain, resid, glycan, dt1000):
+def create_input_line(chain, resid, glycan):
     cfg = cfg_get()
     resid_m = int(resid)-1
     resid_p = int(resid)+1
@@ -231,13 +231,9 @@ def create_input_line(chain, resid, glycan, dt1000):
         os.path.join(cfg["glycan_library_dir"], glycan),
         "production_merged_noW.pdb"
     )
-    if dt1000:
-        dt_str = "_dt1000"
-    else:
-        dt_str = ""
     glycan_xtc = os.path.join(
         os.path.join(cfg["glycan_library_dir"], glycan),
-        f"production_merged_noW{dt_str}.xtc"
+        "production_merged_noW.xtc"
     )
     output_pdb = os.path.join(
         cfg["output_dir"],
@@ -248,7 +244,6 @@ def create_input_line(chain, resid, glycan, dt1000):
         f"{chain}_{resid}.xtc"
     )
     return f"{chain} {resid_m},{resid},{resid_p} 1,2,3 {glycan_pdb} {glycan_xtc} {output_pdb} {output_xtc}"
-    # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
 
 def add_input_line(line):
     cfg = cfg_get()
@@ -304,9 +299,8 @@ if __name__ == "__main__":
     resid = st.selectbox("Residue", resids)
 
     glycan = st.selectbox("Glycan", glycan_lib)
-    dt1000 = st.checkbox("dt1000", value=False)
 
-    new_line = create_input_line(chain, resid, glycan, dt1000)
+    new_line = create_input_line(chain, resid, glycan)
 
     st.text_area('New input line', new_line)
 
@@ -367,7 +361,10 @@ if __name__ == "__main__":
     mime="application/zip"
     )
 
-    # When running on Binder, offer a shut-down button
+
+    # When running on Binder, offer a shutdown button
     if getpass.getuser() == "jovyan":
-        if st.button("Quit Web Application"):
+        label = "Quit Web Application"
+        st.header(label)
+        if st.button(label):
             quit_binder_webapp()
