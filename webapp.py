@@ -9,8 +9,10 @@ import streamlit as st
 import MDAnalysis as mda
 from glycoshield.lib import glycoshield, glycotraj, glycosasa
 
+
 # --- functions for configuration management ---
 def cfg_init():
+    # we use Streamlit's session state to store variables and state between user interaction events
     cfg = st.session_state
     # set up directory and file names
     cfg["tutorial_dir"] = "TUTORIAL"
@@ -37,6 +39,7 @@ def cfg_get():
 
 
 # --- functions defining the steps of the pipeline ---
+
 def store_uploaded_file(uploaded_file):
     cfg = cfg_get()
     file_name = os.path.join(cfg["work_dir"], uploaded_file.name)
@@ -90,7 +93,7 @@ def run_glycoshield(bar):
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
     gs = glycoshield(
-            protpdb=cfg["pdb_input"],  # os.path.join(cfg["tutorial_dir"], "EC5.pdb"),
+            protpdb=cfg["pdb_input"],
             protxtc=None,
             inputfile=os.path.join(cfg["work_dir"], "input_sugaring"),
             pdbtraj=pdbtraj,
@@ -282,7 +285,6 @@ if __name__ == "__main__":
         use_default_input()
 
 
-    # TODO make input config interactive and easy to access!!
     st.header("Input")
 
     chain_resids = get_chain_resids()
@@ -366,5 +368,6 @@ if __name__ == "__main__":
     if getpass.getuser() == "jovyan":
         label = "Quit Web Application"
         st.header(label)
+        st.write("After pushing \"" + label + "\" the webapp will be shut down and you may close the browser tab.")
         if st.button(label):
             quit_binder_webapp()
