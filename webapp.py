@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import getpass
 import shutil
 import pathlib
 import numpy as np
@@ -217,9 +218,9 @@ def get_chain_resids():
     return output
 
 
-def quit_webapp_button():
-    quit_webapp_md = '[Quit Web Application](../hub/logout)'
-    st.markdown(quit_webapp_md, unsafe_allow_html=True)
+def quit_binder_webapp():
+    """Shut down a session running within a Docker container on Binder."""
+    os.system("skill -u jovyan")
 
 
 def create_input_line(chain, resid, glycan, dt1000):
@@ -366,5 +367,7 @@ if __name__ == "__main__":
     mime="application/zip"
     )
 
-    st.header("Quit Web Application")
-    quit_webapp_button()
+    # When running on Binder, offer a shut-down button
+    if getpass.getuser() == "jovyan":
+        if st.button("Quit Web Application"):
+            quit_binder_webapp()
