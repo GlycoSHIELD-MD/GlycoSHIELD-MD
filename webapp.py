@@ -368,6 +368,6 @@ if __name__ == "__main__":
     if getpass.getuser() == "jovyan":
         label = "Quit Web Application"
         st.header(label)
-        st.write("After pushing \"" + label + "\" the webapp will be shut down and you may close the browser tab.")
+        st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
         if st.button(label):
             quit_binder_webapp()
