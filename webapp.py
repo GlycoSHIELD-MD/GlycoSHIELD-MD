@@ -11,7 +11,7 @@ from glycoshield.lib import glycoshield, glycotraj, glycosasa
 
 
 # --- functions for configuration management ---
-def cfg_init():
+def init_config():
     # we use Streamlit's session state to store variables and state between user interaction events
     cfg = st.session_state
     # set up directory and file names
@@ -29,19 +29,18 @@ def cfg_init():
     cfg["glycosasa_done"] = False
     cfg["have_input"] = False
     cfg["input_lines"] = ['#']
-    #
     cfg["init"] = True
 
-def cfg_get():
+def get_config():
     if "init" not in st.session_state:
-        cfg_init()
+        init_config()
     return st.session_state
 
 
 # --- functions defining the steps of the pipeline ---
 
 def store_uploaded_file(uploaded_file):
-    cfg = cfg_get()
+    cfg = get_config()
     file_name = os.path.join(cfg["work_dir"], uploaded_file.name)
     with open(file_name, "wb") as f:
         f.write(uploaded_file.getbuffer())
@@ -49,21 +48,25 @@ def store_uploaded_file(uploaded_file):
     cfg["have_input"] = True
 
 def use_default_input():
-    cfg = cfg_get()
+    cfg = get_config()
     default_pdb = os.path.join(cfg["tutorial_dir"], "EC5.pdb")
     cfg["pdb_input"] = default_pdb
     cfg["have_input"] = True
-    st.write("Using {}".format(default_pdb))
+
+def print_input_pdb():
+    cfg = get_config()
+    file_name = cfg["pdb_input"]
+    st.write("Using {}".format(file_name))
 
 def webapp_output_ready():
-    cfg = cfg_get()
+    cfg = get_config()
     if cfg["glycoshield_done"] and cfg["glycotraj_done"] and cfg["glycosasa_done"]:
         return True
     else:
         return False
 
 def zip_webapp_output():
-    cfg = cfg_get()
+    cfg = get_config()
     if webapp_output_ready():
         shutil.make_archive(
             os.path.join(cfg["work_dir"], cfg["output_zip"]).rstrip(".zip"),
@@ -72,7 +75,7 @@ def zip_webapp_output():
         )
 
 def get_webapp_output():
-    cfg = cfg_get()
+    cfg = get_config()
     if webapp_output_ready():
         zipfile = os.path.join(cfg["work_dir"], cfg["output_zip"])
         with open(zipfile, "rb") as f:
@@ -84,12 +87,12 @@ def get_webapp_output():
     return data, size
 
 def store_inputs(inputs):
-    cfg = cfg_get()
+    cfg = get_config()
     with open(os.path.join(cfg["work_dir"], "input_sugaring"),'w') as f:
         f.write(inputs)
 
 def run_glycoshield(bar):
-    cfg = cfg_get()
+    cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
     gs = glycoshield(
@@ -107,14 +110,14 @@ def run_glycoshield(bar):
 
 
 def check_glycoshield():
-    cfg = cfg_get()
+    cfg = get_config()
     if cfg["glycoshield_done"]:
         st.write("Done!")
     return cfg["glycoshield_done"]
 
 
 def run_glycotraj():
-    cfg = cfg_get()
+    cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
     path = cfg["output_dir"]
@@ -141,13 +144,13 @@ def run_glycotraj():
 
 
 def check_glycotraj():
-    cfg = cfg_get()
+    cfg = get_config()
     if cfg["glycotraj_done"]:
         st.write("Done!")
 
 
 def run_glycosasa():
-    cfg = cfg_get()
+    cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
     path = cfg["output_dir"]
@@ -176,7 +179,7 @@ def run_glycosasa():
 
 
 def check_glycosasa():
-    cfg = cfg_get()
+    cfg = get_config()
     if cfg["glycosasa_done"]:
         st.write("Done!")
 
@@ -194,7 +197,7 @@ def visualize(pdb_list):
 
 
 def get_glycan_library():
-    cfg = cfg_get()
+    cfg = get_config()
     # lib = {}
     lib = []
     glycan_listdir = os.listdir(cfg["glycan_library_dir"])
@@ -209,7 +212,7 @@ def get_glycan_library():
 
 
 def get_chain_resids():
-    cfg = cfg_get()
+    cfg = get_config()
     output={}
     if cfg["have_input"]:
         u=mda.Universe(cfg["pdb_input"])
@@ -227,7 +230,7 @@ def quit_binder_webapp():
 
 
 def create_input_line(chain, resid, glycan):
-    cfg = cfg_get()
+    cfg = get_config()
     resid_m = int(resid)-1
     resid_p = int(resid)+1
     glycan_pdb = os.path.join(
@@ -249,41 +252,47 @@ def create_input_line(chain, resid, glycan):
     return f"{chain} {resid_m},{resid},{resid_p} 1,2,3 {glycan_pdb} {glycan_xtc} {output_pdb} {output_xtc}"
 
 def add_input_line(line):
-    cfg = cfg_get()
+    cfg = get_config()
     if line not in cfg["input_lines"]:
         cfg["input_lines"].append(line)
 
 def rem_input_line(line):
-    cfg = cfg_get()
+    cfg = get_config()
     try:
         cfg["input_lines"].remove(line)
     except:
         pass
 
 def get_input_lines():
-    cfg = cfg_get()
+    cfg = get_config()
     return cfg["input_lines"]
 
 def clear_input_lines():
-    cfg = cfg_get()
+    cfg = get_config()
     cfg["input_lines"] = ['#']
 
+
+
 # --- actual web application below ---
+
+
 
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
     st.title('GlycoSHIELD Interactive Web Application')
 
-    st.header("Upload")
+    st.header("Define PDB file for input")
+    if not get_config()["have_input"]:
+        use_default_input()
+    if st.button("Use default <EC5.pdb>"):
+        use_default_input()
     uploaded_file = st.file_uploader(
         label="Upload PDB file",
         accept_multiple_files=False,
     )
     if uploaded_file is not None:
         store_uploaded_file(uploaded_file)
-    if st.button("Use default PDB"):
-        use_default_input()
-
+    print_input_pdb()
 
     st.header("Input")
 
@@ -318,8 +327,8 @@ if __name__ == "__main__":
     inputs = st.text_area('All input lines',
         "\n".join(get_input_lines())
         # '#\n'
-        # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_463.pdb {cfg_get()["output_dir"]}/A_463.xtc\n'
-        # f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {cfg_get()["output_dir"]}/A_492.pdb {cfg_get()["output_dir"]}/A_492.xtc\n'
+        # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {get_config()["output_dir"]}/A_463.pdb {get_config()["output_dir"]}/A_463.xtc\n'
+        # f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {get_config()["output_dir"]}/A_492.pdb {get_config()["output_dir"]}/A_492.xtc\n'
     )
 
     if st.button("Clear inputs"):
@@ -335,8 +344,8 @@ if __name__ == "__main__":
 
     if check_glycoshield():
         pdb = [
-            os.path.join(cfg_get()["output_dir"], "A_492.pdb"),
-            os.path.join(cfg_get()["output_dir"], "A_463.pdb"),
+            os.path.join(get_config()["output_dir"], "A_492.pdb"),
+            os.path.join(get_config()["output_dir"], "A_463.pdb"),
         ]
         visualize(pdb_list=pdb)
 
@@ -359,7 +368,7 @@ if __name__ == "__main__":
     st.download_button(
     label=f"Download ZIP ({size:.1f} MB)",
     data=data,
-    file_name=cfg_get()["output_zip"],
+    file_name=get_config()["output_zip"],
     mime="application/zip"
     )
 
