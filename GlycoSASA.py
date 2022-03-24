@@ -1,5 +1,3 @@
-from glycoshield import glycosasa, GMXTEST
-from argparse import ArgumentParser
 __author__ = "Matt Sikora"
 __copyright__ = "Copyright 2021, GlycoSHIELD project"
 __credits__ = ["Cyril Hanus"]
@@ -10,17 +8,18 @@ __email__ = "masikora@biophys.mpg.de"
 __status__ = "Development"
 
 
+from argparse import ArgumentParser
+import warnings
 import matplotlib
 matplotlib.use('Agg')
-import warnings
-from argparse import ArgumentParser
 from glycoshield import glycosasa, GMXTEST
 
 
 def run_glycosasa(pdbfiles, xtcfiles, plottrace, probes, ndots, mode, keepoutput, endframe):
     with warnings.catch_warnings():
-        # warnings.simplefilter('ignore')
-        glycosasa(pdbfiles, xtcfiles, plottrace, probes, ndots, mode, keepoutput, endframe)
+        warnings.simplefilter("ignore")
+        warnings.filterwarnings("ignore", category=DeprecationWarning)
+        glycosasa(pdbfiles, xtcfiles, plottrace, probes, ndots, mode, keepoutput, endframe, run_parallel=True)
         print("OK")
 
 
