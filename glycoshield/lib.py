@@ -37,7 +37,7 @@ from . import tables
 
 
 class glycoshield:
-    def __init__(self, protpdb, protxtc, inputfile, threshold=3.5, mode="CG", zmin=None, zmax=None, dryrun=False, shuffle_sugar=True, ignorewarn=False, pdbtraj=None, pdbtrajframes=0,verbose=False,path="./", skip=1):
+    def __init__(self, protpdb, protxtc, inputfile, threshold=3.5, mode="CG", zmin=None, zmax=None, dryrun=False, shuffle_sugar=True, ignorewarn=False, pdbtraj=None, pdbtrajframes=0, verbose=False, path="./", skip=1):
 
         # set vars
         # Print output?
@@ -95,12 +95,12 @@ class glycoshield:
             # This could be changed in the future if there are glycans that do not have this atom
 
         # The chopping of the trajectory. 1 means take all frames, 10 means take every 10th frame
-        self.skip=skip
+        self.skip = skip
 
-    def _test_sequon(self,resids_on_protein,protchain):
+    def _test_sequon(self, resids_on_protein, protchain):
         # test whether a sequon is in the 2:N-1 range
         if resids_on_protein[1] >= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[-1] or resids_on_protein[1] <= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[0]:
-                  raise BaseException("Selected sequon {},{},{} lies outside of the residues if the chain {}!\nGrafting on the first/last residues is not supported.".format(resids_on_protein[0],resids_on_protein[1],resids_on_protein[2],protchain))
+            raise BaseException("Selected sequon {},{},{} lies outside of the residues if the chain {}!\nGrafting on the first/last residues is not supported.".format(resids_on_protein[0], resids_on_protein[1], resids_on_protein[2], protchain))
 
     def run(self, streamlit_progressbar=None):
 
@@ -125,7 +125,7 @@ class glycoshield:
                 tripep = self.usugar.select_atoms('protein and resid {} and name N CA CO'.format(" ".join([str(i) for i in resids_on_sugar])))
 
                 # Test whether sequon is in the 2:N-1 range:
-                self._test_sequon(resids_on_protein,protchain)
+                self._test_sequon(resids_on_protein, protchain)
 
                 # select sequon on protein
                 sequon = self.uprot.select_atoms('segid {} and resid {} and name N CA CO'.format(protchain, " ".join([str(i) for i in resids_on_protein])))
@@ -187,12 +187,12 @@ class glycoshield:
 
                 if streamlit_progressbar is not None:
                     i_it = i_it + 1
-                    progress = float(i_it)/float(n_it)
+                    progress = float(i_it) / float(n_it)
                     streamlit_progressbar.progress(progress)
 
             if self.verbose:
-               # Main output printout
-               print(protframe, " ".join([str(i) for i in occupancies]))
+                # Main output printout
+                print(protframe, " ".join([str(i) for i in occupancies]))
 
             # Increment frame counter
             protframe += 1
@@ -215,7 +215,6 @@ class glycoshield:
         if self.protxtc is not None and pdbtraj is not None:
             pdbtraj = pdbtraj.replace('.pdb', '_protein_frame_{}.pdb'.format(protframe))
 
-
         # if dry run - skip writing xtc,pdb
         if not self.dryrun:
             # Placeholder for a reconstructed glycoprotein
@@ -234,7 +233,6 @@ class glycoshield:
             # pdb trajectory (LARGE). Here the name of the pdb file should be inherited after the xtc output files!
             if pdbtraj is not None:
                 write_pdb_trajectory(glycoprotein, pdbtraj, pdbtrajframes)
-
 
             del glycoprotein
 
@@ -364,7 +362,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     coords = []
 
     # open the protein frame and add to the trajectories
-    u = mda.Universe(pdblist[0],xtclist[0], in_memory=True)
+    u = mda.Universe(pdblist[0], xtclist[0], in_memory=True)
 
     # again - this selection can be made more specific
     protein = u.select_atoms('protein')
@@ -483,9 +481,9 @@ def GMXTEST():
             raise SystemExit("Gromacs not found, stopping...")
 
 
-def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
-        keepoutput, maxframe, path="./", chainlist=None, \
-            run_parallel=True, n_procs=multiprocessing.cpu_count()):
+def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
+              keepoutput, maxframe, path="./", chainlist=None,
+              run_parallel=True, n_procs=multiprocessing.cpu_count()):
     # Chainlist only needed for multichain proteins for plotting.
 
     # GMX required, test if present
@@ -529,8 +527,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
             parameter_list = []
             for iglycan in range(1, len(xtclist)):
                 parameter = (
-                    iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots, \
-                        mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
+                    iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots,
+                    mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
                 )
                 parameter_list.append(parameter)
             with multiprocessing.Pool(n_procs) as p:
@@ -542,8 +540,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
         else:
             for iglycan in range(1, len(xtclist)):
                 relativesasa, relativesasaaa, _sel_P, _occucancy_r = glycosasa_glycan_kernel(
-                    iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots, \
-                        mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
+                    iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots,
+                    mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
                 )
                 outrelativesasa.append(relativesasa)
                 outrelativesasaaa.append(relativesasaaa)
@@ -570,7 +568,7 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
         # make a per-residue plot of the sasa
         if plottrace:
             # This is wrong:
-            #~ residues = np.unique(sel_P.resids)
+            # ~ residues = np.unique(sel_P.resids)
             residues = sel_P.residues.resids
             xticks = np.arange(len(residues)).astype(int)
             xticklabels = residues
@@ -578,10 +576,10 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
             # chain boundaries for plotting
             chainbounds = []
             for chain in np.unique(sel_P.segids):
-               idx=np.where(sel_P.residues.segids==chain)[0]
-               mychaincoords = xticks[idx]
-               chainbounds.append([chain,mychaincoords[0],mychaincoords[-1]])
-            fig = plot_SASA(xticks, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path=path,chainbounds = chainbounds)
+                idx = np.where(sel_P.residues.segids == chain)[0]
+                mychaincoords = xticks[idx]
+                chainbounds.append([chain, mychaincoords[0], mychaincoords[-1]])
+            fig = plot_SASA(xticks, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path=path, chainbounds=chainbounds)
 
         outputs.append([residues, outrelativesasa, maxSASA, meanSASA, probe, occupancy_r])
 
@@ -599,7 +597,6 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, \
 
             sel_Pnw.write(os.path.join(path, 'avgResidueSASA_probe_{}.pdb'.format(probe)))
             np.savetxt(os.path.join(path, 'avgResidueSASA_probe_{}.txt'.format(probe)), meanSASA)
-
 
         if mode == "max":
             # now maxima:
@@ -637,8 +634,8 @@ def glycosasa_glycan_kernel_wrapper(parameter):
     )
 
 
-def glycosasa_glycan_kernel(iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots, \
-        mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file):
+def glycosasa_glycan_kernel(iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots,
+                            mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file):
 
     pdb = pdblist[iglycan]
     xtc = xtclist[iglycan]
@@ -764,19 +761,19 @@ def glycosasa_glycan_kernel(iglycan, probe, pdblist, xtclist, plottrace, probeli
 def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path, chainbounds):
 
     # a dictionary to translate 0-1 coordinates back to the amino acids
-    labels = {residues[i]:xticklabels[i] for i in range(len(residues))}
+    labels = {residues[i]: xticklabels[i] for i in range(len(residues))}
 
     # Formatter fction to draw it
     def MyTicks(x, pos):
-       'The two args are the value and tick position'
-       tick_locs=ax.xaxis.get_majorticklocs()      # Get the list of all tick locations
-       tl = tick_locs[1:-1]
-       if pos is not None:
-           if x in tl and x in labels.keys():
+        'The two args are the value and tick position'
+        tick_locs = ax.xaxis.get_majorticklocs()      # Get the list of all tick locations
+        tl = tick_locs[1:-1]
+        if pos is not None:
+            if x in tl and x in labels.keys():
 
-               return labels[x]
-           else:
-               return ''
+                return labels[x]
+            else:
+                return ''
 
     # Fig
     plt.clf()
@@ -799,15 +796,14 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     ax.tick_params(axis='both', which='major', labelsize=14)
     ax.tick_params(axis='both', which='minor', labelsize=14)
 
-
     formatter = FuncFormatter(MyTicks)
     ax.xaxis.set_major_formatter(formatter)
 
     # Draw chains
-    yminb=0.90 # span of the bar above the plot
-    ymaxb=0.97
-    for (chain,begining,ending) in chainbounds:
-       ax.fill_between([begining,ending],yminb,ymaxb,alpha=0.2,color=np.random.rand(3,))
-       ax.text(0.5*(begining+ending),0.5*(yminb+ymaxb),"chain {}".format(chain),ha='center',va='center')
+    yminb = 0.90  # span of the bar above the plot
+    ymaxb = 0.97
+    for (chain, begining, ending) in chainbounds:
+        ax.fill_between([begining, ending], yminb, ymaxb, alpha=0.2, color=np.random.rand(3,))
+        ax.text(0.5 * (begining + ending), 0.5 * (yminb + ymaxb), "chain {}".format(chain), ha='center', va='center')
     plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.pdf'.format(probe)))
     plt.show()
