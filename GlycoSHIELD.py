@@ -22,7 +22,7 @@ def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dr
         print("OK")
 
 def check_positive(value):
-   "FROM https://stackoverflow.com/questions/64980270/how-to-allow-only-positive-integer-using-argparse"
+    """FROM https://stackoverflow.com/questions/64980270/how-to-allow-only-positive-integer-using-argparse"""
     try:
         value = int(value)
         if value <= 0:
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('--ignorewarn', dest='ignorewarn', action='store_true', help="Ignore cases when no sugar is implanted")
     parser.add_argument('--no-ignorewarn', dest='ignorewarn', action='store_false')
     parser.add_argument('--skip', dest='skip', help='skip frames from the glycan trajectory, default = 1', default=1, type=check_positive)
-    
+
     parser.set_defaults(dryrun=False)
     parser.set_defaults(ignorewarn=False)
     parser.set_defaults(protxtc=None)
@@ -68,5 +68,5 @@ if __name__ == "__main__":
     shuffle_sugar = args.shuffle_sugar
     ignorewarn = args.ignorewarn
     skip = int(args.skip)
-    
+
     run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip)

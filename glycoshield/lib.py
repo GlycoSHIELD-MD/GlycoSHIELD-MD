@@ -29,6 +29,7 @@ import shlex
 import os
 import subprocess
 import glob
+import pickle
 from shutil import copyfile, move
 from . import tables
 
@@ -495,119 +496,43 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
         outrelativesasa = []
         outrelativesasaaa = []
 
+        # create barasasa data required by subsequent iterations
+        iglycan = 0
+        sel_P, occupancy_r = glycosasa_glycan_kernel_protein_only(
+            iglycan,
+            probe,
+            pdblist,
+            xtclist,
+            plottrace,
+            probelist,
+            ndots,
+            mode,
+            keepoutput,
+            maxframe,
+            path,
+            chainlist
+        )
+
         # Iterate over trajectories for glycans
         # Load each glycan+protein trajectory
         for iglycan in range(len(xtclist)):
-
-            pdb = pdblist[iglycan]
-            xtc = xtclist[iglycan]
-            u = mda.Universe(pdb, xtc)
-
-            # Define some temporary file names.
-            tmpindex = os.path.join(path, 'index0.ndx')
-            tmpsel = 'prot; gly'
-            tmpsys = 'system'
-            baresel = 'prot'
-            tmpsasa = os.path.join(path, 'sasa1.xvg')
-            tmpsasar = os.path.join(path, 'sasar.xvg')
-            tmpsasaa = os.path.join(path, 'sasaa.xvg')
-            tmppdb = os.path.join(path, 'test1.pdb')
-            tmpbarepdb = os.path.join(path, 'test2.pdb')
-            tmpbarextc = os.path.join(path, 'test2.xtc')
-
-            # remove all lines but ATOM from the PDB (otherwise gmx sasa freezes)
-
-            with open(tmppdb, 'w') as f:
-                with open(pdb, 'r') as g:
-                    for line in g:
-                        if "ATOM" in line:
-
-                            # Replace modified AA with natural counterparts
-                            myres = line[17:20]
-                            if myres in tables.AMINO_ACID_VARIANTS_SUBSTITUTION.keys():
-                                line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])
-
-                            f.write(line)
-
-            # Re-open the pdb
-            u = mda.Universe(tmppdb, xtc)
-
-            sel_P = u.select_atoms('protein')
-            sel_P.write(tmpbarepdb)
-
-            # This is a dirty fix, to be corrected! Issue is that the CRYST1 is added by MDAnalysis and gmx sasa silently freezes on it
-            with open(tmpbarepdb) as fff:
-                with open('ggg', 'w') as ggg:
-                    for line in fff:
-                        if "ATOM" in line:
-                            ggg.write(line)
-
-            move('ggg', tmpbarepdb)
-            # If the protein is static, bare SASA does not matter. But if we just calc relative sasa then we average over trajectory
-            with mda.coordinates.XTC.XTCWriter(tmpbarextc, n_atoms=sel_P.atoms.n_atoms) as w:
-                for tp in u.trajectory:
-                    w.write(sel_P.atoms)
-
-            sel_G = u.select_atoms('not protein')
-
-            with mda.selections.gromacs.SelectionWriter(tmpindex) as w:
-                w.write(sel_P, name='prot')
-                w.write(sel_G, name='gly')
-                w.write(u.atoms, name='system')
-
-            sasatimes, sasar, sasaa, _ = get_SASA(tmppdb, xtc, tmpindex, tmpsys, tmpsel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
-
-            if keepoutput:
-                out1name = pdb.replace(".pdb", "")
-                copyfile(tmpsasa, os.path.join(path, "raw_{}_probe_{}.xvg".format(out1name, probe)))
-                copyfile(tmpsasar, os.path.join(path, "raw_r_{}_probe_{}.xvg".format(out1name, probe)))
-                copyfile(tmpsasaa, os.path.join(path, "raw_a_{}_probe_{}.xvg".format(out1name, probe)))
-
-            # Now protein only, this will not change so we calc only once
-            if iglycan == 0:
-                baresasatimes, baresasar, baresasaa, _ = get_SASA(tmpbarepdb, tmpbarextc, tmpindex, baresel, baresel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
-
-                if keepoutput:
-                    copyfile(tmpsasa, os.path.join(path, "bare_probe_{}.xvg".format(probe)))
-                    copyfile(tmpsasar, os.path.join(path, "bare_r_probe_{}.xvg".format(probe)))
-                    copyfile(tmpsasaa, os.path.join(path, "bare_a_probe_{}.xvg".format(probe)))
-
-            # Calculate SASA relative to bare protein
-
-            # to eliminate warnings:
-            baresasar_idx = np.where(baresasar[:, 1] != 0)
-
-            # write down which atoms do not see any probe. Occupancy=0 means that.
-            occupancy_r = np.zeros(len(baresasar[:, 1]))
-            occupancy_r[baresasar_idx] = 1.0
-
-            relativesasa = np.zeros(len(baresasar[:, 1]))
-            relativesasa[baresasar_idx] = (baresasar[:, 1][baresasar_idx] - sasar[:baresasar.shape[0], 1][baresasar_idx]) / baresasar[:, 1][baresasar_idx]
-
-            # all atom version
-
-            # to eliminate warnings:
-            baresasaa_idx = np.where(baresasaa[:, 1] != 0)
-
-            # write down which atoms do not see any probe. Occupancy=0 means that.
-            occupancy_a = np.zeros(len(baresasaa[:, 1]))
-            occupancy_a[baresasaa_idx] = 1.0
-
-            relativesasaaa = np.zeros(len(baresasaa[:, 1]))
-            relativesasaaa[baresasaa_idx] = (baresasaa[:, 1][baresasaa_idx] - sasaa[:baresasaa.shape[0], 1][baresasaa_idx]) / baresasaa[:, 1][baresasaa_idx]
-
-            # Aappend relative SASA for each residue
+            print("###", iglycan)
+            relativesasa, relativesasaaa = glycosasa_glycan_kernel(
+                iglycan,
+                probe,
+                pdblist,
+                xtclist,
+                plottrace,
+                probelist,
+                ndots,
+                mode,
+                keepoutput,
+                maxframe,
+                path,
+                chainlist
+            )
             outrelativesasa.append(relativesasa)
-            # and for each atom
             outrelativesasaaa.append(relativesasaaa)
-
-            # cleanup
-            os.remove(tmpindex)
-            os.remove(tmpsasa)
-            os.remove(tmpsasar)
-            os.remove(tmpsasaa)
-            for afile in glob.glob(os.path.join(path, "\#sasa*")):
-                os.remove(afile)
 
         outrelativesasa = np.array(outrelativesasa)
         outrelativesasaaa = np.array(outrelativesasaaa)
@@ -646,6 +571,7 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
         # Move back to the reference frame
         # Re-open the pdb
+        tmppdb = os.path.join(path, 'test1.pdb')
         unw = mda.Universe(tmppdb)
         sel_Pnw = unw.select_atoms('protein')
 
@@ -671,12 +597,197 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, m
 
 
     # cleanup
-    os.remove(tmpbarepdb)
+    # os.remove(tmpbarepdb)
     os.remove(tmppdb)
-    os.remove(tmpbarextc)
+    # os.remove(tmpbarextc)
     return outputs
 
 
+def glycosasa_glycan_kernel_protein_only(iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, maxframe, path="./", chainlist=None):
+    pdb = pdblist[iglycan]
+    xtc = xtclist[iglycan]
+    u = mda.Universe(pdb, xtc)
+
+    # Define some temporary file names.
+    tmpindex = os.path.join(path, 'index0.ndx')
+    tmpsel = 'prot; gly'
+    tmpsys = 'system'
+    baresel = 'prot'
+    tmpsasa = os.path.join(path, 'sasa1.xvg')
+    tmpsasar = os.path.join(path, 'sasar.xvg')
+    tmpsasaa = os.path.join(path, 'sasaa.xvg')
+    tmppdb = os.path.join(path, 'test1.pdb')
+    tmpbarepdb = os.path.join(path, 'test2.pdb')
+    tmpbarextc = os.path.join(path, 'test2.xtc')
+
+    # remove all lines but ATOM from the PDB (otherwise gmx sasa freezes)
+    with open(tmppdb, 'w') as f:
+        with open(pdb, 'r') as g:
+            for line in g:
+                if "ATOM" in line:
+
+                    # Replace modified AA with natural counterparts
+                    myres = line[17:20]
+                    if myres in tables.AMINO_ACID_VARIANTS_SUBSTITUTION.keys():
+                        line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])
+
+                    f.write(line)
+
+    # Re-open the pdb
+    u = mda.Universe(tmppdb, xtc)
+
+    sel_P = u.select_atoms('protein')
+    sel_P.write(tmpbarepdb)
+
+    # This is a dirty fix, to be corrected! Issue is that the CRYST1 is added by MDAnalysis and gmx sasa silently freezes on it
+    with open(tmpbarepdb) as fff:
+        with open('ggg', 'w') as ggg:
+            for line in fff:
+                if "ATOM" in line:
+                    ggg.write(line)
+
+    move('ggg', tmpbarepdb)
+    # If the protein is static, bare SASA does not matter. But if we just calc relative sasa then we average over trajectory
+    with mda.coordinates.XTC.XTCWriter(tmpbarextc, n_atoms=sel_P.atoms.n_atoms) as w:
+        for tp in u.trajectory:
+            w.write(sel_P.atoms)
+
+    # Now protein only, this will not change so we calc only once
+    baresasatimes, baresasar, baresasaa, _ = get_SASA(tmpbarepdb, tmpbarextc, tmpindex, baresel, baresel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
+
+    if keepoutput:
+        copyfile(tmpsasa, os.path.join(path, "bare_probe_{}.xvg".format(probe)))
+        copyfile(tmpsasar, os.path.join(path, "bare_r_probe_{}.xvg".format(probe)))
+        copyfile(tmpsasaa, os.path.join(path, "bare_a_probe_{}.xvg".format(probe)))
+
+    baresasa_data = (baresasatimes, baresasar, baresasaa)
+    baresasa_tmp_file = os.path.join(path, 'baresasa_tmp.pickle')
+    with open(baresasa_tmp_file, 'wb') as f:
+        pickle.dump(baresasa_data, f, pickle.HIGHEST_PROTOCOL)
+
+    baresasar_idx = np.where(baresasar[:, 1] != 0)
+    # write down which atoms do not see any probe. Occupancy=0 means that.
+    occupancy_r = np.zeros(len(baresasar[:, 1]))
+    occupancy_r[baresasar_idx] = 1.0
+
+    return sel_P, occupancy_r
+
+
+def glycosasa_glycan_kernel(iglycan, probe, pdblist, xtclist, plottrace, probelist, ndots, mode, keepoutput, maxframe, path="./", chainlist=None):
+    pdb = pdblist[iglycan]
+    xtc = xtclist[iglycan]
+    u = mda.Universe(pdb, xtc)
+
+    # Define some temporary file names.
+    tmpindex = os.path.join(path, 'index0.ndx')
+    tmpsel = 'prot; gly'
+    tmpsys = 'system'
+    baresel = 'prot'
+    tmpsasa = os.path.join(path, 'sasa1.xvg')
+    tmpsasar = os.path.join(path, 'sasar.xvg')
+    tmpsasaa = os.path.join(path, 'sasaa.xvg')
+    tmppdb = os.path.join(path, 'test1.pdb')
+    tmpbarepdb = os.path.join(path, 'test2.pdb')
+    tmpbarextc = os.path.join(path, 'test2.xtc')
+
+    # remove all lines but ATOM from the PDB (otherwise gmx sasa freezes)
+
+    with open(tmppdb, 'w') as f:
+        with open(pdb, 'r') as g:
+            for line in g:
+                if "ATOM" in line:
+
+                    # Replace modified AA with natural counterparts
+                    myres = line[17:20]
+                    if myres in tables.AMINO_ACID_VARIANTS_SUBSTITUTION.keys():
+                        line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])
+
+                    f.write(line)
+
+    # Re-open the pdb
+    u = mda.Universe(tmppdb, xtc)
+
+    sel_P = u.select_atoms('protein')
+    sel_P.write(tmpbarepdb)
+
+    # This is a dirty fix, to be corrected! Issue is that the CRYST1 is added by MDAnalysis and gmx sasa silently freezes on it
+    with open(tmpbarepdb) as fff:
+        with open('ggg', 'w') as ggg:
+            for line in fff:
+                if "ATOM" in line:
+                    ggg.write(line)
+
+    move('ggg', tmpbarepdb)
+    # If the protein is static, bare SASA does not matter. But if we just calc relative sasa then we average over trajectory
+    with mda.coordinates.XTC.XTCWriter(tmpbarextc, n_atoms=sel_P.atoms.n_atoms) as w:
+        for tp in u.trajectory:
+            w.write(sel_P.atoms)
+
+    sel_G = u.select_atoms('not protein')
+
+    with mda.selections.gromacs.SelectionWriter(tmpindex) as w:
+        w.write(sel_P, name='prot')
+        w.write(sel_G, name='gly')
+        w.write(u.atoms, name='system')
+
+    sasatimes, sasar, sasaa, _ = get_SASA(tmppdb, xtc, tmpindex, tmpsys, tmpsel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
+
+    if keepoutput:
+        out1name = pdb.replace(".pdb", "")
+        copyfile(tmpsasa, os.path.join(path, "raw_{}_probe_{}.xvg".format(out1name, probe)))
+        copyfile(tmpsasar, os.path.join(path, "raw_r_{}_probe_{}.xvg".format(out1name, probe)))
+        copyfile(tmpsasaa, os.path.join(path, "raw_a_{}_probe_{}.xvg".format(out1name, probe)))
+
+    # # Now protein only, this will not change so we calc only once
+    # if iglycan == 0:
+    #     baresasatimes, baresasar, baresasaa, _ = get_SASA(tmpbarepdb, tmpbarextc, tmpindex, baresel, baresel, tmpsasa, tmpsasar, tmpsasaa, probe, ndots, maxframe)
+
+    #     if keepoutput:
+    #         copyfile(tmpsasa, os.path.join(path, "bare_probe_{}.xvg".format(probe)))
+    #         copyfile(tmpsasar, os.path.join(path, "bare_r_probe_{}.xvg".format(probe)))
+    #         copyfile(tmpsasaa, os.path.join(path, "bare_a_probe_{}.xvg".format(probe)))
+    baresasa_tmp_file = os.path.join(path, 'baresasa_tmp.pickle')
+    with open(baresasa_tmp_file, 'rb') as f:
+        baresasatimes, baresasar, baresasaa = pickle.load(f)
+
+    # Calculate SASA relative to bare protein
+
+    # to eliminate warnings:
+    baresasar_idx = np.where(baresasar[:, 1] != 0)
+
+    # write down which atoms do not see any probe. Occupancy=0 means that.
+    # occupancy_r = np.zeros(len(baresasar[:, 1]))
+    # occupancy_r[baresasar_idx] = 1.0
+
+    relativesasa = np.zeros(len(baresasar[:, 1]))
+    relativesasa[baresasar_idx] = (baresasar[:, 1][baresasar_idx] - sasar[:baresasar.shape[0], 1][baresasar_idx]) / baresasar[:, 1][baresasar_idx]
+
+    # all atom version
+
+    # to eliminate warnings:
+    baresasaa_idx = np.where(baresasaa[:, 1] != 0)
+
+    # write down which atoms do not see any probe. Occupancy=0 means that.
+    occupancy_a = np.zeros(len(baresasaa[:, 1]))
+    occupancy_a[baresasaa_idx] = 1.0
+
+    relativesasaaa = np.zeros(len(baresasaa[:, 1]))
+    relativesasaaa[baresasaa_idx] = (baresasaa[:, 1][baresasaa_idx] - sasaa[:baresasaa.shape[0], 1][baresasaa_idx]) / baresasaa[:, 1][baresasaa_idx]
+
+    # # Aappend relative SASA for each residue
+    # outrelativesasa.append(relativesasa)
+    # # and for each atom
+    # outrelativesasaaa.append(relativesasaaa)
+
+    # cleanup
+    os.remove(tmpindex)
+    os.remove(tmpsasa)
+    os.remove(tmpsasar)
+    os.remove(tmpsasaa)
+    for afile in glob.glob(os.path.join(path, "\#sasa*")):
+        os.remove(afile)
+
+    return (relativesasa, relativesasaaa)
 
 
 def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, path, chainbounds):
