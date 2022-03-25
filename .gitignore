@@ -1,5 +1,9 @@
 GLYCAN_LIBRARY/
 
+tmp_files/input_sugaring
+tmp_files/merged_traj.pdb
+tmp_files/merged_traj.xtc
+
 __pycache__/
 *.py[cod]
 *$py.class
