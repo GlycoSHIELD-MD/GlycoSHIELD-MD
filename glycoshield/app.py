@@ -1,8 +1,6 @@
 import os
-import re
-import sys
-import getpass
-import shutil
+import glob
+import zipfile
 import pathlib
 import numpy as np
 import streamlit as st
@@ -38,7 +36,16 @@ def get_config():
     return st.session_state
 
 
+def reset_webapp():
+    cfg = get_config()
+    remove_files = glob.glob(cfg["work_dir"]+"/*") + glob.glob(cfg["output_dir"]+"/*")
+    for file in remove_files:
+        os.unlink(file)
+    init_config()
+
+
 # --- functions defining the steps of the pipeline ---
+
 
 def store_uploaded_file(uploaded_file):
     cfg = get_config()
@@ -71,13 +78,21 @@ def webapp_output_ready():
 
 
 def zip_webapp_output():
+    # zip-directory function inspired from <https://stackoverflow.com/a/1855118>
+    def zipdir(path, zip_fh):
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                zip_fh.write(
+                    os.path.join(root, file),
+                    os.path.relpath(os.path.join(root, file),
+                                    os.path.join(path, '..')
+                    )
+                )
     cfg = get_config()
     if webapp_output_ready():
-        shutil.make_archive(
-            os.path.join(cfg["work_dir"], cfg["output_zip"]).rstrip(".zip"),
-            "zip",
-            cfg["output_dir"]
-        )
+        with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["output_zip"]), 'w',
+                        compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
+            zipdir(cfg["output_dir"], zip_fh)
 
 
 def get_webapp_output():
@@ -190,6 +205,7 @@ def check_glycosasa():
     cfg = get_config()
     if cfg["glycosasa_done"]:
         st.write("Done!")
+    return cfg["glycosasa_done"]
 
 
 def visualize(pdb_list):
@@ -203,6 +219,53 @@ def visualize(pdb_list):
     view.zoomTo()
     view.setBackgroundColor('white')
     showmol(view, height=400, width=600)
+
+
+def visualize_test(pdb):
+    from stmol import showmol
+    import py3Dmol
+    # view = py3Dmol.view()
+    # view = py3Dmol.view(query="mmtf:1ycr")
+    # for pdb in pdb_list:
+        # view.addModel(open(pdb, 'r').read(), 'pdb')
+    # view.setStyle(chA, {'cartoon': {'color': 'spectrum'}})
+
+    with open(pdb, 'r') as fp:
+        data = fp.read()
+    view = py3Dmol.view(
+        data=data,
+        style={'stick': {'colorscheme': 'greenCarbon'}},
+        # style={'cartoon': {'color': 'spectrum'}},
+        # query="chain:B"
+    )
+    chA = {'chain': 'A', 'opacity':0.7, 'color':'white'}
+
+    view.addSurface(py3Dmol.VDW, chA)
+    view.zoomTo()
+    view.setBackgroundColor('white')
+    showmol(view, height=800, width=800)
+
+
+def visualize_sasa(pdb, height=800, width=1200):
+    from stmol import showmol
+    import py3Dmol
+    with open(pdb, 'r') as fp:
+        data = fp.read()
+    view = py3Dmol.view(
+        data=data,
+        style={'stick': {'colorscheme': 'greenCarbon'}},
+        width=width,
+        height=height
+    )
+    chA = {'chain': 'A', 'opacity':0.7} #, 'color':'white'}
+    view.addSurface(py3Dmol.VDW, chA)
+    view.zoomTo()
+    view.setBackgroundColor('white')
+    showmol(
+        view,
+        width=width,
+        height=height
+    )
 
 
 def get_glycan_library():

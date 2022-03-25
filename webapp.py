@@ -11,19 +11,24 @@ from glycoshield.lib import glycoshield, glycotraj, glycosasa
 import glycoshield.app as app
 
 
-if __name__ == "XX__main__":
+if __name__ == "X__main__":
     st.set_page_config(layout="wide")
     st.title('GlycoSHIELD Interactive Web Application')
     pdbs = [
-        'GLYCAN_LIBRARY/Man5.pdb'
+        # 'GLYCAN_LIBRARY/Man5.pdb'
+        'webapp_output/maxResidueSASA_probe_0.7.pdb'
     ]
-    app.visualize(pdb_list=pdbs)
+    app.visualize_test(pdb=pdbs[0])
 
 
 
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
     st.title('GlycoSHIELD Interactive Web Application')
+
+    st.header("Reset web application")
+    if st.button("Reset"):
+        app.reset_webapp()
 
     st.header("Define PDB file for input")
     if not app.get_config()["have_input"]:
@@ -84,19 +89,19 @@ if __name__ == "__main__":
     if st.button("Run glycoSHIELD ..."):
         app.run_glycoshield(bar)
 
-    if app.check_glycoshield():
-        pdb = set()
-        input_lines = inputs.split('\n')
-        for line in input_lines:
-            items = line.split()
-            if len(items) == 7:
-                pdb.add(items[3])
-                pdb.add(items[5])
-        # pdb = [
-        #     os.path.join(get_config()["output_dir"], "A_492.pdb"),
-        #     os.path.join(get_config()["output_dir"], "A_463.pdb"),
-        # ]
-        app.visualize(pdb_list=list(pdb))
+    # if app.check_glycoshield():
+    #     pdb = set()
+    #     input_lines = inputs.split('\n')
+    #     for line in input_lines:
+    #         items = line.split()
+    #         if len(items) == 7:
+    #             pdb.add(items[3])
+    #             pdb.add(items[5])
+    #     # pdb = [
+    #     #     os.path.join(get_config()["output_dir"], "A_492.pdb"),
+    #     #     os.path.join(get_config()["output_dir"], "A_463.pdb"),
+    #     # ]
+    #     app.visualize(pdb_list=list(pdb))
 
     st.header("Run glycoTRAJ ...")
     if st.button("Run glycoTRAJ ..."):
@@ -106,7 +111,11 @@ if __name__ == "__main__":
     st.header("Run glycoSASA ...")
     if st.button("Run glycoSASA ..."):
         app.run_glycosasa()
-    app.check_glycosasa()
+
+    if app.check_glycosasa():
+        app.visualize_sasa(
+            os.path.join(app.get_config()["output_dir"], "maxResidueSASA_probe_0.7.pdb")
+        )
 
     st.header("Download")
     app.zip_webapp_output()

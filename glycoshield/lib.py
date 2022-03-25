@@ -483,7 +483,7 @@ def GMXTEST():
 
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
               keepoutput, maxframe, path="./", chainlist=None,
-              run_parallel=True, n_procs=multiprocessing.cpu_count()):
+              run_parallel=False, n_procs=multiprocessing.cpu_count()):
     # Chainlist only needed for multichain proteins for plotting.
 
     # GMX required, test if present
