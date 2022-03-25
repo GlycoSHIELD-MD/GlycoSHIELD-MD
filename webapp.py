@@ -7,7 +7,6 @@ import pathlib
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
-from glycoshield.lib import glycoshield, glycotraj, glycosasa
 import glycoshield.app as app
 
 

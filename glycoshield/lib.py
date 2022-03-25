@@ -32,6 +32,7 @@ import glob
 import pickle
 import tempfile
 import multiprocessing
+from multiprocessing.pool import ThreadPool
 from shutil import copyfile, move
 from . import tables
 
@@ -531,7 +532,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
                     mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
                 )
                 parameter_list.append(parameter)
-            with multiprocessing.Pool(n_procs) as p:
+            # with multiprocessing.Pool(n_procs) as p:
+            with ThreadPool(n_procs) as p:
                 glycosasa_glycan_kernel_output = p.map(glycosasa_glycan_kernel_wrapper, parameter_list)
             for elem in glycosasa_glycan_kernel_output:
                 relativesasa, relativesasaaa, _sel_P, _occucancy_r = elem

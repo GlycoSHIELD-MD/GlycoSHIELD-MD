@@ -195,7 +195,8 @@ def run_glycosasa():
         mode=mode,
         keepoutput=keepoutput,
         maxframe=maxframe,
-        path=path
+        path=path,
+        run_parallel=True
     )
     cfg["sasas"] = sasas
     cfg["glycosasa_done"] = True
