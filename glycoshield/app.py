@@ -1,5 +1,6 @@
 import os
 import glob
+import base64
 import zipfile
 import pathlib
 import numpy as np
@@ -132,14 +133,16 @@ def run_glycoshield(bar):
     cfg["glycoshield_done"] = True
 
 
-def check_glycoshield():
+def check_glycoshield(bar=None):
     cfg = get_config()
     if cfg["glycoshield_done"]:
-        st.write("Done!")
+        # st.write("Done!")
+        if bar is not None:
+            bar.progress(1.0)
     return cfg["glycoshield_done"]
 
 
-def run_glycotraj():
+def run_glycotraj(bar_1, bar_2):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -161,15 +164,21 @@ def run_glycotraj():
         reslist,
         pdbtraj,
         pdbtrajframes,
-        path
+        path,
+        streamlit_progressbar_1=bar_1,
+        streamlit_progressbar_2=bar_2,
     )
     cfg["glycotraj_done"] = True
 
 
-def check_glycotraj():
+def check_glycotraj(bar_1=None, bar_2=None):
     cfg = get_config()
     if cfg["glycotraj_done"]:
-        st.write("Done!")
+        # st.write("Done!")
+        if bar_1 is not None:
+            bar_1.progress(1.0)
+        if bar_2 is not None:
+            bar_2.progress(1.0)
 
 
 def run_glycosasa():
@@ -196,16 +205,19 @@ def run_glycosasa():
         keepoutput=keepoutput,
         maxframe=maxframe,
         path=path,
-        run_parallel=True
+        run_parallel=True,
+        streamlit_progressbar=None
     )
     cfg["sasas"] = sasas
     cfg["glycosasa_done"] = True
 
 
-def check_glycosasa():
+def check_glycosasa(bar):
     cfg = get_config()
     if cfg["glycosasa_done"]:
-        st.write("Done!")
+        # st.write("Done!")
+        if bar is not None:
+            bar.progress(1.0)
     return cfg["glycosasa_done"]
 
 
@@ -347,3 +359,12 @@ def get_input_lines():
 def clear_input_lines():
     cfg = get_config()
     cfg["input_lines"] = ['#']
+
+
+def display_html_image_file(streamlit_empty_handle, image_file):
+    with open(image_file, "rb") as fp:
+        image_data = base64.b64encode(fp.read()).decode("utf-8")
+        streamlit_empty_handle.markdown(
+            f'<img src="data:image/gif;base64,{image_data}" style="width:25vw; min-width:256px;" alt="{image_file}"/>',
+            unsafe_allow_html=True,
+        )

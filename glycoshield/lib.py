@@ -312,7 +312,8 @@ def write_pdb_trajectory(universe, pdbtraj, pdbtrajframes):
             w.write(universe.atoms)
 
 
-def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=None, pdbtrajframes=0, path="./"):
+def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=None, pdbtrajframes=0, path="./",
+        streamlit_progressbar_1=None, streamlit_progressbar_2=None):
     """
     Read in multiple trajectories each containing a static protein structure and a single mobile glycan.
     Script will merge these trajectories into one (i.e. with static protein and all glycans moving)
@@ -337,6 +338,8 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
             resid_per_chain[achain].append(aresid)
 
     # Iterate over structures and trajs for single glycans to extract subtrajs
+    i_it = 0
+    n_it = len(pdblist)
     for pdb, xtc, chain, resid in zip(pdblist, xtclist, chainlist, reslist):
 
         newxtc = pdb.replace(".pdb", "_glycan.xtc")
@@ -355,6 +358,11 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
         sugarsel.write(newpdb)
         chains.append(chain)
         resids.append(resid)
+
+        if streamlit_progressbar_1 is not None:
+            i_it = i_it + 1
+            progress = float(i_it) / float(n_it)
+            streamlit_progressbar_1.progress(progress)
 
     chains = sorted(np.unique(chains))
     # resids=sorted(np.unique(resids))
@@ -378,6 +386,8 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     coords.append(coordinates)
 
     # Now go second time over the files and merge, renumbering the glycans
+    i_it = 0
+    n_it = len(chain)
     for chain in chains:
         # last residue is? we do it per chain
         lastres = protein.select_atoms("segid {}".format(chain)).resids[-1]
@@ -401,8 +411,12 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
             sels.append(u1)
 
-    # Concatenate and save
+        if streamlit_progressbar_2 is not None:
+            i_it = i_it + 1
+            progress = float(i_it) / float(n_it)
+            streamlit_progressbar_2.progress(progress)
 
+    # Concatenate and save
     coords = np.column_stack(coords)
     u2 = mda.Merge(*[i.atoms for i in sels])
     u2.load_new(coords, format=MemoryReader)
@@ -484,7 +498,8 @@ def GMXTEST():
 
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
               keepoutput, maxframe, path="./", chainlist=None,
-              run_parallel=False, n_procs=multiprocessing.cpu_count()):
+              run_parallel=False, n_procs=multiprocessing.cpu_count(),
+              streamlit_progressbar=None):
     # Chainlist only needed for multichain proteins for plotting.
 
     # GMX required, test if present
@@ -496,6 +511,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
     outputs = []
 
     # Iterate over probe sizes
+    i_it = 0
+    n_it = len(probelist)
     for probe in probelist:
         baresasa_tmp_file = os.path.join(path, f"baresasa_{probe}.pickle_tmp")
 
@@ -532,7 +549,8 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
                     mode, keepoutput, maxframe, path, chainlist, baresasa_tmp_file
                 )
                 parameter_list.append(parameter)
-            # with multiprocessing.Pool(n_procs) as p:
+            # Web application (streamlit) does not allow forking, so we need to use Python threads not processes
+            # which works well to run GMX truely in parallel.
             with ThreadPool(n_procs) as p:
                 glycosasa_glycan_kernel_output = p.map(glycosasa_glycan_kernel_wrapper, parameter_list)
             for elem in glycosasa_glycan_kernel_output:
@@ -608,6 +626,11 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
 
             sel_Pnw.write(os.path.join(path, 'maxResidueSASA_probe_{}.pdb'.format(probe)))
             np.savetxt(os.path.join(path, 'maxResidueSASA_probe_{}.txt'.format(probe)), maxSASA)
+
+        if streamlit_progressbar is not None:
+            i_it = i_it + 1
+            progress = float(i_it) / float(n_it)
+            streamlit_progressbar.progress(progress)
 
     # cleanup
     # os.remove(tmpbarepdb)

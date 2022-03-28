@@ -1,12 +1,13 @@
 import os
-import re
-import sys
+import base64
+# import re
+# import sys
 import getpass
-import shutil
-import pathlib
-import numpy as np
+# import shutil
+# import pathlib
+# import numpy as np
 import streamlit as st
-import MDAnalysis as mda
+# import MDAnalysis as mda
 import glycoshield.app as app
 
 
@@ -23,10 +24,10 @@ if __name__ == "X__main__":
 
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
-    st.title('GlycoSHIELD Interactive Web Application')
+    st.title('GlycoSHIELD Web Application')
 
     st.header("Reset web application")
-    if st.button("Reset"):
+    if st.button("Reset web application"):
         app.reset_webapp()
 
     st.header("Define PDB file for input")
@@ -71,47 +72,52 @@ if __name__ == "__main__":
     if col2.button("Remove"):
         app.rem_input_line(new_line)
 
+    if st.button("Use default set of input lines"):
+        app.clear_input_lines()
+        default_input=[
+            '#',
+            f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_463.pdb {app.get_config()["output_dir"]}/A_463.xtc',
+            f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_492.pdb {app.get_config()["output_dir"]}/A_492.xtc',
+        ]
+        for line in default_input:
+            app.add_input_line(line)
+
     inputs = st.text_area('All input lines',
                           "\n".join(app.get_input_lines())
-                          # '#\n'
-                          # f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {get_config()["output_dir"]}/A_463.pdb {get_config()["output_dir"]}/A_463.xtc\n'
-                          # f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {get_config()["output_dir"]}/A_492.pdb {get_config()["output_dir"]}/A_492.xtc\n'
                           )
+
 
     if st.button("Clear inputs"):
         app.clear_input_lines()
 
     app.store_inputs(inputs)
 
-    st.header("Run glycoSHIELD ...")
-    bar = st.progress(0)
-    if st.button("Run glycoSHIELD ..."):
-        app.run_glycoshield(bar)
+    st.header("Run glycoSHIELD and glycoTRAJ ...")
+    progress_image_obj = st.empty()
+    image_file = "webapp/glycoshield_still.png"
+    app.display_html_image_file(progress_image_obj, image_file)
 
-    # if app.check_glycoshield():
-    #     pdb = set()
-    #     input_lines = inputs.split('\n')
-    #     for line in input_lines:
-    #         items = line.split()
-    #         if len(items) == 7:
-    #             pdb.add(items[3])
-    #             pdb.add(items[5])
-    #     # pdb = [
-    #     #     os.path.join(get_config()["output_dir"], "A_492.pdb"),
-    #     #     os.path.join(get_config()["output_dir"], "A_463.pdb"),
-    #     # ]
-    #     app.visualize(pdb_list=list(pdb))
+    glycoshield_progressbar = st.progress(0)
+    glycostraj_progressbar_1 = st.progress(0)
+    glycostraj_progressbar_2 = st.progress(0)
 
-    st.header("Run glycoTRAJ ...")
-    if st.button("Run glycoTRAJ ..."):
-        app.run_glycotraj()
-    app.check_glycotraj()
+    if st.button("Run glycoSHIELD and glycoTRAJ ..."):
+        image_file = "webapp/glycoshield_anim.gif"
+        app.display_html_image_file(progress_image_obj, image_file)
+        app.run_glycoshield(glycoshield_progressbar)
+        app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
+
+    if app.check_glycoshield(glycoshield_progressbar) and app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2):
+        image_file = "webapp/glycoshield_still.png"
+        app.display_html_image_file(progress_image_obj, image_file)
+
 
     st.header("Run glycoSASA ...")
+    glycosasa_progressbar = st.progress(0)
     if st.button("Run glycoSASA ..."):
-        app.run_glycosasa()
+        app.run_glycosasa(glycosasa_progressbar)
 
-    if app.check_glycosasa():
+    if app.check_glycosasa(glycosasa_progressbar):
         app.visualize_sasa(
             os.path.join(app.get_config()["output_dir"], "maxResidueSASA_probe_0.7.pdb")
         )
