@@ -181,7 +181,7 @@ def check_glycotraj(bar_1=None, bar_2=None):
             bar_2.progress(1.0)
 
 
-def run_glycosasa():
+def run_glycosasa(streamlit_progressbar=None):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -206,7 +206,7 @@ def run_glycosasa():
         maxframe=maxframe,
         path=path,
         run_parallel=True,
-        streamlit_progressbar=None
+        streamlit_progressbar=streamlit_progressbar
     )
     cfg["sasas"] = sasas
     cfg["glycosasa_done"] = True
