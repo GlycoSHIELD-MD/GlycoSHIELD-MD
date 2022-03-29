@@ -136,6 +136,7 @@ if __name__ == "__main__":
     glycosasa_progressbar = st.progress(0)
     if st.button("Run glycoSASA ..."):
         app.run_glycosasa(glycosasa_progressbar, probelist=probe_values)
+        st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
 
 
     st.header("5. Analysis and visualization ...")
@@ -173,5 +174,3 @@ if __name__ == "__main__":
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
             app.display_image(image_file="webapp/glycoshield-tutorial.png", href=notebook_url)
-
-    st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
