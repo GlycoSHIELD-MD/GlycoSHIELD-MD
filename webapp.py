@@ -33,20 +33,13 @@ if __name__ == "__main__":
 
     # logos on top, MPI-BP twice as a placeholder
     col1, col2, col3 = st.columns(3)
-    app.display_image_file(mpibp_logo,
-        streamlit_handle=col1,
-        width="256px", min_width="128px")
-    app.display_image_file(mpibp_logo,
-        streamlit_handle=col2,
-        width="256px", min_width="128px")
-    app.display_image_file(mpcdf_logo,
-        streamlit_handle=col3,
-        width="256px", min_width="128px")
+    logo_image_style="width:256px;min_width:128px;"
+    app.display_image(mpibp_logo, streamlit_handle=col1, image_style=logo_image_style)
+    app.display_image(mpibp_logo, streamlit_handle=col2, image_style=logo_image_style)
+    app.display_image(mpcdf_logo, streamlit_handle=col3, image_style=logo_image_style)
 
     st.title('GlycoSHIELD Web Application')
-
-    app.display_image_file(glycoshield_logo_still,
-        width="256px", min_width="1px")
+    app.display_image(glycoshield_logo_still, image_style=logo_image_style)
 
     st.header("1. Define input PDB file")
     if not app.get_config()["have_input"]:
@@ -115,20 +108,19 @@ if __name__ == "__main__":
     st.header("3. Run glycoSHIELD and glycoTRAJ ...")
 
     progress_image_obj = st.empty()
-    app.display_image_file(glycoshield_logo_still, progress_image_obj)
+    app.display_image(glycoshield_logo_still, progress_image_obj, image_style=logo_image_style)
     glycoshield_progressbar = st.progress(0)
     glycostraj_progressbar_1 = st.progress(0)
     glycostraj_progressbar_2 = st.progress(0)
 
     if st.button("Run glycoSHIELD and glycoTRAJ ..."):
-        app.display_image_file(glycoshield_logo_anim,
-            progress_image_obj)
+        app.display_image(glycoshield_logo_anim, progress_image_obj, image_style=logo_image_style)
         app.run_glycoshield(glycoshield_progressbar)
         app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 
     app.check_glycoshield(glycoshield_progressbar)
     app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
-    app.display_image_file(glycoshield_logo_still, progress_image_obj)
+    app.display_image(glycoshield_logo_still, progress_image_obj, image_style=logo_image_style)
 
 
     st.header("4. Run glycoSASA ...")
@@ -173,5 +165,4 @@ if __name__ == "__main__":
 
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
-            st.markdown(f'Launch interactive <a href="{notebook_url}" target="_blank">Jupyter Notebook Tutorial</a>',
-                unsafe_allow_html=True)
+            app.display_image(image_file="webapp/glycoshield-tutorial.svg", href=notebook_url)

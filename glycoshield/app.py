@@ -365,10 +365,19 @@ def clear_input_lines():
     cfg["input_lines"] = ['#']
 
 
-def display_image_file(image_file, streamlit_handle=st, width="25vw", min_width="256px"):
+def display_image(image_file, streamlit_handle=st, image_style="", href=None):
     with open(image_file, "rb") as fp:
+        _filename, extension = os.path.splitext(image_file)
+        image_type = extension[1:]
+        assert(image_type in ('gif','png','svg'))
         image_data = base64.b64encode(fp.read()).decode("utf-8")
+        html = []
+        if href is not None:
+            html.append(f'<a href="{href}" target="_blank">')
+        html.append(f'<img src="data:image/{image_type};base64,{image_data}" style="{image_style}" alt="{image_file}"/>')
+        if href is not None:
+            html.append(f'</a>')
         streamlit_handle.markdown(
-            f'<img src="data:image/gif;base64,{image_data}" style="width:{width}; min-width:{min_width};" alt="{image_file}"/>',
-            unsafe_allow_html=True,
+            "".join(html),
+            unsafe_allow_html=True
         )
