@@ -185,7 +185,7 @@ def check_glycotraj(bar_1=None, bar_2=None):
             bar_2.progress(1.0)
 
 
-def run_glycosasa(streamlit_progressbar=None):
+def run_glycosasa(streamlit_progressbar=None, probelist=[0.14,0.70]):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -194,7 +194,7 @@ def run_glycosasa(streamlit_progressbar=None):
     maxframe = 10  # temporary
     pdblist = gs.pdblist
     xtclist = gs.xtclist
-    probelist = [0.14, 0.70]  # Possibly user will have an option to choose one value, makes it faster and easier to manage visualisation
+    # probelist = [0.14, 0.70]
     plottrace = True
     ndots = 15
     mode = "max"

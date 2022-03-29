@@ -31,12 +31,17 @@ if __name__ == "X__main__":
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
 
+    with st.sidebar:
+        # st.header("Reset Web Application")
+        if st.button("Reset Web Application", help="Pushing this button restores the initial state of the application."):
+            app.reset_webapp()
+
     # logos on top, MPI-BP twice as a placeholder
-    col1, col2, col3 = st.columns(3)
+    header_col1, header_col2, header_col3 = st.columns(3)
     logo_image_style="width:256px;min_width:128px;"
-    app.display_image(mpibp_logo, streamlit_handle=col1, image_style=logo_image_style)
-    app.display_image(mpibp_logo, streamlit_handle=col2, image_style=logo_image_style)
-    app.display_image(mpcdf_logo, streamlit_handle=col3, image_style=logo_image_style)
+    app.display_image(mpibp_logo, streamlit_handle=header_col1, image_style=logo_image_style)
+    app.display_image(mpibp_logo, streamlit_handle=header_col2, image_style=logo_image_style)
+    app.display_image(mpcdf_logo, streamlit_handle=header_col3, image_style=logo_image_style)
 
     st.title('GlycoSHIELD Web Application')
     app.display_image(glycoshield_logo_still, image_style=logo_image_style)
@@ -77,15 +82,15 @@ if __name__ == "__main__":
 
     # st.text_area('Preview of new input line', new_line)
 
-    col1, col2, col3, col4 = st.columns(4)
+    button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
-    if col1.button("Add"):
+    if button_col1.button("Add"):
         app.add_input_line(new_line)
 
-    if col2.button("Remove"):
+    if button_col2.button("Remove"):
         app.rem_input_line(new_line)
 
-    if col3.button("Use default set of input lines"):
+    if button_col3.button("Use default set of input lines"):
         app.clear_input_lines()
         default_input=[
             '#',
@@ -95,7 +100,7 @@ if __name__ == "__main__":
         for line in default_input:
             app.add_input_line(line)
 
-    if col4.button("Clear all input lines"):
+    if button_col4.button("Clear all input lines"):
         app.clear_input_lines()
 
     inputs = st.text_area('Current input lines',
@@ -124,45 +129,49 @@ if __name__ == "__main__":
 
 
     st.header("4. Run glycoSASA ...")
+
+    probe_values_str=st.text_input(label="Enter probe values (comma separated)", value="0.14, 0.70")
+    probe_values = [float(x) for x in probe_values_str.split(',')]
+
     glycosasa_progressbar = st.progress(0)
     if st.button("Run glycoSASA ..."):
-        app.run_glycosasa(glycosasa_progressbar)
+        app.run_glycosasa(glycosasa_progressbar, probelist=probe_values)
+
+
+    st.header("5. Analysis and visualization ...")
 
     if app.check_glycosasa(glycosasa_progressbar):
-        st.image(os.path.join(app.get_config()["output_dir"], "ResidueSASA_probe_0.7.png"))
-        app.visualize_sasa(
-            os.path.join(app.get_config()["output_dir"], "maxResidueSASA_probe_0.7.pdb")
+        probe = st.radio(
+            label="Select the probe value to display the plot and visualization for.",
+            options=[str(x) for x in probe_values],
+            index=0
         )
-        st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
-
+        st.image(os.path.join(app.get_config()["output_dir"], f"ResidueSASA_probe_{probe}.png"))
+        app.visualize_sasa(
+            os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb")
+        )
 
 
     with st.sidebar:
-        # st.header("Download Output")
         app.zip_webapp_output()
         data, size = app.get_webapp_output()
         st.download_button(
             label=f"Download Output ({size:.1f} MB)",
-            help="Download the output data from the application run as a Zip file.",
+            help="Download the output data as a Zip file.",
             data=data,
             file_name=app.get_config()["output_zip"],
             mime="application/zip"
         )
 
-    with st.sidebar:
-        # st.header("Reset Web Application")
-        if st.button("Reset Web Application", help="Pushing this button restores the initial state of the application."):
-            app.reset_webapp()
-
     # When running on Binder, offer a shutdown button
     with st.sidebar:
         if getpass.getuser() == "jovyan":
             label = "Shut Down Web Application"
-            # st.header(label)
-            # st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
             if st.button(label, help="Pushing this button shuts down the webapp, and you may close the browser tab."):
                 app.quit_binder_webapp()
 
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
             app.display_image(image_file="webapp/glycoshield-tutorial.png", href=notebook_url)
+
+    st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
