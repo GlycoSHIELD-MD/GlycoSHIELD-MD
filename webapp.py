@@ -60,7 +60,8 @@ if __name__ == "__main__":
     chain = st.selectbox("Chain", chain_resids.keys())
 
     if chain in chain_resids:
-        resids = chain_resids[chain]
+        # exclude the first and last residues
+        resids = chain_resids[chain][1:-1]
     else:
         resids = []
     resid = st.selectbox("Residue", resids)
