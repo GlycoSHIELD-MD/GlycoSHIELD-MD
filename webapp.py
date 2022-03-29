@@ -11,6 +11,10 @@ import streamlit as st
 import glycoshield.app as app
 
 
+glycoshield_logo_still = "webapp/glycoshield_still.png"
+glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
+
+
 if __name__ == "X__main__":
     st.set_page_config(layout="wide")
     st.title('GlycoSHIELD Interactive Web Application')
@@ -24,26 +28,33 @@ if __name__ == "X__main__":
 
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
+
+    app.display_image_file(glycoshield_logo_still,
+        width="10vw", min_width="92px")
+
     st.title('GlycoSHIELD Web Application')
 
-    st.header("Reset web application")
-    if st.button("Reset web application"):
-        app.reset_webapp()
+    with st.sidebar:
+        # st.header("Reset Web Application")
+        if st.button("Reset Web Application"):
+            app.reset_webapp()
 
-    st.header("Define PDB file for input")
+
+    st.header("1. Define input PDB file")
     if not app.get_config()["have_input"]:
         app.use_default_input()
-    if st.button("Use default <EC5.pdb>"):
-        app.use_default_input()
+    st.write("By default, the application uses the file {}, alternatively you may upload a custom PDB file.".format(app.get_default_input()))
     uploaded_file = st.file_uploader(
         label="Upload PDB file",
-        accept_multiple_files=False,
-    )
+        accept_multiple_files=False)
     if uploaded_file is not None:
         app.store_uploaded_file(uploaded_file)
-    app.print_input_pdb()
+    # if st.button("Use tutorial input file (EC5.pdb)"):
+        # app.use_default_input()
+    # app.print_input_pdb()
 
-    st.header("Input")
+
+    st.header("2. Define GlycoSHIELD Input Lines")
 
     chain_resids = app.get_chain_resids()
     # st.write(chain_resids)
@@ -62,7 +73,7 @@ if __name__ == "__main__":
 
     new_line = app.create_input_line(chain, resid, glycan)
 
-    st.text_area('New input line', new_line)
+    # st.text_area('Preview of new input line', new_line)
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -72,7 +83,7 @@ if __name__ == "__main__":
     if col2.button("Remove"):
         app.rem_input_line(new_line)
 
-    if st.button("Use default set of input lines"):
+    if col3.button("Use default set of input lines"):
         app.clear_input_lines()
         default_input=[
             '#',
@@ -82,60 +93,64 @@ if __name__ == "__main__":
         for line in default_input:
             app.add_input_line(line)
 
-    inputs = st.text_area('All input lines',
+    if col4.button("Clear all input lines"):
+        app.clear_input_lines()
+
+    inputs = st.text_area('Current input lines',
                           "\n".join(app.get_input_lines())
                           )
 
-
-    if st.button("Clear inputs"):
-        app.clear_input_lines()
-
     app.store_inputs(inputs)
 
-    st.header("Run glycoSHIELD and glycoTRAJ ...")
-    progress_image_obj = st.empty()
-    image_file = "webapp/glycoshield_still.png"
-    app.display_html_image_file(progress_image_obj, image_file)
 
+    st.header("3. Run glycoSHIELD and glycoTRAJ ...")
+
+    progress_image_obj = st.empty()
+    app.display_image_file(glycoshield_logo_still, progress_image_obj)
     glycoshield_progressbar = st.progress(0)
     glycostraj_progressbar_1 = st.progress(0)
     glycostraj_progressbar_2 = st.progress(0)
 
     if st.button("Run glycoSHIELD and glycoTRAJ ..."):
-        image_file = "webapp/glycoshield_anim.gif"
-        app.display_html_image_file(progress_image_obj, image_file)
+        app.display_image_file(glycoshield_logo_anim,
+            progress_image_obj)
         app.run_glycoshield(glycoshield_progressbar)
         app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 
-    if app.check_glycoshield(glycoshield_progressbar) and app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2):
-        image_file = "webapp/glycoshield_still.png"
-        app.display_html_image_file(progress_image_obj, image_file)
+    app.check_glycoshield(glycoshield_progressbar)
+    app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
+    app.display_image_file(glycoshield_logo_still, progress_image_obj)
 
 
-    st.header("Run glycoSASA ...")
+    st.header("4. Run glycoSASA ...")
     glycosasa_progressbar = st.progress(0)
     if st.button("Run glycoSASA ..."):
         app.run_glycosasa(glycosasa_progressbar)
 
     if app.check_glycosasa(glycosasa_progressbar):
+        st.image(os.path.join(app.get_config()["output_dir"], "ResidueSASA_probe_0.7.png"))
         app.visualize_sasa(
             os.path.join(app.get_config()["output_dir"], "maxResidueSASA_probe_0.7.pdb")
         )
+        st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
 
-    st.header("Download")
-    app.zip_webapp_output()
-    data, size = app.get_webapp_output()
-    st.download_button(
-        label=f"Download ZIP ({size:.1f} MB)",
-        data=data,
-        file_name=app.get_config()["output_zip"],
-        mime="application/zip"
-    )
 
     # When running on Binder, offer a shutdown button
-    if getpass.getuser() == "jovyan":
-        label = "Quit Web Application"
-        st.header(label)
-        st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
-        if st.button(label):
-            app.quit_binder_webapp()
+    with st.sidebar:
+        if getpass.getuser() == "jovyan":
+            label = "Quit Web Application"
+            # st.header(label)
+            # st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
+            if st.button(label, help="Pushing this button will shut down the webapp, and you may close the browser tab."):
+                app.quit_binder_webapp()
+
+    with st.sidebar:
+        # st.header("Download Output")
+        app.zip_webapp_output()
+        data, size = app.get_webapp_output()
+        st.download_button(
+            label=f"Download Output ({size:.1f} MB)",
+            data=data,
+            file_name=app.get_config()["output_zip"],
+            mime="application/zip"
+        )

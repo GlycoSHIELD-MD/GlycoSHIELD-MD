@@ -57,17 +57,21 @@ def store_uploaded_file(uploaded_file):
     cfg["have_input"] = True
 
 
+def get_default_input():
+    cfg = get_config()
+    return os.path.join(cfg["tutorial_dir"], "EC5.pdb")
+
+
 def use_default_input():
     cfg = get_config()
-    default_pdb = os.path.join(cfg["tutorial_dir"], "EC5.pdb")
-    cfg["pdb_input"] = default_pdb
+    cfg["pdb_input"] = get_default_input()
     cfg["have_input"] = True
 
 
 def print_input_pdb():
     cfg = get_config()
     file_name = cfg["pdb_input"]
-    st.write("Using {}".format(file_name))
+    st.write("Input PDB file: {}".format(file_name))
 
 
 def webapp_output_ready():
@@ -361,10 +365,10 @@ def clear_input_lines():
     cfg["input_lines"] = ['#']
 
 
-def display_html_image_file(streamlit_empty_handle, image_file):
+def display_image_file(image_file, streamlit_handle=st, width="25vw", min_width="256px"):
     with open(image_file, "rb") as fp:
         image_data = base64.b64encode(fp.read()).decode("utf-8")
-        streamlit_empty_handle.markdown(
-            f'<img src="data:image/gif;base64,{image_data}" style="width:25vw; min-width:256px;" alt="{image_file}"/>',
+        streamlit_handle.markdown(
+            f'<img src="data:image/gif;base64,{image_data}" style="width:{width}; min-width:{min_width};" alt="{image_file}"/>',
             unsafe_allow_html=True,
         )

@@ -831,4 +831,5 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
         ax.fill_between([begining, ending], yminb, ymaxb, alpha=0.2, color=np.random.rand(3,))
         ax.text(0.5 * (begining + ending), 0.5 * (yminb + ymaxb), "chain {}".format(chain), ha='center', va='center')
     plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.pdf'.format(probe)))
+    plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.png'.format(probe)))
     plt.show()
