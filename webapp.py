@@ -170,3 +170,8 @@ if __name__ == "__main__":
             # st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
             if st.button(label, help="Pushing this button shuts down the webapp, and you may close the browser tab."):
                 app.quit_binder_webapp()
+
+            st.write("")
+            notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
+            st.markdown(f'Launch interactive <a href="{notebook_url}" target="_blank">Jupyter Notebook Tutorial</a>',
+                unsafe_allow_html=True)
