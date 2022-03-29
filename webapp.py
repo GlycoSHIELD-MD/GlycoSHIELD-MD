@@ -34,10 +34,6 @@ if __name__ == "__main__":
 
     st.title('GlycoSHIELD Web Application')
 
-    with st.sidebar:
-        # st.header("Reset Web Application")
-        if st.button("Reset Web Application"):
-            app.reset_webapp()
 
 
     st.header("1. Define input PDB file")
@@ -135,14 +131,6 @@ if __name__ == "__main__":
         st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
 
 
-    # When running on Binder, offer a shutdown button
-    with st.sidebar:
-        if getpass.getuser() == "jovyan":
-            label = "Quit Web Application"
-            # st.header(label)
-            # st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
-            if st.button(label, help="Pushing this button will shut down the webapp, and you may close the browser tab."):
-                app.quit_binder_webapp()
 
     with st.sidebar:
         # st.header("Download Output")
@@ -150,7 +138,22 @@ if __name__ == "__main__":
         data, size = app.get_webapp_output()
         st.download_button(
             label=f"Download Output ({size:.1f} MB)",
+            help="Download the output data from the application run as a Zip file.",
             data=data,
             file_name=app.get_config()["output_zip"],
             mime="application/zip"
         )
+
+    with st.sidebar:
+        # st.header("Reset Web Application")
+        if st.button("Reset Web Application", help="Pushing this button restores the initial state of the application."):
+            app.reset_webapp()
+
+    # When running on Binder, offer a shutdown button
+    with st.sidebar:
+        if getpass.getuser() == "jovyan":
+            label = "Shut Down Web Application"
+            # st.header(label)
+            # st.write("By pushing \"" + label + "\" the webapp will shut down, and you may close the browser tab.")
+            if st.button(label, help="Pushing this button shuts down the webapp, and you may close the browser tab."):
+                app.quit_binder_webapp()
