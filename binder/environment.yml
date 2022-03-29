@@ -22,7 +22,7 @@ dependencies:
   - ipywidgets
   # - voila
   # support for streamlit
-  - streamlit
+  - streamlit=1.7.0
   - jupyter-server-proxy
   # support for documentation creation
   - sphinx
