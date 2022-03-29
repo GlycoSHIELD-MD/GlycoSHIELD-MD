@@ -21,8 +21,9 @@ dependencies:
   - nglview
   - ipywidgets
   # - voila
-  # support for streamlit
-  - streamlit=1.7.0
+  # support for streamlit, the following combination of click and streamlit appears to work (to be checked in the future)
+  - click=8.0.4
+  - streamlit=1.8.0
   - jupyter-server-proxy
   # support for documentation creation
   - sphinx
