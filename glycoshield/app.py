@@ -369,7 +369,7 @@ def display_image(image_file, streamlit_handle=st, image_style="", href=None):
     with open(image_file, "rb") as fp:
         _filename, extension = os.path.splitext(image_file)
         image_type = extension[1:]
-        assert(image_type in ('gif','png','svg'))
+        assert(image_type in ('gif','png'))
         image_data = base64.b64encode(fp.read()).decode("utf-8")
         html = []
         if href is not None:

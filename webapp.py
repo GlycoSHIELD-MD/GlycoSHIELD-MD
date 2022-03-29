@@ -165,4 +165,4 @@ if __name__ == "__main__":
 
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
-            app.display_image(image_file="webapp/glycoshield-tutorial.svg", href=notebook_url)
+            app.display_image(image_file="webapp/glycoshield-tutorial.png", href=notebook_url)
