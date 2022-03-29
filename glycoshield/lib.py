@@ -264,7 +264,10 @@ class glycoshield:
 
             # check for the overlap
             if self.threshold != 0:
-                distarr = distance_array(self.reduced_prot_positions, self.sugar_without_protein_flanked.positions)
+                distarr = distance_array(
+                    self.reduced_prot_positions,
+                    self.sugar_without_protein_flanked.positions,
+                    backend='openmp')
                 if np.min(distarr) < self.threshold:
                     # overlap - do nothing
                     pass
