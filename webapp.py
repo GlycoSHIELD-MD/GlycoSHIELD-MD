@@ -13,6 +13,8 @@ import glycoshield.app as app
 
 glycoshield_logo_still = "webapp/glycoshield_still.png"
 glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
+mpibp_logo = "webapp/mpibp-logo.png"
+mpcdf_logo = "webapp/mpcdf-logo.png"
 
 
 if __name__ == "X__main__":
@@ -29,12 +31,22 @@ if __name__ == "X__main__":
 if __name__ == "__main__":
     st.set_page_config(layout="wide")
 
-    app.display_image_file(glycoshield_logo_still,
-        width="10vw", min_width="92px")
+    # logos on top, MPI-BP twice as a placeholder
+    col1, col2, col3 = st.columns(3)
+    app.display_image_file(mpibp_logo,
+        streamlit_handle=col1,
+        width="256px", min_width="128px")
+    app.display_image_file(mpibp_logo,
+        streamlit_handle=col2,
+        width="256px", min_width="128px")
+    app.display_image_file(mpcdf_logo,
+        streamlit_handle=col3,
+        width="256px", min_width="128px")
 
     st.title('GlycoSHIELD Web Application')
 
-
+    app.display_image_file(glycoshield_logo_still,
+        width="256px", min_width="1px")
 
     st.header("1. Define input PDB file")
     if not app.get_config()["have_input"]:
