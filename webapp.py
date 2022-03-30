@@ -139,7 +139,7 @@ if __name__ == "__main__":
         st.write("Hint: Use the Download button on the sidebar to download the output data as a Zip file.")
 
 
-    st.header("5. Analysis and visualization ...")
+    st.header("5. Analysis and Visualization ...")
 
     if app.check_glycosasa(glycosasa_progressbar):
         probe = st.radio(
