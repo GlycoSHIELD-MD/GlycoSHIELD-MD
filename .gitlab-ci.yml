@@ -1,0 +1,21 @@
+image: gitlab-registry.mpcdf.mpg.de/khr/docker/miniforge/ubuntu2004:20210913
+
+# update the files on the public repository automatically
+trigger-rebuild-launchpad:
+  script:
+    - git clone https://oauth2:${DEPLOYTOKEN}@gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md-binder-launchpad.git
+    - cd glycoshield-md-binder-launchpad
+    - sed -i sed -e "s/.*TRIGGERED_FROM_MAIN_REPO.*/    echo TRIGGERED_FROM_MAIN_REPO $CI_COMMIT_SHORT_SHA >.rebuild.log/"
+    - |
+      CHANGED=0
+      git diff-index --quiet HEAD || CHANGED=1
+      if [ $CHANGED -eq 0 ]
+      then
+        echo "all public files unchanged, nothing to commit"
+      else
+        git config user.email "noreply@mpcdf.mpg.de"
+        git config user.name "Repo Updater"
+        git commit -a -m "$CI_COMMIT_SHORT_SHA $CI_COMMIT_TITLE"
+        git push
+      fi
+
