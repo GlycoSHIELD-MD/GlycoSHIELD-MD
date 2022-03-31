@@ -1,7 +1,7 @@
 image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
 
 # trigger a notification for the launchpad repo to update the Dockerfile
-trigger-rebuild-launchpad:
+notify-launchpad:
   script:
     - module load git
     - git clone https://oauth2:${DEPLOYTOKEN}@gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md-binder-launchpad.git
@@ -15,8 +15,8 @@ trigger-rebuild-launchpad:
         echo "all files unchanged, nothing to commit"
       else
         git config user.email "noreply@mpcdf.mpg.de"
-        git config user.name "Repo Updater"
-        git commit -a -m "$CI_COMMIT_SHORT_SHA $CI_COMMIT_TITLE"
+        git config user.name "Automated Repository Update"
+        git commit -a -m "GlycoSHIELD-MD $CI_COMMIT_SHORT_SHA"
         git push
       fi
 
