@@ -1,11 +1,12 @@
-image: gitlab-registry.mpcdf.mpg.de/khr/docker/miniforge/ubuntu2004:20210913
+image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
 
 # trigger a notification for the launchpad repo to update the Dockerfile
 trigger-rebuild-launchpad:
   script:
+    - module load git
     - git clone https://oauth2:${DEPLOYTOKEN}@gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md-binder-launchpad.git
     - cd glycoshield-md-binder-launchpad
-    - sed -i "s/.*TRIGGERED_FROM_MAIN_REPO.*/    echo TRIGGERED_FROM_MAIN_REPO $CI_COMMIT_SHORT_SHA >.rebuild.log"
+    - sed -i "s/.*TRIGGERED_FROM_MAIN_REPO.*/    echo TRIGGERED_FROM_MAIN_REPO $CI_COMMIT_SHORT_SHA >.rebuild.log/"
     - |
       CHANGED=0
       git diff-index --quiet HEAD || CHANGED=1
