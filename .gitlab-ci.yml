@@ -2,6 +2,8 @@ image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
 
 # trigger a notification for the launchpad repo to update the Dockerfile
 notify-launchpad:
+  only:
+    - refactoring
   script:
     - module load git
     - git clone https://oauth2:${DEPLOYTOKEN}@gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md-binder-launchpad.git
