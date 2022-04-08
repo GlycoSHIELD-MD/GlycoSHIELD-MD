@@ -97,6 +97,9 @@ class glycoshield:
 
         # The chopping of the trajectory. 1 means take all frames, 10 means take every 10th frame
         self.skip = skip
+        
+        # write down the initial no of frames for sugars prior to grafting
+        self.initialsugarframes = [0 for i in self.inputlines]
 
     def _test_sequon(self, resids_on_protein, protchain):
         # test whether a sequon is in the 2:N-1 range
@@ -118,10 +121,18 @@ class glycoshield:
             # counter for "entropy"
             occupancies = []
 
+            
+            
+            
             # Iterate over sugars:
+            isugar = 0 
             for protchain, resids_on_protein, resids_on_sugar, sugarpdb, sugarxtc, pdbout, xtcout in self.inputlines:
                 # load sugar
                 self.usugar = mda.Universe(sugarpdb, sugarxtc, in_memory=True, in_memory_step=self.skip)
+                
+                # note number of frames
+                if self.initialsugarframes[isugar] == 0:
+                   self.initialsugarframes[isugar] = self.usugar.trajectory.n_frames
                 # select (part of) the protein that is connected to the sugar
                 tripep = self.usugar.select_atoms('protein and resid {} and name N CA CO'.format(" ".join([str(i) for i in resids_on_sugar])))
 
@@ -184,6 +195,7 @@ class glycoshield:
                 self.write_output(xtcout, pdbout, coordinates, protframe, pdbtraj=self.pdbtraj, pdbtrajframes=self.pdbtrajframes)
 
                 # Cleanup
+                isugar += 1
                 del self.usugar
 
                 if streamlit_progressbar is not None:
