@@ -848,3 +848,21 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.pdf'.format(probe)))
     plt.savefig(os.path.join(path, 'ResidueSASA_probe_{}.png'.format(probe)))
     plt.show()
+
+
+def clean_segid(pdbfile,outfile):
+    """Remove SEGID field (confuses mdanalysis) and keep only ATOM lines"""
+    output=open(outfile,'w')
+    with open(pdbfile) as f:
+        for line in f:
+            if 'ATOM' in line[:5]:
+                segid=line[71:75]
+                if segid.isspace():
+                    output.write(line)
+                else:
+                    tline=list(line)
+                    for char in [72,73,74,75]:
+                        tline[char]=" "
+                    output.write(''.join(tline))
+
+    output.close()
