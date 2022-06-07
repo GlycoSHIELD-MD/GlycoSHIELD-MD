@@ -103,7 +103,8 @@ class glycoshield:
 
     def _test_sequon(self, resids_on_protein, protchain):
         # test whether a sequon is in the 2:N-1 range
-        if resids_on_protein[1] >= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[-1] or resids_on_protein[1] <= self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids[0]:
+        
+        if resids_on_protein[1] >= sorted(self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids)[-1] or resids_on_protein[1] <= sorted(self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids)[0]:
             raise BaseException("Selected sequon {},{},{} lies outside of the residues if the chain {}!\nGrafting on the first/last residues is not supported.".format(resids_on_protein[0], resids_on_protein[1], resids_on_protein[2], protchain))
 
     def run(self, streamlit_progressbar=None):
