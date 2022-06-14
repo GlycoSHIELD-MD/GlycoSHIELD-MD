@@ -65,7 +65,7 @@ def download():
 def unpack():
     try:
         os.chdir(out)
-        file_list = glob.glob("*.tar.gz")
+        file_list = glob.glob("*.tar") + glob.glob("*.tgz") + glob.glob("*.tar.gz")
         for file_name in file_list:
             cmd = "tar -xf {}".format(file_name)
             subprocess.check_call(cmd, shell=True)
