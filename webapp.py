@@ -85,16 +85,35 @@ if __name__ == "__main__":
     glycan_type = st.selectbox("Glycan Type", glycan_lib.keys())
     #png_tableau = {name:os.path.join(d, "thumbnail.png") for name, d in glycan_lib[glycan_type]}
 
-    html = []
+    # create table with clickable images
+    n_cols = 4
+    n_elem = len(html_figs)
+    n_per_col = n_elem//n_cols + 1
+
+    html_figs = []
     for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
         image_data = app.load_image(image_file)
-        html.append(
+        html_figs.append(
             app.clickable_image_html(image_label, image_data)
         )
-    html = "\n".join(html)
-    clicked = click_detector(html)
-    #st.markdown(f"**{clicked} clicked**" if clicked != "" else "**No click**")
 
+    html = []
+    html.append('<div class="container">')
+    html.append('<div class="row">')
+    for i in range(4):
+        html.append('<div class="col">')
+        for j in range(n_per_col):
+            if len(html_figs) > 0:
+                html.append(html_figs.pop(0))
+        html.append('</div>')
+    html.append('</div>')
+    html.append('</div>')
+    html = "\n".join(html)
+
+    # present the table to the user, allow to select by click
+    clicked = click_detector(html)
+
+    # catch the initial non-clicked case
     if clicked == "":
         clicked = list(glycan_lib[glycan_type].keys())[0]
 
