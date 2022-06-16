@@ -285,7 +285,7 @@ def visualize_sasa(pdb, height=800, width=1200):
     )
 
 
-def get_glycan_library():
+def get_glycan_library_old():
     cfg = get_config()
     # lib = {}
     lib = []
@@ -297,6 +297,22 @@ def get_glycan_library():
             # files = os.listdir(dir_path)
             # lib[dir_raw] = list(filter(lambda x: x.endswith(('.xtc', '.pdb')), files))
             lib.append(dir_raw)
+    return lib
+
+
+def get_glycan_library():
+    lib = {}
+    cfg = get_config()
+    libdir = cfg["glycan_library_dir"]
+    dirs = glob.glob(os.path.join(libdir, 'gs.*.*.*'))
+    dirs.sort()
+    for d in dirs:
+        label = os.path.basename(d)
+        gs, num, gtype, name = label.split('.')
+        if gtype not in lib:
+            lib[gtype] = {}
+        thumb = os.path.join(d, "thumbnail.png")
+        lib[gtype][name] = (d, label, thumb)
     return lib
 
 
@@ -381,3 +397,21 @@ def display_image(image_file, streamlit_handle=st, image_style="", href=None):
             "".join(html),
             unsafe_allow_html=True
         )
+
+
+def load_image(image_file):
+    with open(image_file, "rb") as fp:
+        _filename, extension = os.path.splitext(image_file)
+        image_type = extension[1:]
+        assert(image_type in ('gif','png'))
+        image_data = base64.b64encode(fp.read()).decode("utf-8")
+    return image_data
+
+
+def clickable_image_html(image_label, image_data, image_type="png"):
+    return ("<figure>"
+           f"<a href='#' id='{image_label}'><img height='96px' src='data:image/{image_type};base64,{image_data}'></a>"
+           f"<figcaption>{image_label}</figcaption>"
+            "</figure>"
+    )
+

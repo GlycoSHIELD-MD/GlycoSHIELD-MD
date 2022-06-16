@@ -10,6 +10,10 @@ import streamlit as st
 # import MDAnalysis as mda
 import glycoshield.app as app
 
+import streamlit_modal as modal
+import streamlit.components.v1 as components
+from st_click_detector import click_detector
+
 
 glycoshield_logo_still = "webapp/glycoshield_still.png"
 glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
@@ -76,9 +80,26 @@ if __name__ == "__main__":
         resids = []
     resid = st.selectbox("Residue", resids)
 
-    glycan = st.selectbox("Glycan", glycan_lib)
+    st.write("Select Glycan")
 
-    new_line = app.create_input_line(chain, resid, glycan)
+    glycan_type = st.selectbox("Glycan Type", glycan_lib.keys())
+    #png_tableau = {name:os.path.join(d, "thumbnail.png") for name, d in glycan_lib[glycan_type]}
+
+    html = []
+    for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
+        image_data = app.load_image(image_file)
+        html.append(
+            app.clickable_image_html(image_label, image_data)
+        )
+    html = "\n".join(html)
+    clicked = click_detector(html)
+    #st.markdown(f"**{clicked} clicked**" if clicked != "" else "**No click**")
+
+    if clicked == "":
+        clicked = list(glycan_lib[glycan_type].keys())[0]
+
+    d, raw_label, image_file = glycan_lib[glycan_type][clicked]
+    new_line = app.create_input_line(chain, resid, raw_label)
 
     # st.text_area('Preview of new input line', new_line)
 
