@@ -87,8 +87,6 @@ if __name__ == "__main__":
 
     # create table with clickable images
     n_cols = 4
-    n_elem = len(html_figs)
-    n_per_col = n_elem//n_cols + 1
 
     html_figs = []
     for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
@@ -96,6 +94,8 @@ if __name__ == "__main__":
         html_figs.append(
             app.clickable_image_html(image_label, image_data)
         )
+    n_elem = len(html_figs)
+    n_per_col = n_elem//n_cols + 1
 
     html = []
     html.append('<div class="container">')
@@ -120,7 +120,8 @@ if __name__ == "__main__":
     d, raw_label, image_file = glycan_lib[glycan_type][clicked]
     new_line = app.create_input_line(chain, resid, raw_label)
 
-    # st.text_area('Preview of new input line', new_line)
+    st.write('Preview of input line')
+    st.text(new_line)
 
     button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
@@ -143,9 +144,9 @@ if __name__ == "__main__":
     if button_col4.button("Clear all input lines"):
         app.clear_input_lines()
 
-    inputs = st.text_area('Current input lines',
-                          "\n".join(app.get_input_lines())
-                          )
+    inputs = "\n".join(app.get_input_lines())
+    st.write('Current input lines')
+    st.text(inputs)
 
     app.store_inputs(inputs)
 
