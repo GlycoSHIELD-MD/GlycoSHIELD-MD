@@ -21,12 +21,12 @@ def run_glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--maxframe', dest='maxframe', help='number of frames to include for each glycan')
-    parser.add_argument('--outname', dest='outname', help='root name of the output file')
-    parser.add_argument('--pdblist', dest='pdblist', help='(input) list of coma-separated reference pdb files')
-    parser.add_argument('--xtclist', dest='xtclist', help='(input) list of coma-separated trajectory files')
-    parser.add_argument('--chainlist', dest='chainlist', help='(input) list of coma-separated chain descriptors where each glycan was attached')
-    parser.add_argument('--reslist', dest='reslist', help='(input) list of coma-separated residue numbers where each glycan was attached')
+    parser.add_argument('--maxframe', dest='maxframe', help='number of frames to include for each glycan',required=True)
+    parser.add_argument('--outname', dest='outname', help='root name of the output file',required=True)
+    parser.add_argument('--pdblist', dest='pdblist', help='(input) list of coma-separated reference pdb files',required=True)
+    parser.add_argument('--xtclist', dest='xtclist', help='(input) list of coma-separated trajectory files',required=True)
+    parser.add_argument('--chainlist', dest='chainlist', help='(input) list of coma-separated chain descriptors where each glycan was attached',required=True)
+    parser.add_argument('--reslist', dest='reslist', help='(input) list of coma-separated residue numbers where each glycan was attached',required=True)
 
     args = parser.parse_args()
 

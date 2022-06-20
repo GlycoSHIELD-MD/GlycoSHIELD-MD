@@ -26,16 +26,16 @@ def run_glycosasa(pdbfiles, xtcfiles, plottrace, probes, ndots, mode, keepoutput
 if __name__ == "__main__":
     parser = ArgumentParser()
 
-    parser.add_argument('--pdblist', dest='pdblist', help='coma-separated list of pdb references [no spaces! test1.pdb,test2.pdb ]')
-    parser.add_argument('--xtclist', dest='xtclist', help='coma-separated list of xtc trajs [no spaces! test1.xtc,test2.xtc ]')
-    parser.add_argument('--probelist', dest='probelist', help='coma-separated list of probe sizes for SASA calculation, in nm. can be a single one')
+    parser.add_argument('--pdblist', dest='pdblist', help='coma-separated list of pdb references [no spaces! test1.pdb,test2.pdb ]',required=True)
+    parser.add_argument('--xtclist', dest='xtclist', help='coma-separated list of xtc trajs [no spaces! test1.xtc,test2.xtc ]',required=True)
+    parser.add_argument('--probelist', dest='probelist', help='coma-separated list of probe sizes for SASA calculation, in nm. can be a single one', default=0.14, required=False)
     parser.add_argument('--plottrace', dest='plottrace', action='store_true', help='plot per-residue shielding? default is no')
     parser.add_argument('--no-plottrace', dest='plottrace', action='store_false', help='do not plot per-residue shielding')
     parser.add_argument('--keepoutput', dest='keepoutput', action='store_true', help="do not delete tmp files, default is no")
     parser.add_argument('--no-keepoutput', dest='keepoutput', action='store_false', help="delete tmp files")
-    parser.add_argument('--ndots', dest='ndots', help='number of dots used per atom by the Shrake-Rupley algorithm (see Gromacs documentation for details)', default=15)
-    parser.add_argument('--mode', dest='mode', help='mode = avg or max, report max or avg Delta_sasa', default="max")
-    parser.add_argument('--endframe', dest='endframe', help='last frame to read from the glycan trajectories. Assumes 1 ps time step', default=0)
+    parser.add_argument('--ndots', dest='ndots', help='number of dots used per atom by the Shrake-Rupley algorithm (see Gromacs documentation for details)', default=15,required=False)
+    parser.add_argument('--mode', dest='mode', help='mode = avg or max, report max or avg Delta_sasa', default="max",required=False)
+    parser.add_argument('--endframe', dest='endframe', help='last frame to read from the glycan trajectories. -1 reads all frames', default=-1,required=False)
 
     args = parser.parse_args()
 

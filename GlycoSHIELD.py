@@ -34,9 +34,9 @@ def check_positive(value):
 if __name__ == "__main__":
     parser = ArgumentParser()
 
-    parser.add_argument('--protpdb', dest='protpdb', help='pdb file for protein')
-    parser.add_argument('--protxtc', dest='protxtc', help='xtc file for protein, optional if one needs multiple states of the protein')
-    parser.add_argument('--inputfile', dest='inputfile', help='Input file with each line representing a sequon')
+    parser.add_argument('--protpdb', dest='protpdb', help='pdb file for protein',required=True)
+    parser.add_argument('--protxtc', dest='protxtc', help='xtc file for protein, optional if one needs multiple states of the protein',required=False)
+    parser.add_argument('--inputfile', dest='inputfile', help='Input file with each line representing a sequon',required=True)
     parser.add_argument('--threshold', dest='threshold', help='threshold in A for checking for the overlap between sugar and protein.')
     parser.add_argument('--mode', dest='mode', help='do we take all atoms "All" or only Calpha "CG" when calculating distances. CG useful for large proteins but remember to change threshold! A good value here would be 0.7 for All atom and 3.5 for CG')
     parser.add_argument('--zmin', dest='zmin', help='position of the membrane below which we do not accept the glycan', default=-110000)
