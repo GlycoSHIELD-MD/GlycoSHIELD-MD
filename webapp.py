@@ -1,13 +1,7 @@
 import os
 import base64
-# import re
-# import sys
 import getpass
-# import shutil
-# import pathlib
-# import numpy as np
 import streamlit as st
-# import MDAnalysis as mda
 import glycoshield.app as app
 
 import streamlit_modal as modal
@@ -67,9 +61,7 @@ if __name__ == "__main__":
     st.header("2. Define GlycoSHIELD Input Lines")
 
     chain_resids = app.get_chain_resids()
-    # st.write(chain_resids)
     glycan_lib = app.get_glycan_library()
-    # st.write(glycan_lib)
 
     chain = st.selectbox("Chain", chain_resids.keys())
 
@@ -83,34 +75,9 @@ if __name__ == "__main__":
     st.write("Select Glycan")
 
     glycan_type = st.selectbox("Glycan Type", glycan_lib.keys())
-    #png_tableau = {name:os.path.join(d, "thumbnail.png") for name, d in glycan_lib[glycan_type]}
 
-    # create table with clickable images
-    n_cols = 4
-
-    html_figs = []
-    for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
-        image_data = app.load_image(image_file)
-        html_figs.append(
-            app.clickable_image_html(image_label, image_data)
-        )
-    n_elem = len(html_figs)
-    n_per_col = n_elem//n_cols + 1
-
-    html = []
-    html.append('<div class="container">')
-    html.append('<div class="row">')
-    for i in range(4):
-        html.append('<div class="col">')
-        for j in range(n_per_col):
-            if len(html_figs) > 0:
-                html.append(html_figs.pop(0))
-        html.append('</div>')
-    html.append('</div>')
-    html.append('</div>')
-    html = "\n".join(html)
-
-    # present the table to the user, allow to select by click
+    # present a table of clickable preview images to the user
+    html = app.get_glycan_clickable_image_html(glycan_lib, glycan_type)
     clicked = click_detector(html)
 
     # catch the initial non-clicked case

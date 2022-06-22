@@ -300,6 +300,7 @@ def get_glycan_library_old():
     return lib
 
 
+@st.cache
 def get_glycan_library():
     lib = {}
     cfg = get_config()
@@ -314,6 +315,31 @@ def get_glycan_library():
         thumb = os.path.join(d, "thumbnail.png")
         lib[gtype][name] = (d, label, thumb)
     return lib
+
+
+@st.cache
+def get_glycan_clickable_image_html(glycan_lib, glycan_type, n_cols=4):
+    # create table with clickable images
+    html_figs = []
+    for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
+        image_data = load_image(image_file)
+        html_figs.append(
+            clickable_image_html(image_label, image_data)
+        )
+    n_elem = len(html_figs)
+    n_per_col = n_elem//n_cols + 1
+    html = []
+    html.append('<div class="container">')
+    html.append('<div class="row">')
+    for i in range(4):
+        html.append('<div class="col">')
+        for j in range(n_per_col):
+            if len(html_figs) > 0:
+                html.append(html_figs.pop(0))
+        html.append('</div>')
+    html.append('</div>')
+    html.append('</div>')
+    return "\n".join(html)
 
 
 def get_chain_resids():
@@ -414,4 +440,3 @@ def clickable_image_html(image_label, image_data, image_type="png"):
            f"<figcaption>{image_label}</figcaption>"
             "</figure>"
     )
-
