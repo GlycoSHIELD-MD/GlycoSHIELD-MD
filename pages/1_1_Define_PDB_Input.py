@@ -1,23 +1,21 @@
-import os
-import base64
-import getpass
 import streamlit as st
 import glycoshield.app as app
-
-import streamlit_modal as modal
-import streamlit.components.v1 as components
-from st_click_detector import click_detector
 
 
 st.set_page_config(
     page_title="GlycoSHIELD",
     layout="wide"
 )
-app.show_header(title="Define input PDB file", show_glycoshield_logo=False)
+app.show_header(title="Define PDB input file", show_glycoshield_logo=False)
 
 if not app.get_config()["have_input"]:
     app.use_default_input()
-st.write("By default, the application uses the file {}, alternatively you may upload a custom PDB file.".format(app.get_default_input()))
+
+st.write(
+    "You may upload a PDB file using the uploader below. "
+    f"In case no file is uploaded, the application uses the file {app.get_default_input()}."
+)
+
 uploaded_file = st.file_uploader(
     label="Upload PDB file",
     accept_multiple_files=False)

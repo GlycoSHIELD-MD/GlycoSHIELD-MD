@@ -1,11 +1,5 @@
-import os
-import base64
-import getpass
 import streamlit as st
 import glycoshield.app as app
-
-import streamlit_modal as modal
-import streamlit.components.v1 as components
 from st_click_detector import click_detector
 
 
@@ -13,8 +7,17 @@ st.set_page_config(
     page_title="GlycoSHIELD",
     layout="wide"
 )
-app.show_header(title="Define GlycoSHIELD Input Lines", show_glycoshield_logo=False)
+app.show_header(title="Define GlycoSHIELD Input", show_glycoshield_logo=False)
 
+st.markdown(
+"""
+Use this page to create input lines for GlycoSHIELD.
+Make your selection below and click *Add* to add each line to the set of input lines.
+Alternatively, a default set of input lines can be used by clicking the respective button.
+"""
+)
+
+st.write("Select Protein Chain and Residue")
 
 chain_resids = app.get_chain_resids()
 glycan_lib = app.get_glycan_library()
