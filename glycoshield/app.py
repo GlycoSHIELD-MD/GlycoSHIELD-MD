@@ -1,12 +1,19 @@
 import os
 import glob
 import base64
+import getpass
 import zipfile
 import pathlib
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
 from .lib import glycoshield, glycotraj, glycosasa
+
+
+glycoshield_logo_still = "webapp/glycoshield_still.png"
+glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
+mpibp_logo = "webapp/mpibp-logo.png"
+mpcdf_logo = "webapp/mpcdf-logo.png"
 
 
 # --- functions for configuration management ---
@@ -440,3 +447,29 @@ def clickable_image_html(image_label, image_data, image_type="png"):
            f"<figcaption>{image_label}</figcaption>"
             "</figure>"
     )
+
+def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True, show_glycoshield_logo=True):
+    # logos on top, MPI-BP twice as a placeholder
+    if show_institute_logo:
+        header_col1, header_col2, header_col3 = st.columns(3)
+        logo_image_style="width:192px;min_width:96px;"
+        display_image(mpibp_logo, streamlit_handle=header_col1, image_style=logo_image_style)
+        display_image(mpibp_logo, streamlit_handle=header_col2, image_style=logo_image_style)
+        display_image(mpcdf_logo, streamlit_handle=header_col3, image_style=logo_image_style)
+    st.title(title)
+    if show_glycoshield_logo:
+        logo_image_style="width:256px;min_width:128px;"
+        display_image(glycoshield_logo_still, image_style=logo_image_style)
+
+
+def show_sidebar():
+    with st.sidebar:
+        if st.button("Reset Web Application", help="Pushing this button restores the initial state of the application."):
+            reset_webapp()
+        if getpass.getuser() == "jovyan":
+            label = "Shut Down Web Application"
+            if st.button(label, help="Pushing this button shuts down the webapp, and you may close the browser tab."):
+                quit_binder_webapp()
+            st.write("")
+            notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
+            display_image(image_file="webapp/glycoshield-tutorial.png", href=notebook_url)
