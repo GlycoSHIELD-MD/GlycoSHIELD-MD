@@ -20,10 +20,8 @@ dependencies:
   - jupyterlab
   - nglview
   - ipywidgets
-  # - voila
   # support for streamlit, the following combination of click and streamlit appears to work (to be checked in the future)
-  - click=8.0.4
-  - streamlit=1.8.0
+  - streamlit=1.10.0
   - jupyter-server-proxy
   # support for documentation creation
   - sphinx
@@ -32,6 +30,7 @@ dependencies:
     #- zenodo-get
     - py3Dmol
     - stmol
+    - st-click-detector
     - sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
     - -e ../glycoshield-data-download-helper/
