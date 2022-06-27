@@ -117,15 +117,15 @@ def zip_webapp_output():
             
 def zip_pdb_trajectory():
     cfg = get_config()
-    with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["pdbtrajfile_zip"]), 'w',
+    with zipfile.ZipFile(os.path.join(cfg["output_dir"], cfg["pdbtrajfile_zip"]), 'w',
                         compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
-       zip_fh.write(os.path.join(cfg["work_dir"],cfg["pdbtrajfile"]))
+       zip_fh.write(os.path.join(cfg["output_dir"],cfg["pdbtrajfile"]))
 
 def get_webapp_output_pdbtraj():
     # Here implement a function to download just the multiframe pdb file
     cfg = get_config()
     if webapp_output_ready():
-        zipfile = os.path.join(cfg["work_dir"], cfg["pdbtrajfile_zip"])
+        zipfile = os.path.join(cfg["output_dir"], cfg["pdbtrajfile_zip"])
         with open(zipfile, "rb") as f:
             data = f.read()
         size = os.path.getsize(zipfile) / 1024. / 1024.
