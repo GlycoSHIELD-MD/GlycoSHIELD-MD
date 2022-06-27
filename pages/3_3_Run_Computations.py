@@ -23,7 +23,7 @@ glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG
 
 if st.button("Run glycoSHIELD and glycoTRAJ ..."):
     app.display_image(app.glycoshield_logo_anim, progress_image_obj, image_style=app.glyco_logo_image_style)
-    app.run_glycoshield(glycoshield_progressbar)
+    app.run_glycoshield(glycoshield_progressbar,mode=glycoshield_mode_str, threshold=glycoshield_threshold)
     app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 
 app.check_glycoshield(glycoshield_progressbar)

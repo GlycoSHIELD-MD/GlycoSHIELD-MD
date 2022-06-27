@@ -129,7 +129,7 @@ def store_inputs(inputs):
         f.write(inputs)
 
 
-def run_glycoshield(bar):
+def run_glycoshield(bar,mode="CG",threshold=3.5):
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
@@ -139,6 +139,8 @@ def run_glycoshield(bar):
         inputfile=os.path.join(cfg["work_dir"], "input_sugaring"),
         pdbtraj=pdbtraj,
         pdbtrajframes=pdbtrajframes,
+        mode=mode,
+        threshold=threshold,
     )
     occ = gs.run(streamlit_progressbar=bar)
     st.write(occ)
