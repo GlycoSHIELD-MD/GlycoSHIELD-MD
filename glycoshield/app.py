@@ -28,6 +28,10 @@ def init_config():
     cfg["work_dir"] = "webapp_work"
     cfg["output_dir"] = "webapp_output"
     cfg["pdb_input"] = ""
+    
+    cfg["pdbtrajfile"] = "merged_traj_pdb.pdb"
+    cfg["pdbtrajfile_zip"] = cfg["pdbtrajfile"] + ".zip"    
+    
     pathlib.Path(cfg["work_dir"]).mkdir(exist_ok=True)
     pathlib.Path(cfg["output_dir"]).mkdir(exist_ok=True)
     cfg["output_zip"] = cfg["output_dir"] + ".zip"
@@ -108,7 +112,28 @@ def zip_webapp_output():
         with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["output_zip"]), 'w',
                         compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
             zipdir(cfg["output_dir"], zip_fh)
+            
+            
+            
+def zip_pdb_trajectory():
+    cfg = get_config()
+    with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["pdbtrajfile_zip"]), 'w',
+                        compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
+       zip_fh.write(os.path.join(cfg["work_dir"],cfg["pdbtrajfile"]))
 
+def get_webapp_output_pdbtraj():
+    # Here implement a function to download just the multiframe pdb file
+    cfg = get_config()
+    if webapp_output_ready():
+        zipfile = os.path.join(cfg["work_dir"], cfg["pdbtrajfile_zip"])
+        with open(zipfile, "rb") as f:
+            data = f.read()
+        size = os.path.getsize(zipfile) / 1024. / 1024.
+    else:
+        data = ""
+        size = 0
+    return data, size
+   
 
 def get_webapp_output():
     cfg = get_config()
@@ -158,7 +183,7 @@ def check_glycoshield(bar=None):
     return cfg["glycoshield_done"]
 
 
-def run_glycotraj(bar_1, bar_2):
+def run_glycotraj(bar_1, bar_2,pdbtrajframes = 30):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -169,8 +194,8 @@ def run_glycotraj(bar_1, bar_2):
     chainlist = gs.chainlist
     reslist = gs.reslist
     outname = os.path.join(path, "merged_traj")
-    pdbtraj = os.path.join(path, "test_merged_pdb.pdb")
-    pdbtrajframes = 30
+    pdbtraj = os.path.join(path, cfg["pdbtrajfile"])
+    
     glycotraj(
         maxframe,
         outname,
