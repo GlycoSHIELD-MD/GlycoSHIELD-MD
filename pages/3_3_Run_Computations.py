@@ -21,7 +21,7 @@ glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom
 glycoshield_threshold=float(glycoshield_threshold_str)
 glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG","All"),index=0)
 glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for PDB download",value="30")
-glycotraj_numpdbframes=float(glycotraj_numpdbframes_str)
+glycotraj_numpdbframes=int(glycotraj_numpdbframes_str)
 
 if st.button("Run glycoSHIELD and glycoTRAJ ..."):
     app.display_image(app.glycoshield_logo_anim, progress_image_obj, image_style=app.glyco_logo_image_style)
