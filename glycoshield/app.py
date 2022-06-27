@@ -14,6 +14,7 @@ glycoshield_logo_still = "webapp/glycoshield_still.png"
 glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
 mpibp_logo = "webapp/mpibp-logo.png"
 mpcdf_logo = "webapp/mpcdf-logo.png"
+inserm_logo = "webapp/inserm-logo.png"
 glyco_logo_image_style = "width:256px;min_width:128px;vertical-align:middle;margin:24px 24px"
 
 
@@ -456,7 +457,7 @@ def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True, s
         header_col1, header_col2, header_col3 = st.columns(3)
         logo_image_style="width:192px;min_width:96px;vertical-align:middle;margin:24px 24px"
         display_image(mpibp_logo, streamlit_handle=header_col1, image_style=logo_image_style)
-        display_image(mpibp_logo, streamlit_handle=header_col2, image_style=logo_image_style)
+        display_image(inserm_logo, streamlit_handle=header_col2, image_style=logo_image_style)
         display_image(mpcdf_logo, streamlit_handle=header_col3, image_style=logo_image_style)
     st.title(title)
     if show_glycoshield_logo:
