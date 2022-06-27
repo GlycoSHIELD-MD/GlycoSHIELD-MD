@@ -16,6 +16,11 @@ glycoshield_progressbar = st.progress(0)
 glycostraj_progressbar_1 = st.progress(0)
 glycostraj_progressbar_2 = st.progress(0)
 
+# Set the mode and threshold values
+glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
+glycoshield_threshold=float(glycoshield_threshold_str)
+glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG","AA"),index=0)
+
 if st.button("Run glycoSHIELD and glycoTRAJ ..."):
     app.display_image(app.glycoshield_logo_anim, progress_image_obj, image_style=app.glyco_logo_image_style)
     app.run_glycoshield(glycoshield_progressbar)
