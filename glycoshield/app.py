@@ -375,11 +375,11 @@ def create_input_line(chain, resid, glycan):
     resid_p = int(resid) + 1
     glycan_pdb = os.path.join(
         os.path.join(cfg["glycan_library_dir"], glycan),
-        "production_merged_noW.pdb"
+        "reference.pdb"
     )
     glycan_xtc = os.path.join(
         os.path.join(cfg["glycan_library_dir"], glycan),
-        "production_merged_noW.xtc"
+        "conformations.xtc"
     )
     output_pdb = os.path.join(
         cfg["output_dir"],
