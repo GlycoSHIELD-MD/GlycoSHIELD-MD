@@ -11,6 +11,7 @@ from .lib import glycoshield, glycotraj, glycosasa
 
 
 glycoshield_logo_still = "webapp/glycoshield_still.png"
+glycoshield_logo_still = "webapp/GSlogo.png.png"
 glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
 mpibp_logo = "webapp/mpibp-logo.png"
 mpcdf_logo = "webapp/mpcdf-logo.png"
