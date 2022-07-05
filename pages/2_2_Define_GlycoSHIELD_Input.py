@@ -7,7 +7,7 @@ st.set_page_config(
     page_title="GlycoSHIELD",
     layout="wide"
 )
-app.show_header(title="Define GlycoSHIELD Input", show_glycoshield_logo=False)
+app.show_header(title="Select glycans", show_glycoshield_logo=False)
 
 st.markdown(
 """
