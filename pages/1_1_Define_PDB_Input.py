@@ -13,7 +13,7 @@ if not app.get_config()["have_input"]:
 
 st.write(
     "Upload protein structure in Protein Data Bank (PDB) format using the uploader below. "
-    f"In case no file is uploaded, the application uses the file {app.get_default_input()}."
+    f"As a default, IG-domain of Mouse N-cadherin is used (EC5, PDBid 3Q2W)"
 )
 
 uploaded_file = st.file_uploader(
@@ -21,7 +21,7 @@ uploaded_file = st.file_uploader(
     accept_multiple_files=False)
 if uploaded_file is not None:
     app.store_uploaded_file(uploaded_file)
-if st.button("Use tutorial input file (EC5.pdb)"):
+if st.button("Use default protein", help="Use the 5th IG-domain of Mouse N-cadherin (EC5, PDBid 3Q2W)"):
     app.use_default_input()
 # app.print_input_pdb()
 

@@ -8,7 +8,7 @@ st.set_page_config(
 # use the global state object to transfer state between the pages
 cfg = app.get_config()
 
-app.show_header(title="Run glycoSHIELD, glycoTRAJ, and glycoSASA", show_glycoshield_logo=False)
+app.show_header(title="Run GlycoSHIELD", show_glycoshield_logo=False)
 
 progress_image_obj = st.empty()
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
@@ -17,13 +17,13 @@ glycostraj_progressbar_1 = st.progress(0)
 glycostraj_progressbar_2 = st.progress(0)
 
 # Set the mode and threshold values, no of frames to download (could be put in a single line)
+glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG","All"),index=0)
 glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
 glycoshield_threshold=float(glycoshield_threshold_str)
-glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG","All"),index=0)
 glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for PDB download",value="30")
 glycotraj_numpdbframes=int(glycotraj_numpdbframes_str)
 
-if st.button("Run glycoSHIELD and glycoTRAJ ..."):
+if st.button("Run glycoSHIELD ..."):
     app.display_image(app.glycoshield_logo_anim, progress_image_obj, image_style=app.glyco_logo_image_style)
     app.run_glycoshield(glycoshield_progressbar,mode=glycoshield_mode_str, threshold=glycoshield_threshold)
     app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2,pdbtrajframes=glycotraj_numpdbframes)

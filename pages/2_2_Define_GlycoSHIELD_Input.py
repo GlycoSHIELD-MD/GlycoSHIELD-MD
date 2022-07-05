@@ -11,9 +11,10 @@ app.show_header(title="Select glycans", show_glycoshield_logo=False)
 
 st.markdown(
 """
-Use this page to create input lines for GlycoSHIELD.
-Make your selection below and click *Add* to add each line to the set of input lines.
-Alternatively, a default set of input lines can be used by clicking the respective button.
+To create GlycoSHIELD input, for each glycosylation site please define protein chain, residue number and glycan type and add to PDB file using the "Add" button at the bottom of the page. 
+N and O-glycans available in the GlycoSHIELD library are listed as "complex" (C), "high-mannose" (M) "hybrid" (H) or "O-glycans" (O).
+
+If you selected the default protein in the previous step, you can use a default glycosylation pattern (Man5) on residues 463 and 492.
 """
 )
 
@@ -57,8 +58,9 @@ if button_col1.button("Add"):
 if button_col2.button("Remove"):
     app.rem_input_line(new_line)
 
-if button_col3.button("Use default set of input lines"):
+if button_col3.button("Add default glycosylation", help="By default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain"):
     app.clear_input_lines()
+    # Update to reflect the real names of glycans (?)
     default_input=[
         '#',
         f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_463.pdb {app.get_config()["output_dir"]}/A_463.xtc',
