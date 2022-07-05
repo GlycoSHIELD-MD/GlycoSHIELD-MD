@@ -32,14 +32,14 @@ CG (coarse-grained): graft a conformer if a distance between protein alpha carbo
 # Multi-column input
 but1,but2,but3=st.columns(3)
 with but1:
-    st.header("Set grafting mode")
+    #~ st.header("Set grafting mode")
     st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
 with but2:
-    st.header("Set grafting mode")
-    st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
+    #~ st.header("Set grafting cut-off (Angstrom)")
+    st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
 with but3:
-    st.header("Set grafting mode")
-    st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
+    #~ st.header("Set grafting mode")
+    st.text_input(label="Number of conformers for download in PDB format. Warning: can generate large files!",value="30")
 
 glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
 glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
