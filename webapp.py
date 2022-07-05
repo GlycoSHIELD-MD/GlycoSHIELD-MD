@@ -12,17 +12,16 @@ app.show_header(title="Welcome to the GlycoSHIELD web application!")
 
 st.markdown(
 """
-This application enables users to interactively try the GlycoSHIELD method and implementation.
-Users may upload their own PDB data file, alternatively a PDB dataset is provided for test purposes.
+This application enables users to graft glycan conformer arrays on specific amino-acids of a selected protein structure. 50 glycan types are currently available in the library.
 
-To use the GlycoSHIELD web application, navigate step-by-step through the pages accessible via the sidebar, starting from 1 and going to 5.
-Each page offers additional help texts that will guide you through the process.
 
-This web application exposes the GlycoSHIELD method and implementation as published in the following reference:
+To use the application, please navigate from step 1 to step 5 using the sidebar and follow instructions provided at each step.
 
-GlycoSHIELD, Matt Sikora, doi:xyz
+This application was developed as an open-access community resource and is maintained by Klaus Reuter, Matt Sikora and Cyril Hanus. Please support us by citing our work: 
+https://doi.org/10.1101/2021.08.04.455134 
 
-In case you're using the web application for your research please cite our publication.
+Full GlycoSHIELD source code as well as convenience scripts are available under: https://gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md/-/tree/refactoring
+
 """
 )
 
