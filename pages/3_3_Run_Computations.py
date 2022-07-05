@@ -24,9 +24,22 @@ glycostraj_progressbar_2 = st.progress(0)
 
 # Set the mode and threshold values, no of frames to download (could be put in a single line)
 st.markdown("""Set grafting mode:
+
 All (all atoms): graft a conformer if a distance between any of the protein and glycan atoms is larger than the cut-off
+
 CG (coarse-grained): graft a conformer if a distance between protein alpha carbons and glycan ring oxygens is larger than the cut-off. Recommended for large protein structures!
 """)
+# Multi-column input
+but1,but2,but3=st.columns(3)
+with but1:
+    st.header("Set grafting mode")
+    st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
+with but2:
+    st.header("Set grafting mode")
+    st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
+with but3:
+    st.header("Set grafting mode")
+    st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
 
 glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
 glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
