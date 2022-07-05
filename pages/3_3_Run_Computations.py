@@ -12,7 +12,7 @@ app.show_header(title="Run GlycoSHIELD", show_glycoshield_logo=False)
 
 st.markdown(
 """
-Graft glycans on residues at step 2. Select mode and distance cutoff below..."""
+Graft glycans on residues selected at Step 2. Select mode and distance cutoff below..."""
 )
 
 
@@ -23,13 +23,15 @@ glycostraj_progressbar_1 = st.progress(0)
 glycostraj_progressbar_2 = st.progress(0)
 
 # Set the mode and threshold values, no of frames to download (could be put in a single line)
-st.write("""Set grafting mode
-CG (coarse-grained): cut-off value defines maximal allowed distance between alpha carbons of amino acids and ring oxygens of glycans. This mode requires less calculation and may be used to mimic naturally occurring flexibility of the lateral chains of surface amino-acids. 
-AA (all atoms): cut-off value defines maximal allowed distance between all protein and sugar atoms.""")
-glycoshield_mode_str=st.selectbox(label="Set the mode for grafting",options=("CG","All"),index=0)
+st.markdown("""Set grafting mode:
+All (all atoms): graft a conformer if a distance between any of the protein and glycan atoms is larger than the cut-off
+CG (coarse-grained): graft a conformer if a distance between protein alpha carbons and glycan ring oxygens is larger than the cut-off. Recommended for large protein structures!
+""")
+
+glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
 glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
 glycoshield_threshold=float(glycoshield_threshold_str)
-glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for PDB download",value="30")
+glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for download in PDB format. Warning: can generate large files!",value="30")
 glycotraj_numpdbframes=int(glycotraj_numpdbframes_str)
 
 if st.button("Run glycoSHIELD ..."):
