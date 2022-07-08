@@ -7,6 +7,9 @@ st.set_page_config(
     page_title="GlycoSHIELD",
     layout="wide"
 )
+cfg = app.get_config()
+cfg['have_inputs']=False
+
 app.show_header(title="Select glycans", show_glycoshield_logo=False)
 
 st.markdown(
@@ -54,10 +57,12 @@ button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
 if button_col1.button("Add"):
     app.add_input_line(new_line)
+    cfg['have_inputs']=True
 
 if button_col2.button("Remove"):
     app.rem_input_line(new_line)
-
+    if len(app.get_input_lines())==0:
+       cfg['have_inputs']=False
 if button_col3.button("Add default glycosylation", help="By default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain"):
     app.clear_input_lines()
     # Update to reflect the real names of glycans (?)
@@ -68,14 +73,21 @@ if button_col3.button("Add default glycosylation", help="By default, we will app
     ]
     for line in default_input:
         app.add_input_line(line)
+        cfg['have_inputs']=True
 
 if button_col4.button("Clear all input lines"):
     app.clear_input_lines()
-
+    cfg['have_inputs']=False
+    
 inputs = "\n".join(app.get_input_lines())
 st.write('Current input lines')
 st.text(inputs)
 
 app.store_inputs(inputs)
+if cfg['have_inputs']:
+   
+   st.write("If happy with the input, please go to Step 3 on the left")
+else:
+   st.write("Select at least one residue and glycan type for grafting...")
 
 app.show_sidebar()

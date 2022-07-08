@@ -335,6 +335,44 @@ def visualize_sasa(pdb, height=800, width=1200):
         height=height
     )
 
+def visualize_sasa2(pdb, probe,height=800, width=1200):
+    from stmol import showmol
+    import py3Dmol
+    
+    #Get output for visualisation
+    cfg = get_config()
+    sasas=np.array(cfg["sasas"])
+    
+    with open(pdb, 'r') as fp:
+        data = fp.read()
+    view = py3Dmol.view(
+        data=data,
+        style={'cartoon': {'color': 'gray'}},
+        width=width,
+        height=height
+    )
+    probe=float(probe)
+
+    occupancy=sasas[sasas[:,4]==probe][0][5]
+    residues=sasas[sasas[:,4]==probe][0][0]
+    maxSASA=sasas[sasas[:,4]==probe][0][2]
+    
+    cut=10 # arbitrary for colormap displ.
+    sel_notocc = {'resi':residues[occupancy<1].tolist()} # Not accessible
+    sel_occ = {'resi':residues[occupancy>0].tolist()}
+    view.addSurface(py3Dmol.SAS,{'opacity':0.99,'color':'gray'},sel_notocc)
+    view.addSurface(py3Dmol.SAS,{'opacity':0.99,'colorscheme':{'prop':'b','gradient':'rwb','min':0,'max':cut}},sel_occ)
+    
+    #~ chA = {'chain': 'A', 'opacity':0.7} #, 'color':'white'}
+    #~ view.addSurface(py3Dmol.VDW, chA)
+    view.zoomTo()
+    view.setBackgroundColor('white')
+    showmol(
+        view,
+        width=width,
+        height=height
+    )
+
 
 def get_glycan_library_old():
     cfg = get_config()
