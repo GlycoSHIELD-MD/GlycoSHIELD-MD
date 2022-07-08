@@ -4,6 +4,7 @@ import base64
 import getpass
 import zipfile
 import pathlib
+import pandas as pd
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
@@ -169,7 +170,19 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
         threshold=threshold,
     )
     occ = gs.run(streamlit_progressbar=bar)
-    st.write(occ)
+    occn = []
+    # normalise to initial no of frames used for grafting
+    for aframe in occ:
+        occn.append([])
+        for isugar in range(len(aframe)):
+            occn[-1].append(aframe[isugar]/float(gs.initialsugarframes[isugar]))
+            #~ print(aframe[isugar],float(gs.initialsugarframes[isugar]))
+        #~ print(aframe)
+    # Capture and write down the occupancy for each site
+    df=pd.DataFrame(occn,columns=('{}:{}'.format(gs.chainlist[i],gs.reslist[i]) for i in range(len(occ[0]))))
+    
+    st.write('Glycan occupancy')
+    st.table(df)
     cfg["gs"] = gs
     cfg["occ"] = occ
     cfg["glycoshield_done"] = True

@@ -31,15 +31,12 @@ with but1:
     glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0,help="All (all atoms): graft a conformer if a distance between any of the protein and glycan atoms is larger than the cut-off; CG (coarse-grained): graft a conformer if a distance between protein alpha carbons and glycan ring oxygens is larger than the cut-off. Recommended for large protein structures!")
 with but2:
     #~ st.header("Set grafting cut-off (Angstrom)")
-    glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
+    glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5",help="All glycan conformers that come closer to the protein than this value will be removed")
 with but3:
     #~ st.header("Set grafting mode")
-    glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for download in PDB format",value="30",help="Warning: large number of conformers can generate huge files!")
+    glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for PDB download",value="30",help="Warning: large number of conformers can generate huge files!")
 
-#~ glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0)
-#~ glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5")
 glycoshield_threshold=float(glycoshield_threshold_str)
-#~ glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for download in PDB format. Warning: can generate large files!",value="30")
 glycotraj_numpdbframes=int(glycotraj_numpdbframes_str)
 
 if st.button("Run glycoSHIELD ..."):
