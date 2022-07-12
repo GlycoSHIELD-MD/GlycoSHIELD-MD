@@ -534,10 +534,13 @@ def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True, s
     # logos on top, MPI-BP twice as a placeholder
     if show_institute_logo:
         header_col1, header_col2, header_col3 = st.columns(3)
-        logo_image_style="width:192px;min_width:96px;vertical-align:middle;margin:24px 24px"
-        display_image(mpibp_logo, streamlit_handle=header_col1, image_style=logo_image_style)
-        display_image(inserm_logo, streamlit_handle=header_col2, image_style=logo_image_style)
-        display_image(mpcdf_logo, streamlit_handle=header_col3, image_style=logo_image_style)
+        logo_image_style="height:48px;vertical-align:middle;display:block;"
+        display_image(mpibp_logo, streamlit_handle=header_col1,
+            image_style=logo_image_style+"margin-left:24px;margin-right:auto;")
+        display_image(inserm_logo, streamlit_handle=header_col2,
+            image_style=logo_image_style+"margin-left:auto;margin-right:auto;")
+        display_image(mpcdf_logo, streamlit_handle=header_col3,
+            image_style=logo_image_style+"margin-left:auto;margin-right:24px;")
     st.title(title)
     if show_glycoshield_logo:
         display_image(glycoshield_logo_still, image_style=glyco_logo_image_style)
