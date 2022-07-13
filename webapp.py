@@ -8,7 +8,7 @@ st.set_page_config(
 # use the global state object to transfer state between the pages
 cfg = app.get_config()
 
-app.show_header(title="Welcome to the GlycoSHIELD web application!")
+app.show_header(title="Welcome to the GlycoSHIELD web application!", enable_institute_links=True)
 
 st.markdown(
 """

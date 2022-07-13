@@ -30,10 +30,10 @@ def init_config():
     cfg["work_dir"] = "webapp_work"
     cfg["output_dir"] = "webapp_output"
     cfg["pdb_input"] = ""
-    
+
     cfg["pdbtrajfile"] = "merged_traj_pdb.pdb"
-    cfg["pdbtrajfile_zip"] = cfg["pdbtrajfile"] + ".zip"    
-    
+    cfg["pdbtrajfile_zip"] = cfg["pdbtrajfile"] + ".zip"
+
     pathlib.Path(cfg["work_dir"]).mkdir(exist_ok=True)
     pathlib.Path(cfg["output_dir"]).mkdir(exist_ok=True)
     cfg["output_zip"] = cfg["output_dir"] + ".zip"
@@ -114,9 +114,9 @@ def zip_webapp_output():
         with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["output_zip"]), 'w',
                         compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
             zipdir(cfg["output_dir"], zip_fh)
-            
-            
-            
+
+
+
 def zip_pdb_trajectory():
     cfg = get_config()
     with zipfile.ZipFile(os.path.join(cfg["output_dir"], cfg["pdbtrajfile_zip"]), 'w',
@@ -135,7 +135,7 @@ def get_webapp_output_pdbtraj():
         data = ""
         size = 0
     return data, size
-   
+
 
 def get_webapp_output():
     cfg = get_config()
@@ -182,7 +182,7 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
         #~ print(aframe)
     # Capture and write down the occupancy for each site
     df=pd.DataFrame(occn,columns=('{}:{}'.format(gs.chainlist[i],gs.reslist[i]) for i in range(len(occ[0]))))
-    
+
     st.write('Glycan occupancy')
     st.table(df)
     cfg["gs"] = gs
@@ -211,7 +211,7 @@ def run_glycotraj(bar_1, bar_2,pdbtrajframes = 30):
     reslist = gs.reslist
     outname = os.path.join(path, "merged_traj")
     pdbtraj = os.path.join(path, cfg["pdbtrajfile"])
-    
+
     actual_pdbtrajframes = glycotraj(
         maxframe,
         outname,
@@ -341,11 +341,11 @@ def visualize_sasa(pdb, height=800, width=1200):
 def visualize_sasa2(pdb, probe,height=800, width=1200):
     from stmol import showmol
     import py3Dmol
-    
+
     #Get output for visualisation
     cfg = get_config()
     sasas=np.array(cfg["sasas"])
-    
+
     with open(pdb, 'r') as fp:
         data = fp.read()
     view = py3Dmol.view(
@@ -359,13 +359,13 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
     occupancy=sasas[sasas[:,4]==probe][0][5]
     residues=sasas[sasas[:,4]==probe][0][0]
     maxSASA=sasas[sasas[:,4]==probe][0][2]
-    
+
     cut=10 # arbitrary for colormap displ.
     sel_notocc = {'resi':residues[occupancy<1].tolist()} # Not accessible
     sel_occ = {'resi':residues[occupancy>0].tolist()}
     view.addSurface(py3Dmol.SAS,{'opacity':0.99,'color':'gray'},sel_notocc)
     view.addSurface(py3Dmol.SAS,{'opacity':0.99,'colorscheme':{'prop':'b','gradient':'rwb','min':0,'max':cut}},sel_occ)
-    
+
 
     view.zoomTo()
     view.setBackgroundColor('white')
@@ -377,7 +377,7 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
 
 class visPy3Dmol:
     def __init__(self, path="./tmp_files/"):
-        
+
         self.pdbfiles = []
         self.xtcfiles = []
         self.n_frames = []
@@ -402,15 +402,15 @@ class visPy3Dmol:
     def subsample(self):
         nfile = 0
         self.proteinfile=self.path + 'tmp_prot.pdb'
-        
+
         for (pdbfile, xtcfile, framecount) in zip(self.pdbfiles, self.xtcfiles, self.n_frames):
             self.resampledfiles.append([])
             u = mda.Universe(pdbfile, xtcfile)
             # Write only sugar traj and prot reference
             sugar = u.select_atoms('not protein')
             protein = u.select_atoms('protein')
-            
-            
+
+
             #~ with mda.Writer(resampledname, u.atoms.n_atoms) as W:
             iframe=0
             for ts in u.trajectory[:framecount]:
@@ -420,24 +420,24 @@ class visPy3Dmol:
                 iframe+=1
             if nfile == 0:
                 protein.write(self.proteinfile)
-                
+
             nfile += 1
-    
+
 
     def visualize_brushes(self,height=800, width=1200):
         from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
         from stmol import showmol
-        import py3Dmol    
+        import py3Dmol
         """
         Ideas:
-        1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files? 
-        2. load sugars independently, xyz file format supports multimodel, maybe the way to go. 
-        Alternatiuve : addModel for each sugar frame and each sugar? 
+        1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files?
+        2. load sugars independently, xyz file format supports multimodel, maybe the way to go.
+        Alternatiuve : addModel for each sugar frame and each sugar?
         https://mobile.twitter.com/david_koes/status/994891637217267712?lang=ca
         https://github.com/3dmol/3Dmol.js/issues/239
         Here they actually do it
         https://chem-workflows.com/articles/2021/10/15/2-virtual-screening/
-        
+
         3. Steal coloring options from the NGL version.
         """
         components = []
@@ -447,7 +447,7 @@ class visPy3Dmol:
             lg = linear_gradient(start_hex=self.startsugarcolor, finish_hex=self.endsugarcolor, n=len(self.n_frames))
             sugarcolor = lg['hex']
 
-        
+
         #Get output for visualisation
         cfg = get_config()
         view = py3Dmol.view(width=width,height=height)
@@ -462,36 +462,36 @@ class visPy3Dmol:
                 view.addModel(open(self.resampledfiles[isugar][iframe]).read(),format="pdb")
                 zzz=view.getModel()
                 zzz.setStyle({},{'stick':{'color': sugarcolor[isugar],'radius':0.1,'opacity':1.0}})
-        
+
         view.zoomTo()
         view.setBackgroundColor('white')
         showmol(
             view,
             width=width,
             height=height
-        )    
+        )
 
-    
+
 
 def visualize_brushes(pdb,height=100, width=100):
     #~ from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
     from stmol import showmol
-    import py3Dmol    
+    import py3Dmol
     """
     Ideas:
-    1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files? 
-    2. load sugars independently, xyz file format supports multimodel, maybe the way to go. 
-    Alternatiuve : addModel for each sugar frame and each sugar? 
+    1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files?
+    2. load sugars independently, xyz file format supports multimodel, maybe the way to go.
+    Alternatiuve : addModel for each sugar frame and each sugar?
     https://mobile.twitter.com/david_koes/status/994891637217267712?lang=ca
     https://github.com/3dmol/3Dmol.js/issues/239
     Here they actually do it
     https://chem-workflows.com/articles/2021/10/15/2-virtual-screening/
-    
+
     3. Steal coloring options from the NGL version.
     """
     #Get output for visualisation
     cfg = get_config()
-    
+
     with open(pdb, 'r') as fp:
         data = fp.read()
     view = py3Dmol.view(
@@ -507,9 +507,9 @@ def visualize_brushes(pdb,height=100, width=100):
         view,
         width=width,
         height=height
-    )    
-    
-        
+    )
+
+
 def get_glycan_library_old():
     cfg = get_config()
     # lib = {}
@@ -666,17 +666,30 @@ def clickable_image_html(image_label, image_data, image_type="png"):
             "</figure>"
     )
 
-def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True, show_glycoshield_logo=True):
-    # logos on top, MPI-BP twice as a placeholder
+def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True,
+                show_glycoshield_logo=True, enable_institute_links=False):
     if show_institute_logo:
+        if enable_institute_links:
+            href={
+                "mpibp": "https://www.biophys.mpg.de/",
+                "inserm": "https://www.inserm.fr/",
+                "mpcdf": "https://www.mpcdf.mpg.de/"
+            }
+        else:
+            href={
+                "mpibp": None, "inserm": None, "mpcdf": None
+            }
         header_col1, header_col2, header_col3 = st.columns(3)
         logo_image_style="height:48px;vertical-align:middle;display:block;"
         display_image(mpibp_logo, streamlit_handle=header_col1,
-            image_style=logo_image_style+"margin-left:24px;margin-right:auto;")
+            image_style=logo_image_style+"margin-left:24px;margin-right:auto;",
+            href=href["mpibp"])
         display_image(inserm_logo, streamlit_handle=header_col2,
-            image_style=logo_image_style+"margin-left:auto;margin-right:auto;")
+            image_style=logo_image_style+"margin-left:auto;margin-right:auto;",
+            href=href["inserm"])
         display_image(mpcdf_logo, streamlit_handle=header_col3,
-            image_style=logo_image_style+"margin-left:auto;margin-right:24px;")
+            image_style=logo_image_style+"margin-left:auto;margin-right:24px;",
+            href=href["mpcdf"])
     st.title(title)
     if show_glycoshield_logo:
         display_image(glycoshield_logo_still, image_style=glyco_logo_image_style)
@@ -693,4 +706,3 @@ def show_sidebar():
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
             display_image(image_file="webapp/tutorial-button.png", href=notebook_url, image_style="height:32px;")
-
