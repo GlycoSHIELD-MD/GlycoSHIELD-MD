@@ -5,8 +5,9 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd ${SCRIPT_DIR}
 
-streamlit run Welcome.py \
+streamlit run \
     --server.headless true \
     --browser.gatherUsageStats false \
-    --browser.serverAddress "127.0.0.1" \
+    --browser.serverAddress "127.0.0.1" "$@" \
     Welcome.py
+
