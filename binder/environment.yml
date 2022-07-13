@@ -20,7 +20,7 @@ dependencies:
   - jupyterlab
   - nglview
   - ipywidgets
-  # support for streamlit, the following combination of click and streamlit appears to work (to be checked in the future)
+  # support for streamlit and the jupyter proxy
   - streamlit=1.10.0
   - jupyter-server-proxy
   # support for documentation creation
