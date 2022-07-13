@@ -556,4 +556,5 @@ def show_sidebar():
                 quit_binder_webapp()
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
-            display_image(image_file="webapp/glycoshield-tutorial.png", href=notebook_url)
+            display_image(image_file="webapp/tutorial-button.png", href=notebook_url, image_style="height=32px")
+
