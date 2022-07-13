@@ -27,19 +27,19 @@ if app.webapp_output_ready():
     data_pdb, size_pdb = app.get_webapp_output_pdbtraj()
     st.download_button(
         label=f"Download zipped pdb file ({size_pdb:.1f} MB)",
-        help="Download the zipped multi-model pdb file containing protein and multiple glycan conformers.",
+        help="Download the zipped multi-model pdb file containing the protein and multiple glycan conformers.",
         data=data_pdb,
         file_name=app.get_config()["pdbtrajfile_zip"],
         mime="application/zip"
     )
     # optionally offer the potentially very large full output
     if st.button("Create zip file with full GlycoSHIELD output ...",
-                 help="Create a zip file with the full output and offer it for download. This may take a while ..."):
+                 help="Create a zip file with the full output and offer it for download. Zipping may take a while ..."):
         app.zip_webapp_output()
         data, size = app.get_webapp_output()
         st.download_button(
-            label=f"Download zip file ({size:.1f} MB)",
-            help="Download the output data as a zip file.",
+            label=f"Download zip file with full GlycoSHIELD output ({size:.1f} MB)",
+            help="Download the complete output data as a zip file.",
             data=data,
             file_name=app.get_config()["output_zip"],
             mime="application/zip"
