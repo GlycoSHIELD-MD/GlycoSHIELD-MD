@@ -21,26 +21,29 @@ The glycan conformers can be visualised using the standard visualisation tools, 
 """)
 
 
-if cfg["have_sasa"]:
-    # Treat pdb trajectory separately
+if app.webapp_output_ready():
+    # always offer the comparably small PDB trajectory
     app.zip_pdb_trajectory()
     data_pdb, size_pdb = app.get_webapp_output_pdbtraj()
     st.download_button(
-        label=f"Download pdb file containing protein and multiple glycan conformers ({size_pdb:.1f} MB)",
-        help="Download the zipped multi-model pdb file.",
+        label=f"Download zipped pdb file ({size_pdb:.1f} MB)",
+        help="Download the zipped multi-model pdb file containing protein and multiple glycan conformers.",
         data=data_pdb,
         file_name=app.get_config()["pdbtrajfile_zip"],
         mime="application/zip"
     )
-    app.zip_webapp_output()
-    data, size = app.get_webapp_output()
-    st.download_button(
-        label=f"Download zip file ({size:.1f} MB)",
-        help="Download the output data as a Zip file.",
-        data=data,
-        file_name=app.get_config()["output_zip"],
-        mime="application/zip"
-    )
+    # optionally offer the potentially very large full output
+    if st.button("Create zip file with full GlycoSHIELD output ...",
+                 help="Create a zip file with the full output and offer it for download. This may take a while ..."):
+        app.zip_webapp_output()
+        data, size = app.get_webapp_output()
+        st.download_button(
+            label=f"Download zip file ({size:.1f} MB)",
+            help="Download the output data as a zip file.",
+            data=data,
+            file_name=app.get_config()["output_zip"],
+            mime="application/zip"
+        )
 else:
     st.markdown("**Note**: Please perform steps 1 to 4 first in order to produce results for download.")
 
