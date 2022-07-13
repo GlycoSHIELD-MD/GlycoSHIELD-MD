@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Launch the streamlit-based webapp, either locally on your computer
-# or automatically on binder via https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy
+# Launch the streamlit-based webapp, either locally on your computer or automatically
+# on binder via https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy
 
 streamlit run Welcome.py \
     --server.headless true \
