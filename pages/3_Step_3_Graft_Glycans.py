@@ -1,5 +1,7 @@
 import streamlit as st
 import glycoshield.app as app
+import os
+
 
 st.set_page_config(
     page_title="GlycoSHIELD",
@@ -47,5 +49,24 @@ if st.button("Run glycoSHIELD ..."):
 app.check_glycoshield(glycoshield_progressbar)
 app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
+
+if cfg["glycotraj_done"]:
+        VIS=app.visPy3Dmol(app.get_config()["output_dir"]+"/")
+        chainlist=cfg["gs"].chainlist
+        reslist=cfg["gs"].reslist
+        actual_pdbtrajframes = cfg["glycotraj_actualpdbtrajframes"]
+        # Parameters for vis (can we make it dynamic?)
+        height=400
+        width=600
+
+        for (chain,resid) in zip(chainlist,reslist):
+            VIS.add_sugar(app.get_config()["output_dir"]+'/{}_{}.pdb'.format(chain,resid),
+            app.get_config()["output_dir"]+'/{}_{}.xtc'.format(chain,resid),
+            actual_pdbtrajframes)
+        VIS.subsample()
+        VIS.visualize_brushes(height,width)
+
+else:
+        st.write("You need to run GlycoSHIELD before you can see the visualization.")
 
 app.show_sidebar()

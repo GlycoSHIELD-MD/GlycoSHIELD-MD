@@ -160,6 +160,7 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
+    skip=1
     gs = glycoshield(
         protpdb=cfg["pdb_input"],
         protxtc=None,
@@ -168,6 +169,7 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
         pdbtrajframes=pdbtrajframes,
         mode=mode,
         threshold=threshold,
+        skip=skip # DEBUG
     )
     occ = gs.run(streamlit_progressbar=bar)
     occn = []
@@ -210,7 +212,7 @@ def run_glycotraj(bar_1, bar_2,pdbtrajframes = 30):
     outname = os.path.join(path, "merged_traj")
     pdbtraj = os.path.join(path, cfg["pdbtrajfile"])
     
-    glycotraj(
+    actual_pdbtrajframes = glycotraj(
         maxframe,
         outname,
         pdblist,
@@ -223,6 +225,7 @@ def run_glycotraj(bar_1, bar_2,pdbtrajframes = 30):
         streamlit_progressbar_1=bar_1,
         streamlit_progressbar_2=bar_2,
     )
+    cfg["glycotraj_actualpdbtrajframes"] = actual_pdbtrajframes
     cfg["glycotraj_done"] = True
 
 
@@ -363,8 +366,7 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
     view.addSurface(py3Dmol.SAS,{'opacity':0.99,'color':'gray'},sel_notocc)
     view.addSurface(py3Dmol.SAS,{'opacity':0.99,'colorscheme':{'prop':'b','gradient':'rwb','min':0,'max':cut}},sel_occ)
     
-    #~ chA = {'chain': 'A', 'opacity':0.7} #, 'color':'white'}
-    #~ view.addSurface(py3Dmol.VDW, chA)
+
     view.zoomTo()
     view.setBackgroundColor('white')
     showmol(
@@ -373,7 +375,141 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
         height=height
     )
 
+class visPy3Dmol:
+    def __init__(self, path="./tmp_files/"):
+        
+        self.pdbfiles = []
+        self.xtcfiles = []
+        self.n_frames = []
+        self.resampledfiles=[]
+        self.sugarcolors = []
+        self.path = path
+        # Def protein and sugar colors
+        self.proteincolor = "#aec1b0"
 
+        self.startsugarcolor = "#009392"
+        self.endsugarcolor = "#d0587e"
+
+    def add_sugar(self, pdbfile, xtcfile, n_frames, color=None):
+        # Can accept sugar color (hex)
+        # assumes user will not change her/his mind and only def color of one sugar...
+        self.pdbfiles.append(pdbfile)
+        self.xtcfiles.append(xtcfile)
+        self.n_frames.append(n_frames)
+        if color is not None:
+            self.sugarcolors.append(color)
+
+    def subsample(self):
+        nfile = 0
+        self.proteinfile=self.path + 'tmp_prot.pdb'
+        
+        for (pdbfile, xtcfile, framecount) in zip(self.pdbfiles, self.xtcfiles, self.n_frames):
+            self.resampledfiles.append([])
+            u = mda.Universe(pdbfile, xtcfile)
+            # Write only sugar traj and prot reference
+            sugar = u.select_atoms('not protein')
+            protein = u.select_atoms('protein')
+            
+            
+            #~ with mda.Writer(resampledname, u.atoms.n_atoms) as W:
+            iframe=0
+            for ts in u.trajectory[:framecount]:
+                resampledname=self.path + "tmp_{}_{}.pdb".format(nfile,iframe)
+                self.resampledfiles[nfile].append(resampledname)
+                sugar.write(resampledname)
+                iframe+=1
+            if nfile == 0:
+                protein.write(self.proteinfile)
+                
+            nfile += 1
+    
+
+    def visualize_brushes(self,height=800, width=1200):
+        from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
+        from stmol import showmol
+        import py3Dmol    
+        """
+        Ideas:
+        1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files? 
+        2. load sugars independently, xyz file format supports multimodel, maybe the way to go. 
+        Alternatiuve : addModel for each sugar frame and each sugar? 
+        https://mobile.twitter.com/david_koes/status/994891637217267712?lang=ca
+        https://github.com/3dmol/3Dmol.js/issues/239
+        Here they actually do it
+        https://chem-workflows.com/articles/2021/10/15/2-virtual-screening/
+        
+        3. Steal coloring options from the NGL version.
+        """
+        components = []
+        # Define colors
+        if len(self.sugarcolors) != len(self.n_frames):
+            # By now we know how many sugar types there are, so we can generate sugar colors,unless user provided colors
+            lg = linear_gradient(start_hex=self.startsugarcolor, finish_hex=self.endsugarcolor, n=len(self.n_frames))
+            sugarcolor = lg['hex']
+
+        
+        #Get output for visualisation
+        cfg = get_config()
+        view = py3Dmol.view(width=width,height=height)
+        view.removeAllModels()
+        #~ view.setViewStyle({'style':'outline','color':'black','width':0.0})
+        view.addModel(open(self.proteinfile,'r').read(),format='pdb')
+        Prot=view.getModel()
+        Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+
+        for isugar in range(len(self.n_frames)):
+            for iframe in range(self.n_frames[isugar]):
+                view.addModel(open(self.resampledfiles[isugar][iframe]).read(),format="pdb")
+                zzz=view.getModel()
+                zzz.setStyle({},{'stick':{'color': sugarcolor[isugar],'radius':0.1,'opacity':1.0}})
+        
+        view.zoomTo()
+        view.setBackgroundColor('white')
+        showmol(
+            view,
+            width=width,
+            height=height
+        )    
+
+    
+
+def visualize_brushes(pdb,height=100, width=100):
+    #~ from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
+    from stmol import showmol
+    import py3Dmol    
+    """
+    Ideas:
+    1. split pdb to protein and sugars (check how it was done with nglview). We could even directly read the A_XXX, B_XXx files? 
+    2. load sugars independently, xyz file format supports multimodel, maybe the way to go. 
+    Alternatiuve : addModel for each sugar frame and each sugar? 
+    https://mobile.twitter.com/david_koes/status/994891637217267712?lang=ca
+    https://github.com/3dmol/3Dmol.js/issues/239
+    Here they actually do it
+    https://chem-workflows.com/articles/2021/10/15/2-virtual-screening/
+    
+    3. Steal coloring options from the NGL version.
+    """
+    #Get output for visualisation
+    cfg = get_config()
+    
+    with open(pdb, 'r') as fp:
+        data = fp.read()
+    view = py3Dmol.view(
+        data=data,
+        style={'cartoon': {'color': 'gray'}},
+        width=width,
+        height=height
+    )
+
+    view.zoomTo()
+    view.setBackgroundColor('white')
+    showmol(
+        view,
+        width=width,
+        height=height
+    )    
+    
+        
 def get_glycan_library_old():
     cfg = get_config()
     # lib = {}

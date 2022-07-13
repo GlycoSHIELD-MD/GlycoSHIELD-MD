@@ -326,6 +326,8 @@ def write_pdb_trajectory(universe, pdbtraj, pdbtrajframes):
     with mda.Writer(pdbtraj, n_atoms=universe.atoms.n_atoms) as w:
         for tp in universe.trajectory[:pdbtrajframes]:
             w.write(universe.atoms)
+    # return actual number of frames in pdb trajectory 
+    return pdbtrajframes
 
 
 def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=None, pdbtrajframes=0, path="./",
@@ -442,11 +444,11 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     # pdb trajectory (LARGE).
     if pdbtraj is not None:
-        write_pdb_trajectory(u2, pdbtraj, pdbtrajframes)
+        actual_pdbtrajframes = write_pdb_trajectory(u2, pdbtraj, pdbtrajframes)
 
     # Save a reference
     u2.atoms.write(outname + '.pdb')
-
+    return actual_pdbtrajframes
 
 def get_SASA(pdbname, xtcname, index, groupname, selectgroups, outfile, outfileres, outfileatom, probe, ndots, maxframe):
     """
