@@ -5,6 +5,9 @@ st.set_page_config(
     page_title="GlycoSHIELD",
     layout="wide"
 )
+# use the global state object to transfer state between the pages
+cfg = app.get_config()
+
 app.show_header(title="Download Output", show_glycoshield_logo=False)
 st.markdown("""
 You can download the multimodel file with the selected number of glycan conformers or the zipped folder containing a full GlycoSHIELD run output.
@@ -17,25 +20,28 @@ The glycan conformers can be visualised using the standard visualisation tools, 
    There, in the "Draw Multiple Frames" field put ```1:1:X``` where X is the total number of conformers you would like to see.
 """)
 
-# Treat pdb trajectory separately
-app.zip_pdb_trajectory()
-data_pdb, size_pdb = app.get_webapp_output_pdbtraj()
-st.download_button(
-    label=f"Download pdb file containing protein and multiple glycan conformers ({size_pdb:.1f} MB)",
-    help="Download the zipped multi-model pdb file.",
-    data=data_pdb,
-    file_name=app.get_config()["pdbtrajfile_zip"],
-    mime="application/zip"
-)
 
-app.zip_webapp_output()
-data, size = app.get_webapp_output()
-st.download_button(
-    label=f"Download zip file ({size:.1f} MB)",
-    help="Download the output data as a Zip file.",
-    data=data,
-    file_name=app.get_config()["output_zip"],
-    mime="application/zip"
-)
+if cfg["have_sasa"]:
+    # Treat pdb trajectory separately
+    app.zip_pdb_trajectory()
+    data_pdb, size_pdb = app.get_webapp_output_pdbtraj()
+    st.download_button(
+        label=f"Download pdb file containing protein and multiple glycan conformers ({size_pdb:.1f} MB)",
+        help="Download the zipped multi-model pdb file.",
+        data=data_pdb,
+        file_name=app.get_config()["pdbtrajfile_zip"],
+        mime="application/zip"
+    )
+    app.zip_webapp_output()
+    data, size = app.get_webapp_output()
+    st.download_button(
+        label=f"Download zip file ({size:.1f} MB)",
+        help="Download the output data as a Zip file.",
+        data=data,
+        file_name=app.get_config()["output_zip"],
+        mime="application/zip"
+    )
+else:
+    st.markdown("**Note**: Please perform steps 1 to 4 first in order to produce results for download.")
 
 app.show_sidebar()
