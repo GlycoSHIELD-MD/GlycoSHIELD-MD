@@ -36,7 +36,7 @@ if cfg["have_sasa"]:
         index=0
     )
     st.image(os.path.join(app.get_config()["output_dir"], f"ResidueSASA_probe_{probe}.png"))
-    app.visualize_sasa2(
+    app.visualize_sasa(
         os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
         probe
     )

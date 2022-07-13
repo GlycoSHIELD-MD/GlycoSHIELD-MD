@@ -279,67 +279,7 @@ def check_glycosasa(bar):
     return cfg["glycosasa_done"]
 
 
-def visualize(pdb_list):
-    from stmol import showmol
-    import py3Dmol
-    view = py3Dmol.view()
-    # view = py3Dmol.view(query="mmtf:1ycr")
-    for pdb in pdb_list:
-        view.addModel(open(pdb, 'r').read(), 'pdb')
-    view.setStyle({'cartoon': {'color': 'spectrum'}})
-    view.zoomTo()
-    view.setBackgroundColor('white')
-    showmol(view, height=400, width=600)
-
-
-def visualize_test(pdb):
-    from stmol import showmol
-    import py3Dmol
-    # view = py3Dmol.view()
-    # view = py3Dmol.view(query="mmtf:1ycr")
-    # for pdb in pdb_list:
-    # view.addModel(open(pdb, 'r').read(), 'pdb')
-    # view.setStyle(chA, {'cartoon': {'color': 'spectrum'}})
-
-    with open(pdb, 'r') as fp:
-        data = fp.read()
-    view = py3Dmol.view(
-        data=data,
-        style={'stick': {'colorscheme': 'greenCarbon'}},
-        # style={'cartoon': {'color': 'spectrum'}},
-        # query="chain:B"
-    )
-    chA = {'chain': 'A', 'opacity': 0.7, 'color': 'white'}
-
-    view.addSurface(py3Dmol.VDW, chA)
-    view.zoomTo()
-    view.setBackgroundColor('white')
-    showmol(view, height=800, width=800)
-
-
-def visualize_sasa(pdb, height=800, width=1200):
-    from stmol import showmol
-    import py3Dmol
-    with open(pdb, 'r') as fp:
-        data = fp.read()
-    view = py3Dmol.view(
-        data=data,
-        style={'stick': {'colorscheme': 'greenCarbon'}},
-        width=width,
-        height=height
-    )
-    chA = {'chain': 'A', 'opacity': 0.7}  # , 'color':'white'}
-    view.addSurface(py3Dmol.VDW, chA)
-    view.zoomTo()
-    view.setBackgroundColor('white')
-    showmol(
-        view,
-        width=width,
-        height=height
-    )
-
-
-def visualize_sasa2(pdb, probe, height=800, width=1200):
+def visualize_sasa(pdb, probe, height=800, width=1200):
     from stmol import showmol
     import py3Dmol
 

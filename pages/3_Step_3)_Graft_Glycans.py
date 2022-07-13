@@ -55,8 +55,8 @@ if cfg["glycotraj_done"]:
     reslist = cfg["gs"].reslist
     actual_pdbtrajframes = cfg["glycotraj_actualpdbtrajframes"]
     # Parameters for vis (can we make it dynamic?)
-    height = 400
-    width = 600
+    width = 1200
+    height = 800
 
     for (chain, resid) in zip(chainlist, reslist):
         VIS.add_sugar(app.get_config()["output_dir"] + '/{}_{}.pdb'.format(chain, resid),
