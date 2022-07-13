@@ -13,8 +13,7 @@ cfg = app.get_config()
 app.show_header(title="Run GlycoSHIELD", show_glycoshield_logo=False)
 
 st.markdown(
-"""
-Graft glycans on residues selected at Step 2. Select mode and distance cutoff below..."""
+    "Graft glycans on the residues selected at Step 2. Select mode and distance cutoff below."
 )
 
 
@@ -33,7 +32,7 @@ with but1:
     glycoshield_mode_str=st.selectbox(label="Set grafting mode",options=("CG","All"),index=0,help="All (all atoms): graft a conformer if a distance between any of the protein and glycan atoms is larger than the cut-off; CG (coarse-grained): graft a conformer if a distance between protein alpha carbons and glycan ring oxygens is larger than the cut-off. Recommended for large protein structures!")
 with but2:
     #~ st.header("Set grafting cut-off (Angstrom)")
-    glycoshield_threshold_str=st.text_input(label="Set the grafting cutoff (Angstrom)",value="3.5",help="All glycan conformers that come closer to the protein than this value will be removed")
+    glycoshield_threshold_str=st.text_input(label="Set grafting cutoff (Angstrom)",value="3.5",help="All glycan conformers that come closer to the protein than this value will be removed")
 with but3:
     #~ st.header("Set grafting mode")
     glycotraj_numpdbframes_str=st.text_input(label="Number of conformers for PDB download",value="30",help="Warning: large number of conformers can generate huge files!")

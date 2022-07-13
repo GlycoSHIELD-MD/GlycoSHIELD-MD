@@ -14,10 +14,10 @@ app.show_header(title="Select glycans", show_glycoshield_logo=False)
 
 st.markdown(
 """
-To create GlycoSHIELD input, for each glycosylation site please define protein chain, residue number and glycan type and add to PDB file using the "Add" button at the bottom of the page. 
-N and O-glycans available in the GlycoSHIELD library are listed as "complex" (C), "high-mannose" (M) "hybrid" (H) or "O-glycans" (O).
+To create GlycoSHIELD input, please define the protein chain, residue number and glycan type for each glycosylation site and add it to a PDB file using the "Add" button at the bottom of the page.
+N and O-glycans available in the GlycoSHIELD library are listed as "complex" (C), "high-mannose" (M), "hybrid" (H), or "O-glycans" (O).
 
-If you selected the default protein in the previous step, you can use a default glycosylation pattern (Man5) on residues 463 and 492.
+If you selected the default protein in the previous step, you can use a default glycosylation pattern (Man5) on the residues 463 and 492.
 """
 )
 
@@ -78,14 +78,14 @@ if button_col3.button("Add default glycosylation", help="By default, we will app
 if button_col4.button("Clear all input lines"):
     app.clear_input_lines()
     cfg['have_inputs']=False
-    
+
 inputs = "\n".join(app.get_input_lines())
 st.write('Current input lines')
 st.text(inputs)
 
 app.store_inputs(inputs)
 if cfg['have_inputs']:
-   
+
    st.write("If happy with the input, please go to Step 3 on the left")
 else:
    st.write("Select at least one residue and glycan type for grafting...")

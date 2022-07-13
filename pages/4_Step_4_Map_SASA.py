@@ -12,10 +12,8 @@ cfg = app.get_config()
 app.show_header(title="Run SASA", show_glycoshield_logo=False)
 
 st.markdown(
-"""
-Map the Solvent Accessible Surface Area Reduction on the protein. Select SASA probe radii below..."""
+    "Map the Solvent Accessible Surface Area Reduction on the protein. Select SASA probe radii below."
 )
-
 
 progress_image_obj = st.empty()
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
@@ -43,6 +41,6 @@ if cfg["have_sasa"]:
         probe
     )
 else:
-    st.write("You need to run SASA calculation before you can see the visualization.")
+    st.write("You need to run the SASA calculation before you can see the visualization.")
 
 app.show_sidebar()

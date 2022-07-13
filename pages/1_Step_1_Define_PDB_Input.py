@@ -16,8 +16,8 @@ if not cfg["have_input"]:
     app.use_default_input()
 
 st.write(
-    "Upload protein structure in Protein Data Bank (PDB) format using the uploader below. "
-    f"As a default, IG-domain of Mouse N-cadherin is used (EC5, PDBid 3Q2W)"
+    "Upload a protein structure in Protein Data Bank (PDB) format using the uploader below. "
+    "As a default, the IG-domain of Mouse N-cadherin is used (EC5, PDBid 3Q2W)."
 )
 
 uploaded_file = st.file_uploader(
@@ -36,8 +36,8 @@ if st.button("Use default protein", help="Use the 5th IG-domain of Mouse N-cadhe
 
 if cfg["clicked_file"]==True:
   st.write("PDB file ready, please go to Step 2 on the left")
-   
+
 else:
     st.write("Please upload a file or select the default...")
-   
+
 app.show_sidebar()
