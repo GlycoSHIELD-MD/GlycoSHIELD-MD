@@ -11,7 +11,7 @@ cfg = app.get_config()
 app.show_header(title="Welcome to the GlycoSHIELD web application!", enable_institute_links=True)
 
 st.markdown(
-"""
+    """
 This application enables users to graft glycan conformer arrays on specific amino-acids of a selected protein structure.
 50 glycan types are currently available in the library.
 

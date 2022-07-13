@@ -55,7 +55,7 @@ def get_config():
 
 def reset_webapp():
     cfg = get_config()
-    remove_files = glob.glob(cfg["work_dir"]+"/*") + glob.glob(cfg["output_dir"]+"/*")
+    remove_files = glob.glob(cfg["work_dir"] + "/*") + glob.glob(cfg["output_dir"] + "/*")
     for file in remove_files:
         os.unlink(file)
     init_config()
@@ -107,21 +107,21 @@ def zip_webapp_output():
                     os.path.join(root, file),
                     os.path.relpath(os.path.join(root, file),
                                     os.path.join(path, '..')
-                    )
+                                    )
                 )
     cfg = get_config()
     if webapp_output_ready():
         with zipfile.ZipFile(os.path.join(cfg["work_dir"], cfg["output_zip"]), 'w',
-                        compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
+                             compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
             zipdir(cfg["output_dir"], zip_fh)
-
 
 
 def zip_pdb_trajectory():
     cfg = get_config()
     with zipfile.ZipFile(os.path.join(cfg["output_dir"], cfg["pdbtrajfile_zip"]), 'w',
-                        compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
-       zip_fh.write(os.path.join(cfg["output_dir"],cfg["pdbtrajfile"]))
+                         compression=zipfile.ZIP_DEFLATED, compresslevel=1) as zip_fh:
+        zip_fh.write(os.path.join(cfg["output_dir"], cfg["pdbtrajfile"]))
+
 
 def get_webapp_output_pdbtraj():
     # Here implement a function to download just the multiframe pdb file
@@ -156,11 +156,11 @@ def store_inputs(inputs):
         f.write(inputs)
 
 
-def run_glycoshield(bar,mode="CG",threshold=3.5):
+def run_glycoshield(bar, mode="CG", threshold=3.5):
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
-    skip=1
+    skip = 1
     gs = glycoshield(
         protpdb=cfg["pdb_input"],
         protxtc=None,
@@ -169,7 +169,7 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
         pdbtrajframes=pdbtrajframes,
         mode=mode,
         threshold=threshold,
-        skip=skip # DEBUG
+        skip=skip  # DEBUG
     )
     occ = gs.run(streamlit_progressbar=bar)
     occn = []
@@ -177,11 +177,11 @@ def run_glycoshield(bar,mode="CG",threshold=3.5):
     for aframe in occ:
         occn.append([])
         for isugar in range(len(aframe)):
-            occn[-1].append(aframe[isugar]/float(gs.initialsugarframes[isugar]))
+            occn[-1].append(aframe[isugar] / float(gs.initialsugarframes[isugar]))
             #~ print(aframe[isugar],float(gs.initialsugarframes[isugar]))
         #~ print(aframe)
     # Capture and write down the occupancy for each site
-    df=pd.DataFrame(occn,columns=('{}:{}'.format(gs.chainlist[i],gs.reslist[i]) for i in range(len(occ[0]))))
+    df = pd.DataFrame(occn, columns=('{}:{}'.format(gs.chainlist[i], gs.reslist[i]) for i in range(len(occ[0]))))
 
     st.write('Glycan occupancy')
     st.table(df)
@@ -199,7 +199,7 @@ def check_glycoshield(bar=None):
     return cfg["glycoshield_done"]
 
 
-def run_glycotraj(bar_1, bar_2,pdbtrajframes = 30):
+def run_glycotraj(bar_1, bar_2, pdbtrajframes=30):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -239,7 +239,7 @@ def check_glycotraj(bar_1=None, bar_2=None):
             bar_2.progress(1.0)
 
 
-def run_glycosasa(streamlit_progressbar=None, probelist=[0.14,0.70]):
+def run_glycosasa(streamlit_progressbar=None, probelist=[0.14, 0.70]):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -298,7 +298,7 @@ def visualize_test(pdb):
     # view = py3Dmol.view()
     # view = py3Dmol.view(query="mmtf:1ycr")
     # for pdb in pdb_list:
-        # view.addModel(open(pdb, 'r').read(), 'pdb')
+    # view.addModel(open(pdb, 'r').read(), 'pdb')
     # view.setStyle(chA, {'cartoon': {'color': 'spectrum'}})
 
     with open(pdb, 'r') as fp:
@@ -309,7 +309,7 @@ def visualize_test(pdb):
         # style={'cartoon': {'color': 'spectrum'}},
         # query="chain:B"
     )
-    chA = {'chain': 'A', 'opacity':0.7, 'color':'white'}
+    chA = {'chain': 'A', 'opacity': 0.7, 'color': 'white'}
 
     view.addSurface(py3Dmol.VDW, chA)
     view.zoomTo()
@@ -328,7 +328,7 @@ def visualize_sasa(pdb, height=800, width=1200):
         width=width,
         height=height
     )
-    chA = {'chain': 'A', 'opacity':0.7} #, 'color':'white'}
+    chA = {'chain': 'A', 'opacity': 0.7}  # , 'color':'white'}
     view.addSurface(py3Dmol.VDW, chA)
     view.zoomTo()
     view.setBackgroundColor('white')
@@ -338,13 +338,14 @@ def visualize_sasa(pdb, height=800, width=1200):
         height=height
     )
 
-def visualize_sasa2(pdb, probe,height=800, width=1200):
+
+def visualize_sasa2(pdb, probe, height=800, width=1200):
     from stmol import showmol
     import py3Dmol
 
-    #Get output for visualisation
+    # Get output for visualisation
     cfg = get_config()
-    sasas=np.array(cfg["sasas"])
+    sasas = np.array(cfg["sasas"])
 
     with open(pdb, 'r') as fp:
         data = fp.read()
@@ -354,18 +355,17 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
         width=width,
         height=height
     )
-    probe=float(probe)
+    probe = float(probe)
 
-    occupancy=sasas[sasas[:,4]==probe][0][5]
-    residues=sasas[sasas[:,4]==probe][0][0]
-    maxSASA=sasas[sasas[:,4]==probe][0][2]
+    occupancy = sasas[sasas[:, 4] == probe][0][5]
+    residues = sasas[sasas[:, 4] == probe][0][0]
+    maxSASA = sasas[sasas[:, 4] == probe][0][2]
 
-    cut=10 # arbitrary for colormap displ.
-    sel_notocc = {'resi':residues[occupancy<1].tolist()} # Not accessible
-    sel_occ = {'resi':residues[occupancy>0].tolist()}
-    view.addSurface(py3Dmol.SAS,{'opacity':0.99,'color':'gray'},sel_notocc)
-    view.addSurface(py3Dmol.SAS,{'opacity':0.99,'colorscheme':{'prop':'b','gradient':'rwb','min':0,'max':cut}},sel_occ)
-
+    cut = 10  # arbitrary for colormap displ.
+    sel_notocc = {'resi': residues[occupancy < 1].tolist()}  # Not accessible
+    sel_occ = {'resi': residues[occupancy > 0].tolist()}
+    view.addSurface(py3Dmol.SAS, {'opacity': 0.99, 'color': 'gray'}, sel_notocc)
+    view.addSurface(py3Dmol.SAS, {'opacity': 0.99, 'colorscheme': {'prop': 'b', 'gradient': 'rwb', 'min': 0, 'max': cut}}, sel_occ)
 
     view.zoomTo()
     view.setBackgroundColor('white')
@@ -375,13 +375,14 @@ def visualize_sasa2(pdb, probe,height=800, width=1200):
         height=height
     )
 
+
 class visPy3Dmol:
     def __init__(self, path="./tmp_files/"):
 
         self.pdbfiles = []
         self.xtcfiles = []
         self.n_frames = []
-        self.resampledfiles=[]
+        self.resampledfiles = []
         self.sugarcolors = []
         self.path = path
         # Def protein and sugar colors
@@ -401,7 +402,7 @@ class visPy3Dmol:
 
     def subsample(self):
         nfile = 0
-        self.proteinfile=self.path + 'tmp_prot.pdb'
+        self.proteinfile = self.path + 'tmp_prot.pdb'
 
         for (pdbfile, xtcfile, framecount) in zip(self.pdbfiles, self.xtcfiles, self.n_frames):
             self.resampledfiles.append([])
@@ -410,21 +411,19 @@ class visPy3Dmol:
             sugar = u.select_atoms('not protein')
             protein = u.select_atoms('protein')
 
-
-            #~ with mda.Writer(resampledname, u.atoms.n_atoms) as W:
-            iframe=0
+            # ~ with mda.Writer(resampledname, u.atoms.n_atoms) as W:
+            iframe = 0
             for ts in u.trajectory[:framecount]:
-                resampledname=self.path + "tmp_{}_{}.pdb".format(nfile,iframe)
+                resampledname = self.path + "tmp_{}_{}.pdb".format(nfile, iframe)
                 self.resampledfiles[nfile].append(resampledname)
                 sugar.write(resampledname)
-                iframe+=1
+                iframe += 1
             if nfile == 0:
                 protein.write(self.proteinfile)
 
             nfile += 1
 
-
-    def visualize_brushes(self,height=800, width=1200):
+    def visualize_brushes(self, height=800, width=1200):
         from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
         from stmol import showmol
         import py3Dmol
@@ -447,21 +446,20 @@ class visPy3Dmol:
             lg = linear_gradient(start_hex=self.startsugarcolor, finish_hex=self.endsugarcolor, n=len(self.n_frames))
             sugarcolor = lg['hex']
 
-
-        #Get output for visualisation
+        # Get output for visualisation
         cfg = get_config()
-        view = py3Dmol.view(width=width,height=height)
+        view = py3Dmol.view(width=width, height=height)
         view.removeAllModels()
         #~ view.setViewStyle({'style':'outline','color':'black','width':0.0})
-        view.addModel(open(self.proteinfile,'r').read(),format='pdb')
-        Prot=view.getModel()
-        Prot.setStyle({'cartoon':{'arrows':True, 'tubes':True, 'style':'oval', 'color':'white'}})
+        view.addModel(open(self.proteinfile, 'r').read(), format='pdb')
+        Prot = view.getModel()
+        Prot.setStyle({'cartoon': {'arrows': True, 'tubes': True, 'style': 'oval', 'color': 'white'}})
 
         for isugar in range(len(self.n_frames)):
             for iframe in range(self.n_frames[isugar]):
-                view.addModel(open(self.resampledfiles[isugar][iframe]).read(),format="pdb")
-                zzz=view.getModel()
-                zzz.setStyle({},{'stick':{'color': sugarcolor[isugar],'radius':0.1,'opacity':1.0}})
+                view.addModel(open(self.resampledfiles[isugar][iframe]).read(), format="pdb")
+                zzz = view.getModel()
+                zzz.setStyle({}, {'stick': {'color': sugarcolor[isugar], 'radius': 0.1, 'opacity': 1.0}})
 
         view.zoomTo()
         view.setBackgroundColor('white')
@@ -472,9 +470,8 @@ class visPy3Dmol:
         )
 
 
-
-def visualize_brushes(pdb,height=100, width=100):
-    #~ from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
+def visualize_brushes(pdb, height=100, width=100):
+    # ~ from .NGL import hex_to_RGB, RGB_to_hex, color_dict, linear_gradient
     from stmol import showmol
     import py3Dmol
     """
@@ -489,7 +486,7 @@ def visualize_brushes(pdb,height=100, width=100):
 
     3. Steal coloring options from the NGL version.
     """
-    #Get output for visualisation
+    # Get output for visualisation
     cfg = get_config()
 
     with open(pdb, 'r') as fp:
@@ -552,7 +549,7 @@ def get_glycan_clickable_image_html(glycan_lib, glycan_type, n_cols=4):
             clickable_image_html(image_label, image_data)
         )
     n_elem = len(html_figs)
-    n_per_col = n_elem//n_cols + 1
+    n_per_col = n_elem // n_cols + 1
     html = []
     html.append('<div class="container">')
     html.append('<div class="row">')
@@ -636,7 +633,7 @@ def display_image(image_file, streamlit_handle=st, image_style="", href=None):
     with open(image_file, "rb") as fp:
         _filename, extension = os.path.splitext(image_file)
         image_type = extension[1:]
-        assert(image_type in ('gif','png'))
+        assert(image_type in ('gif', 'png'))
         image_data = base64.b64encode(fp.read()).decode("utf-8")
         html = []
         if href is not None:
@@ -654,42 +651,43 @@ def load_image(image_file):
     with open(image_file, "rb") as fp:
         _filename, extension = os.path.splitext(image_file)
         image_type = extension[1:]
-        assert(image_type in ('gif','png'))
+        assert(image_type in ('gif', 'png'))
         image_data = base64.b64encode(fp.read()).decode("utf-8")
     return image_data
 
 
 def clickable_image_html(image_label, image_data, image_type="png"):
     return ("<figure>"
-           f"<a href='#' id='{image_label}'><img height='96px' src='data:image/{image_type};base64,{image_data}'></a>"
-           f"<figcaption>{image_label}</figcaption>"
+            f"<a href='#' id='{image_label}'><img height='96px' src='data:image/{image_type};base64,{image_data}'></a>"
+            f"<figcaption>{image_label}</figcaption>"
             "</figure>"
-    )
+            )
+
 
 def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True,
                 show_glycoshield_logo=True, enable_institute_links=False):
     if show_institute_logo:
         if enable_institute_links:
-            href={
+            href = {
                 "mpibp": "https://www.biophys.mpg.de/",
                 "inserm": "https://www.inserm.fr/",
                 "mpcdf": "https://www.mpcdf.mpg.de/"
             }
         else:
-            href={
+            href = {
                 "mpibp": None, "inserm": None, "mpcdf": None
             }
         header_col1, header_col2, header_col3 = st.columns(3)
-        logo_image_style="height:48px;vertical-align:middle;display:block;"
+        logo_image_style = "height:48px;vertical-align:middle;display:block;"
         display_image(mpibp_logo, streamlit_handle=header_col1,
-            image_style=logo_image_style+"margin-left:24px;margin-right:auto;",
-            href=href["mpibp"])
+                      image_style=logo_image_style + "margin-left:24px;margin-right:auto;",
+                      href=href["mpibp"])
         display_image(inserm_logo, streamlit_handle=header_col2,
-            image_style=logo_image_style+"margin-left:auto;margin-right:auto;",
-            href=href["inserm"])
+                      image_style=logo_image_style + "margin-left:auto;margin-right:auto;",
+                      href=href["inserm"])
         display_image(mpcdf_logo, streamlit_handle=header_col3,
-            image_style=logo_image_style+"margin-left:auto;margin-right:24px;",
-            href=href["mpcdf"])
+                      image_style=logo_image_style + "margin-left:auto;margin-right:24px;",
+                      href=href["mpcdf"])
     st.title(title)
     if show_glycoshield_logo:
         display_image(glycoshield_logo_still, image_style=glyco_logo_image_style)

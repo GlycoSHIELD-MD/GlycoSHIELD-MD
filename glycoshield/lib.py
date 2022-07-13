@@ -97,13 +97,13 @@ class glycoshield:
 
         # The chopping of the trajectory. 1 means take all frames, 10 means take every 10th frame
         self.skip = skip
-        
+
         # write down the initial no of frames for sugars prior to grafting
         self.initialsugarframes = [0 for i in self.inputlines]
 
     def _test_sequon(self, resids_on_protein, protchain):
         # test whether a sequon is in the 2:N-1 range
-        
+
         if resids_on_protein[1] >= sorted(self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids)[-1] or resids_on_protein[1] <= sorted(self.uprot.select_atoms('segid {}'.format(protchain)).residues.resids)[0]:
             raise BaseException("Selected sequon {},{},{} lies outside of the residues if the chain {}!\nGrafting on the first/last residues is not supported.".format(resids_on_protein[0], resids_on_protein[1], resids_on_protein[2], protchain))
 
@@ -122,18 +122,15 @@ class glycoshield:
             # counter for "entropy"
             occupancies = []
 
-            
-            
-            
             # Iterate over sugars:
-            isugar = 0 
+            isugar = 0
             for protchain, resids_on_protein, resids_on_sugar, sugarpdb, sugarxtc, pdbout, xtcout in self.inputlines:
                 # load sugar
                 self.usugar = mda.Universe(sugarpdb, sugarxtc, in_memory=True, in_memory_step=self.skip)
-                
+
                 # note number of frames
                 if self.initialsugarframes[isugar] == 0:
-                   self.initialsugarframes[isugar] = self.usugar.trajectory.n_frames
+                    self.initialsugarframes[isugar] = self.usugar.trajectory.n_frames
                 # select (part of) the protein that is connected to the sugar
                 tripep = self.usugar.select_atoms('protein and resid {} and name N CA CO'.format(" ".join([str(i) for i in resids_on_sugar])))
 
@@ -326,12 +323,12 @@ def write_pdb_trajectory(universe, pdbtraj, pdbtrajframes):
     with mda.Writer(pdbtraj, n_atoms=universe.atoms.n_atoms) as w:
         for tp in universe.trajectory[:pdbtrajframes]:
             w.write(universe.atoms)
-    # return actual number of frames in pdb trajectory 
+    # return actual number of frames in pdb trajectory
     return pdbtrajframes
 
 
 def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=None, pdbtrajframes=0, path="./",
-        streamlit_progressbar_1=None, streamlit_progressbar_2=None):
+              streamlit_progressbar_1=None, streamlit_progressbar_2=None):
     """
     Read in multiple trajectories each containing a static protein structure and a single mobile glycan.
     Script will merge these trajectories into one (i.e. with static protein and all glycans moving)
@@ -449,6 +446,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     # Save a reference
     u2.atoms.write(outname + '.pdb')
     return actual_pdbtrajframes
+
 
 def get_SASA(pdbname, xtcname, index, groupname, selectgroups, outfile, outfileres, outfileatom, probe, ndots, maxframe):
     """
@@ -853,19 +851,19 @@ def plot_SASA(residues, outrelativesasa, maxSASA, meanSASA, probe, xticklabels, 
     plt.show()
 
 
-def clean_segid(pdbfile,outfile):
+def clean_segid(pdbfile, outfile):
     """Remove SEGID field (confuses mdanalysis) and keep only ATOM lines"""
-    output=open(outfile,'w')
+    output = open(outfile, 'w')
     with open(pdbfile) as f:
         for line in f:
             if 'ATOM' in line[:5]:
-                segid=line[71:75]
+                segid = line[71:75]
                 if segid.isspace():
                     output.write(line)
                 else:
-                    tline=list(line)
-                    for char in [72,73,74,75]:
-                        tline[char]=" "
+                    tline = list(line)
+                    for char in [72, 73, 74, 75]:
+                        tline[char] = " "
                     output.write(''.join(tline))
 
     output.close()

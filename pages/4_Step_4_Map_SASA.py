@@ -18,7 +18,7 @@ st.markdown(
 progress_image_obj = st.empty()
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
 
-probe_values_str=st.text_input(label="Enter probe values (comma separated)", value="0.14, 0.70")
+probe_values_str = st.text_input(label="Enter probe values (comma separated)", value="0.14, 0.70")
 probe_values = [float(x) for x in probe_values_str.split(',')]
 cfg["probe_values"] = probe_values
 
