@@ -1,3 +1,5 @@
+# entry point for the Streamlit-based GlycoSHIELD web application
+
 import streamlit as st
 import glycoshield.app as app
 
