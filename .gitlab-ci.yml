@@ -27,6 +27,7 @@ pages:
     tags:
         - docker
     script:
+        - mkdir public
         - cp -v webapp/index_frontpage.html public/index.html
     artifacts:
         paths:
