@@ -402,7 +402,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
     # Now go second time over the files and merge, renumbering the glycans
     i_it = 0
-    n_it = len(chain)
+    n_it = len(chains)
     for chain in chains:
         # last residue is? we do it per chain
         lastres = protein.select_atoms("segid {}".format(chain)).resids[-1]
@@ -429,6 +429,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
         if streamlit_progressbar_2 is not None:
             i_it = i_it + 1
             progress = float(i_it) / float(n_it)
+            print(chain,resid,i_it,n_it)
             streamlit_progressbar_2.progress(progress)
 
     # Concatenate and save

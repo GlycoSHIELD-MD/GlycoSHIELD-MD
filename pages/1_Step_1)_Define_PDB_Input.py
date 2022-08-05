@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import glycoshield.app as app
 
 
@@ -19,6 +20,9 @@ st.write(
     "Upload a protein structure in Protein Data Bank (PDB) format using the uploader below. "
     "As a default, the IG-domain of Mouse N-cadherin is used (EC5, PDBid 3Q2W)."
 )
+
+
+
 
 uploaded_file = st.file_uploader(
     label="Upload PDB file",

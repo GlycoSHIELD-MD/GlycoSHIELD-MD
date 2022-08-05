@@ -168,7 +168,7 @@ def run_glycoshield(bar, mode="CG", threshold=3.5):
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
-    skip = 100
+    skip = 1
     gs = glycoshield(
         protpdb=cfg["pdb_input"],
         protxtc=None,
@@ -307,13 +307,15 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
 
     occupancy = sasas[sasas[:, 4] == probe][0][5]
     residues = sasas[sasas[:, 4] == probe][0][0]
-    maxSASA = sasas[sasas[:, 4] == probe][0][2]
+    maxSASA = sasas[sasas[:, 4] == probe][0][2] * 100 # This reflects the B-factor actual values
 
-    cut = 10  # arbitrary for colormap displ.
+    cut = 100.  # max for colormap displ. maxSASA is 0-1, so cut at 100 gives the same scale for all proteins
+    mid = 50. # Midpoint
+
     sel_notocc = {'resi': residues[occupancy < 1].tolist()}  # Not accessible
     sel_occ = {'resi': residues[occupancy > 0].tolist()}
     view.addSurface(py3Dmol.SAS, {'opacity': 0.99, 'color': 'gray'}, sel_notocc)
-    view.addSurface(py3Dmol.SAS, {'opacity': 0.99, 'colorscheme': {'prop': 'b', 'gradient': 'rwb', 'min': 0, 'max': cut}}, sel_occ)
+    view.addSurface(py3Dmol.SAS, {'opacity': 0.99, 'colorscheme': {'prop': 'b', 'gradient': 'rwb', 'min': 0, 'max': cut, 'mid': mid}}, sel_occ)
 
     view.zoomTo()
     view.setBackgroundColor('white')
