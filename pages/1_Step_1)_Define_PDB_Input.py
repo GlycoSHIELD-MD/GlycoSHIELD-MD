@@ -35,6 +35,8 @@ if st.button("Use default protein", help="Use the 5th IG-domain of Mouse N-cadhe
 #~ st.write("aaa [link](Step_2_Select_Glycans)",unsafe_allow_html=True)
 
 if cfg["clicked_file"] == True:
+    # Clean up PDB file...
+    app.clean_input_pdb()
     st.write("PDB file ready, please go to Step 2 on the left")
 
 else:

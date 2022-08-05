@@ -867,3 +867,35 @@ def clean_segid(pdbfile, outfile):
                     output.write(''.join(tline))
 
     output.close()
+
+def clean_pdb(pdbfile, outfile):
+    """Remove SEGID field (confuses mdanalysis) and keep only ATOM lines,
+    REPLACE modified AA with base ones
+    REMOVE all non-protein atoms from the input"""
+    #~ tmpfile='tmptmptmp'
+    
+    # First remove all non-protein things:
+    u = mda.Universe(pdbfile)
+    prot = u.select_atoms('protein')
+    prot.atoms.write(pdbfile)
+    
+    output = open(outfile, 'w')
+    with open(pdbfile) as f:
+        for line in f:
+            if 'ATOM' in line[:5]:
+                # Replace modified AA with natural counterparts:
+                myres = line[17:20]
+                if myres in tables.AMINO_ACID_VARIANTS_SUBSTITUTION.keys():
+                    line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])               
+                segid = line[71:75]
+                # Cleanup SEGIDs:
+                if segid.isspace():
+                    output.write(line)
+                else:
+                    tline = list(line)
+                    for char in [72, 73, 74, 75]:
+                        tline[char] = " "
+                    output.write(''.join(tline))
+
+    output.close()
+    
