@@ -247,7 +247,8 @@ def check_glycotraj(bar_1=None, bar_2=None):
             bar_2.progress(1.0)
 
 
-def run_glycosasa(streamlit_progressbar=None, probelist=[0.14, 0.70]):
+def run_glycosasa(streamlit_progressbar=None, probelist=[0.14, 0.70],
+        run_parallel=True, n_procs="auto"):
     cfg = get_config()
     gs = cfg["gs"]
     occ = cfg["occ"]
@@ -271,7 +272,8 @@ def run_glycosasa(streamlit_progressbar=None, probelist=[0.14, 0.70]):
         keepoutput=keepoutput,
         maxframe=maxframe,
         path=path,
-        run_parallel=True,
+        run_parallel=run_parallel,
+        n_procs=n_procs,
         streamlit_progressbar=streamlit_progressbar
     )
     cfg["sasas"] = sasas
@@ -647,10 +649,14 @@ def show_sidebar():
     with st.sidebar:
         if st.button("Reset Web Application", help="Pushing this button restores the initial state of the application."):
             reset_webapp()
-        if getpass.getuser() == "jovyan":
+        if on_binder():
             label = "Shut Down Web Application"
             if st.button(label, help="Pushing this button shuts down the webapp, and you may close the browser tab."):
                 quit_binder_webapp()
             st.write("")
             notebook_url = "../lab/tree/TutorialGlycoSHIELD.ipynb"
             display_image(image_file="webapp/tutorial-button.png", href=notebook_url, image_style="height:32px;")
+
+
+def on_binder():
+    return getpass.getuser() == "jovyan"

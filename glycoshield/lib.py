@@ -515,7 +515,7 @@ def GMXTEST():
 
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
               keepoutput, maxframe, path="./", chainlist=None,
-              run_parallel=False, n_procs=None,
+              run_parallel=False, n_procs="auto",
               streamlit_progressbar=None):
     # Chainlist only needed for multichain proteins for plotting.
 
@@ -524,12 +524,16 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
     # Assumption is there is only a protein in the pdb file.
     # Everything else assumed to be a glycan.
 
-    if n_procs is None:
-        try:
-            n_procs = int(os.environ["OMP_NUM_THREADS"])
-        except:
-            # WARNING: on K8S (Binder, Jupyter) cpu_count() reports ALL cores on the machine
-            n_procs = multiprocessing.cpu_count()
+    # perform autodetection of the number of processes
+    if run_parallel:
+        if n_procs == "auto":
+            try:
+                n_procs = int(os.environ["OMP_NUM_THREADS"])
+            except:
+                # WARNING: on K8S (Binder, Jupyter) cpu_count() reports ALL cores on the machine
+                n_procs = multiprocessing.cpu_count()
+        else:
+            n_procs = int(n_procs)
 
     # list of outputs for each probe size
     outputs = []

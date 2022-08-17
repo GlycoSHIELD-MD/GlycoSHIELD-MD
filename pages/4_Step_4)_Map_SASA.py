@@ -24,7 +24,11 @@ cfg["probe_values"] = probe_values
 
 glycosasa_progressbar = st.progress(0)
 if st.button("Run glycoSASA ..."):
-    app.run_glycosasa(glycosasa_progressbar, probelist=probe_values)
+    if app.on_binder():
+        app.run_glycosasa(glycosasa_progressbar, probelist=probe_values,
+                          run_parallel=True, n_procs=2)
+    else:
+        app.run_glycosasa(glycosasa_progressbar, probelist=probe_values)
     cfg["have_sasa"] = True
     st.write("You may now proceed to page 4 and 5 to visualize and download the output data.")
 
@@ -39,9 +43,9 @@ if cfg["have_sasa"]:
     app.visualize_sasa(
         os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
         probe
-    
+
     )
-    
+
     st.markdown(f"""<p style="background-color:#ffffff;color:#000000;font-size:24px;border-radius:2%;display:inline;text-align:center">Shielding:&nbsp&nbsp</p>
                 <p style="background-color:#BB0103;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp0&nbsp&nbsp&nbsp%&nbsp</p>
                 <p style="background-color:#DB7A7B;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
