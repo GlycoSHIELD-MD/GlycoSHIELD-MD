@@ -513,6 +513,15 @@ def GMXTEST():
             raise SystemExit("Gromacs not found, stopping...")
 
 
+def get_n_procs():
+    try:
+        n_procs = int(os.environ["OMP_NUM_THREADS"])
+    except:
+        # WARNING: on K8S (Binder, Jupyter) cpu_count() reports ALL cores on the machine
+        n_procs = multiprocessing.cpu_count()
+    return n_procs
+
+
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
               keepoutput, maxframe, path="./", chainlist=None,
               run_parallel=False, n_procs="auto",
@@ -527,11 +536,7 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
     # perform autodetection of the number of processes
     if run_parallel:
         if n_procs == "auto":
-            try:
-                n_procs = int(os.environ["OMP_NUM_THREADS"])
-            except:
-                # WARNING: on K8S (Binder, Jupyter) cpu_count() reports ALL cores on the machine
-                n_procs = multiprocessing.cpu_count()
+            n_procs = get_n_procs()
         else:
             n_procs = int(n_procs)
 

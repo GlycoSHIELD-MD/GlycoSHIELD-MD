@@ -22,13 +22,18 @@ probe_values_str = st.text_input(label="Enter probe values (comma separated)", v
 probe_values = [float(x) for x in probe_values_str.split(',')]
 cfg["probe_values"] = probe_values
 
+n_procs = st.number_input(label="Processes", min_value=1, max_value=app.get_n_procs(),
+    help="Set the number of processes to be used for the SASA computation. Note that more processes may speed up the computation but will at the same time consume more memory."
+)
+
 glycosasa_progressbar = st.progress(0)
 if st.button("Run glycoSASA ..."):
-    if app.on_binder():
-        app.run_glycosasa(glycosasa_progressbar, probelist=probe_values,
-                          run_parallel=True, n_procs=2)
+    if n_procs > 1:
+        run_parallel = True
     else:
-        app.run_glycosasa(glycosasa_progressbar, probelist=probe_values)
+        run_parallel = False
+    app.run_glycosasa(glycosasa_progressbar, probelist=probe_values,
+                      run_parallel=run_parallel, n_procs=n_procs)
     cfg["have_sasa"] = True
     st.write("You may now proceed to page 4 and 5 to visualize and download the output data.")
 

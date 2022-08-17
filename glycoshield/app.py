@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
+from . import lib
 from .lib import glycoshield, glycotraj, glycosasa, clean_pdb
 
 
@@ -245,6 +246,10 @@ def check_glycotraj(bar_1=None, bar_2=None):
             bar_1.progress(1.0)
         if bar_2 is not None:
             bar_2.progress(1.0)
+
+
+def get_n_procs():
+    return lib.get_n_procs()
 
 
 def run_glycosasa(streamlit_progressbar=None, probelist=[0.14, 0.70],
