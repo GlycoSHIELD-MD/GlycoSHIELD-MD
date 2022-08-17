@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
-from .lib import glycoshield, glycotraj, glycosasa,clean_segid,clean_pdb
+from .lib import glycoshield, glycotraj, glycosasa, clean_pdb
 
 
 glycoshield_logo_still = "webapp/glycoshield_still.png"
@@ -92,7 +92,7 @@ def print_input_pdb():
 def clean_input_pdb():
     """Clean up the PDB to avoid problems later on."""
     cfg = get_config()
-    file_name = cfg["pdb_input"]    
+    file_name = cfg["pdb_input"]
     tmp_file_name = os.path.join(cfg["work_dir"], "tmp_clean.pdb")
     clean_pdb(file_name, tmp_file_name)
     # replace input with cleaned file

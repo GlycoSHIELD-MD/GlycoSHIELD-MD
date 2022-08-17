@@ -515,7 +515,7 @@ def GMXTEST():
 
 def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
               keepoutput, maxframe, path="./", chainlist=None,
-              run_parallel=False, n_procs=multiprocessing.cpu_count(),
+              run_parallel=False, n_procs=None,
               streamlit_progressbar=None):
     # Chainlist only needed for multichain proteins for plotting.
 
@@ -523,6 +523,13 @@ def glycosasa(pdblist, xtclist, plottrace, probelist, ndots, mode,
     GMXTEST()
     # Assumption is there is only a protein in the pdb file.
     # Everything else assumed to be a glycan.
+
+    if n_procs is None:
+        try:
+            n_procs = int(os.environ["OMP_NUM_THREADS"])
+        except:
+            # WARNING: on K8S (Binder, Jupyter) cpu_count() reports ALL cores on the machine
+            n_procs = multiprocessing.cpu_count()
 
     # list of outputs for each probe size
     outputs = []
@@ -874,12 +881,12 @@ def clean_pdb(pdbfile, outfile):
     REPLACE modified AA with base ones
     REMOVE all non-protein atoms from the input"""
     #~ tmpfile='tmptmptmp'
-    
+
     # First remove all non-protein things:
     u = mda.Universe(pdbfile)
     prot = u.select_atoms('protein')
     prot.atoms.write(pdbfile)
-    
+
     output = open(outfile, 'w')
     with open(pdbfile) as f:
         for line in f:
@@ -887,7 +894,7 @@ def clean_pdb(pdbfile, outfile):
                 # Replace modified AA with natural counterparts:
                 myres = line[17:20]
                 if myres in tables.AMINO_ACID_VARIANTS_SUBSTITUTION.keys():
-                    line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])               
+                    line.replace(myres, tables.AMINO_ACID_VARIANTS_SUBSTITUTION[myres])
                 segid = line[71:75]
                 # Cleanup SEGIDs:
                 if segid.isspace():
@@ -899,4 +906,3 @@ def clean_pdb(pdbfile, outfile):
                     output.write(''.join(tline))
 
     output.close()
-    
