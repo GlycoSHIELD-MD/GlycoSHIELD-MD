@@ -349,7 +349,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     e.g.
     python GlycoTRAJ-0.1.py --maxframe 10 --outname ttt --pdblist S_463.pdb,S_492.pdb,S_533.pdb --xtclist S_463.xtc,S_492.xtc,S_533.xtc --chainlist S,S,S --reslist 463,492,533
 
-    Some readability was sacrificed to save on memory by staging coordinated in temporary files and del'eting objects explicitly.
+    Some readability was sacrificed to save on memory by staging coordinates in temporary files and del'eting objects explicitly.
     """
 
     chains = []
@@ -463,11 +463,12 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
         os.unlink(file_name)
 
     u2.load_new(coords_stacked, format=MemoryReader)
+
     with mda.Writer(outname + '.xtc', u2.atoms.n_atoms) as W:
         for ts in u2.trajectory:
             W.write(u2.atoms)
 
-    # pdb trajectory (LARGE).
+    # pdb trajectory (LARGE)
     actual_pdbtrajframes = 0
     if pdbtraj is not None:
         actual_pdbtrajframes = write_pdb_trajectory(u2, pdbtraj, pdbtrajframes)
