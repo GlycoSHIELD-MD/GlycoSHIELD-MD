@@ -183,7 +183,6 @@ class glycoshield:
                 if len(coordinates) == 0 and self.protxtc is None:
                     # no frames selected. If this is a protein trajectory just ignore this.
                     if not self.ignorewarn:
-
                         raise BaseException("No frames were accepted for residues {} in chain {}!\nChange threshold or check if the sequon location is accessible!".format(resids_on_protein, protchain))
                     else:
                         print("WARNING!!!\nNo frames were accepted for residues {} in chain {}!\nThis means the sequon location is not accessible given the threshold\nYou decided to ignore this warning so we carry on!".format(resids_on_protein, protchain))
@@ -327,6 +326,17 @@ def write_pdb_trajectory(universe, pdbtraj, pdbtrajframes):
     return pdbtrajframes
 
 
+def np_save_tmp(array, dir=None):
+    """
+    Save the numpy array to a temporary file, and return the file name.
+    """
+    file_name = None
+    with tempfile.NamedTemporaryFile(suffix=".npy", dir=dir, delete=False) as fp:
+        np.save(fp, array)
+        file_name = fp.name
+    return file_name
+
+
 def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=None, pdbtrajframes=0, path="./",
               streamlit_progressbar_1=None, streamlit_progressbar_2=None):
     """
@@ -338,6 +348,8 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     --pdblist and corresponding --xtclist, --chainlist, --residuelist (same order)
     e.g.
     python GlycoTRAJ-0.1.py --maxframe 10 --outname ttt --pdblist S_463.pdb,S_492.pdb,S_533.pdb --xtclist S_463.xtc,S_492.xtc,S_533.xtc --chainlist S,S,S --reslist 463,492,533
+
+    Some readability was sacrificed to save on memory by staging coordinated in temporary files and del'eting objects explicitly.
     """
 
     chains = []
@@ -383,7 +395,7 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     # resids=sorted(np.unique(resids))
 
     sels = []
-    coords = []
+    coords_files = []
 
     # open the protein frame and add to the trajectories
     u = mda.Universe(pdblist[0], xtclist[0], in_memory=True)
@@ -395,10 +407,11 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
     coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(), protein).run().results
     if version.parse(mda.__version__) >= version.parse("2.0.0"):
         coordinates = coordinates["timeseries"]  # This is only needed in certain MDAnalysis versions
-
     coordinates = coordinates[:maxframe, :, :]
+
     sels.append(protein)
-    coords.append(coordinates)
+    coords_files.append(np_save_tmp(coordinates, dir=path))
+    del coordinates
 
     # Now go second time over the files and merge, renumbering the glycans
     i_it = 0
@@ -409,9 +422,10 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
 
         for resid in resid_per_chain[chain]:
             pdb = os.path.join(path, chain + "_" + str(resid) + "_glycan.pdb")
-
             xtc = pdb.replace(".pdb", ".xtc")
+
             u1 = mda.Universe(pdb, xtc, in_memory=True)
+
             sugar = u1.atoms
             sugar.segments.segids = chain
             # update residues
@@ -422,30 +436,45 @@ def glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, pdbtraj=N
             coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(), sugar).run().results
             if version.parse(mda.__version__) >= version.parse("2.0.0"):
                 coordinates = coordinates["timeseries"]  # This is only needed in certain MDAnalysis versions
-            coords.append(coordinates)
+            coords_files.append(np_save_tmp(coordinates, dir=path))
+            del coordinates
 
             sels.append(u1)
 
         if streamlit_progressbar_2 is not None:
             i_it = i_it + 1
             progress = float(i_it) / float(n_it)
-            print(chain,resid,i_it,n_it)
+            print(chain, resid, i_it, n_it)
             streamlit_progressbar_2.progress(progress)
 
     # Concatenate and save
-    coords = np.column_stack(coords)
     u2 = mda.Merge(*[i.atoms for i in sels])
-    u2.load_new(coords, format=MemoryReader)
+    del sels
+    del u
+
+    coords_handles = []
+    for file_name in coords_files:
+        coords_handles.append(np.load(file_name, mmap_mode='r'))
+
+    coords_stacked = np.column_stack(coords_handles)
+
+    del coords_handles
+    for file_name in coords_files:
+        os.unlink(file_name)
+
+    u2.load_new(coords_stacked, format=MemoryReader)
     with mda.Writer(outname + '.xtc', u2.atoms.n_atoms) as W:
         for ts in u2.trajectory:
             W.write(u2.atoms)
 
     # pdb trajectory (LARGE).
+    actual_pdbtrajframes = 0
     if pdbtraj is not None:
         actual_pdbtrajframes = write_pdb_trajectory(u2, pdbtraj, pdbtrajframes)
 
     # Save a reference
     u2.atoms.write(outname + '.pdb')
+
     return actual_pdbtrajframes
 
 
@@ -885,11 +914,12 @@ def clean_segid(pdbfile, outfile):
 
     output.close()
 
+
 def clean_pdb(pdbfile, outfile):
     """Remove SEGID field (confuses mdanalysis) and keep only ATOM lines,
     REPLACE modified AA with base ones
     REMOVE all non-protein atoms from the input"""
-    #~ tmpfile='tmptmptmp'
+    # ~ tmpfile='tmptmptmp'
 
     # First remove all non-protein things:
     u = mda.Universe(pdbfile)
