@@ -45,19 +45,20 @@ if cfg["have_sasa"]:
         index=0
     )
     st.image(os.path.join(app.get_config()["output_dir"], f"ResidueSASA_probe_{probe}.png"))
-    app.visualize_sasa(
-        os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
-        probe
 
-    )
-
-    st.markdown(f"""<p style="background-color:#ffffff;color:#000000;font-size:24px;border-radius:2%;display:inline;text-align:center">Shielding:&nbsp&nbsp</p>
-                <p style="background-color:#BB0103;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp0&nbsp&nbsp&nbsp%&nbsp</p>
-                <p style="background-color:#DB7A7B;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                <p style="background-color:#FFFEFE;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                <p style="background-color:#8F88D2;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                <p style="background-color:#1207A3;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp100&nbsp%&nbsp</p>
-                <p style="background-color:#999999;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbspNot Accessible&nbsp</p>""", unsafe_allow_html=True)
+    if st.button("Enable 3d visualization of SASA"):
+        app.visualize_sasa(
+            os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
+            probe
+        )
+        st.markdown(f"""<p style="background-color:#ffffff;color:#000000;font-size:24px;border-radius:2%;display:inline;text-align:center">Shielding:&nbsp&nbsp</p>
+                    <p style="background-color:#BB0103;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp0&nbsp&nbsp&nbsp%&nbsp</p>
+                    <p style="background-color:#DB7A7B;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                    <p style="background-color:#FFFEFE;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                    <p style="background-color:#8F88D2;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                    <p style="background-color:#1207A3;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp100&nbsp%&nbsp</p>
+                    <p style="background-color:#999999;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbspNot Accessible&nbsp</p>""",
+                    unsafe_allow_html=True)
 else:
     st.write("You need to run the SASA calculation before you can see the visualization.")
 
