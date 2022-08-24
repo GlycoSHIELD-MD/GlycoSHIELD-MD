@@ -165,11 +165,12 @@ def store_inputs(inputs):
         f.write(inputs)
 
 
-def run_glycoshield(bar, mode="CG", threshold=3.5):
+def run_glycoshield(bar, mode="CG", threshold=3.5, skip=1):
+    "Exposed 'skip' is here to allow control from webapp for large files"
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
-    skip = 1
+    
     gs = glycoshield(
         protpdb=cfg["pdb_input"],
         protxtc=None,
