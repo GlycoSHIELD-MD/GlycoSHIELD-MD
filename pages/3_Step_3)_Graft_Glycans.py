@@ -36,15 +36,15 @@ with but2:
 with but3:
     #~ st.header("Set grafting mode")
     glycotraj_numpdbframes_str = st.text_input(label="Number of conformers for PDB download", value="30", help="Warning: large number of conformers can generate huge files!")
-
 with but4:
     glycotraj_skip_str = st.text_input(label="Use only every n-th glycan conformer", value="10", help="Note: Smaller value will generate more complete shields, at a risk of exceeding the application memory for large proteins")
+
+enable_viz = st.checkbox("Enable 3d visualization", value=False)
 
 glycoshield_threshold = float(glycoshield_threshold_str)
 glycotraj_numpdbframes = int(glycotraj_numpdbframes_str)
 glycotraj_skip = int(glycotraj_skip_str)
 if st.button("Run glycoSHIELD ..."):
-    
     app.display_image(app.glycoshield_logo_anim, progress_image_obj, image_style=app.glyco_logo_image_style)
     app.run_glycoshield(glycoshield_progressbar, mode=glycoshield_mode_str, threshold=glycoshield_threshold, skip=glycotraj_skip)
     app.run_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2, pdbtrajframes=glycotraj_numpdbframes)
@@ -53,7 +53,7 @@ app.check_glycoshield(glycoshield_progressbar)
 app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
 
-if st.button("Enable 3d visualization"):
+if enable_viz:
     if cfg["glycotraj_done"]:
         VIS = app.visPy3Dmol(app.get_config()["output_dir"] + "/")
         chainlist = cfg["gs"].chainlist

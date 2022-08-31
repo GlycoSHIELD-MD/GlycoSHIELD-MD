@@ -26,6 +26,8 @@ n_procs = st.number_input(label="Processes", min_value=1, max_value=app.get_n_pr
     help="Set the number of processes to be used for the SASA computation. Note that more processes may speed up the computation but will at the same time consume more memory."
 )
 
+enable_viz = st.checkbox("Enable 3d visualization", value=False)
+
 glycosasa_progressbar = st.progress(0)
 if st.button("Run glycoSASA ..."):
     if n_procs > 1:
@@ -46,7 +48,7 @@ if cfg["have_sasa"]:
     )
     st.image(os.path.join(app.get_config()["output_dir"], f"ResidueSASA_probe_{probe}.png"))
 
-    if st.button("Enable 3d visualization of SASA"):
+    if enable_viz:
         app.visualize_sasa(
             os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
             probe
