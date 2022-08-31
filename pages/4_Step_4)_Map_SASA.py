@@ -37,7 +37,7 @@ if st.button("Run glycoSASA ..."):
     app.run_glycosasa(glycosasa_progressbar, probelist=probe_values,
                       run_parallel=run_parallel, n_procs=n_procs)
     cfg["have_sasa"] = True
-    st.write("You may now proceed to page 4 and 5 to visualize and download the output data.")
+    st.write("You may now proceed to step 5 to download the output data.")
 
 if cfg["have_sasa"]:
     probe_values = cfg["probe_values"]
