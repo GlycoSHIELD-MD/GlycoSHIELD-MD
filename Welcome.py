@@ -17,7 +17,7 @@ st.markdown(
 This application enables users to graft glycan conformer arrays on specific amino-acids of a selected protein structure.
 50 glycan types are currently available in the library.
 
-To use the application, please navigate from step 1 to step 5 using the sidebar and follow the instructions provided at each step.
+To use the application, please navigate from step 1 to step 5 using the sidebar on the left and follow the instructions provided at each step. (Mobile devices: use arrow to show the side bar)
 
 This application was developed as an open-access community resource and is maintained by Klaus Reuter, Matt Sikora and Cyril Hanus.
 Please support us by citing our work:
