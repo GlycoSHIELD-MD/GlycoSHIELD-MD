@@ -33,5 +33,5 @@ pages:
         paths:
             - public
     only:
-        - refactoring
+        - wip_landingpage
 
