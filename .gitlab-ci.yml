@@ -1,7 +1,6 @@
-image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
-
 # trigger a notification for the launchpad repo to update the Dockerfile
 notify-launchpad:
+  image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
   only:
     - refactoring
   script:
@@ -22,13 +21,16 @@ notify-launchpad:
         git push
       fi
 
+# create the GS landing page using jekyll
 pages:
+    image: gitlab-registry.mpcdf.mpg.de/mpibp-hummer/glycoshield-md/jekyll-202209
     stage: deploy
     tags:
         - docker
     script:
-        - mkdir public
-        - cp -v webapp/index_frontpage.html public/index.html
+        - cd webapp-landingpage
+        - jekyll build
+        - mv _site ../public
     artifacts:
         paths:
             - public
