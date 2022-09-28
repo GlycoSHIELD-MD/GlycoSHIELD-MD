@@ -7,7 +7,7 @@ layout: home
 
 # Welcome
 
-Hello, stranger!
+Welcome to GlycoSHIELD!
 
 # Launch web application
 
