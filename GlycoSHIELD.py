@@ -70,4 +70,4 @@ if __name__ == "__main__":
     skip = int(args.skip)
     path= args.path
 
-    run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip)
+    run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip, path)
