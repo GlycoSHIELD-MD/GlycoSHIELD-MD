@@ -13,10 +13,10 @@ from argparse import ArgumentParser
 from glycoshield import glycoshield
 
 
-def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip):
+def run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip, path):
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile,skip=skip)
+        gs = glycoshield(protpdb=protpdb, protxtc=protxtc, inputfile=inputfile,skip=skip, path=path)
         occupancy_single = gs.run()
         print(occupancy_single)
         print("OK")
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('--ignorewarn', dest='ignorewarn', action='store_true', help="Ignore cases when no sugar is implanted")
     parser.add_argument('--no-ignorewarn', dest='ignorewarn', action='store_false')
     parser.add_argument('--skip', dest='skip', help='skip frames from the glycan trajectory, default = 1', default=1, type=check_positive)
-
+    parser.add_argument('--path', dest='path', help='path for output files, default is current directory', default="./")
     parser.set_defaults(dryrun=False)
     parser.set_defaults(ignorewarn=False)
     parser.set_defaults(protxtc=None)
@@ -68,5 +68,6 @@ if __name__ == "__main__":
     shuffle_sugar = args.shuffle_sugar
     ignorewarn = args.ignorewarn
     skip = int(args.skip)
+    path= args.path
 
     run_glycoshield(protpdb, protxtc, inputfile, zmax, zmin, threshold, mode, dryrun, shuffle_sugar, ignorewarn,skip)
