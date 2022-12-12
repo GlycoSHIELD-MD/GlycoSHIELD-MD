@@ -13,10 +13,10 @@ from argparse import ArgumentParser
 from glycoshield import glycotraj
 
 
-def run_glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist):
+def run_glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, path):
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
-        glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist)
+        glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, path=path)
         print("OK")
 
 if __name__ == "__main__":
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument('--xtclist', dest='xtclist', help='(input) list of coma-separated trajectory files',required=True)
     parser.add_argument('--chainlist', dest='chainlist', help='(input) list of coma-separated chain descriptors where each glycan was attached',required=True)
     parser.add_argument('--reslist', dest='reslist', help='(input) list of coma-separated residue numbers where each glycan was attached',required=True)
+    parser.add_argument('--path', dest='path', help='path to execute command',required=False,default='./')
 
     args = parser.parse_args()
 
@@ -36,5 +37,5 @@ if __name__ == "__main__":
     xtclist = [i for i in args.xtclist.split(",")]
     chainlist = [i for i in args.chainlist.split(",")]
     reslist = [i for i in args.reslist.split(",")]
-
-    run_glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist)
+    path=args.path
+    run_glycotraj(maxframe, outname, pdblist, xtclist, chainlist, reslist, path)
