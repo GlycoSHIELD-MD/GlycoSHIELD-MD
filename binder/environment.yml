@@ -28,7 +28,7 @@ dependencies:
   # finally, install the glycan data and the present package in editable mode
   - pip:
     #- zenodo-get
-    - py3Dmol==1.8.1
+    - py3Dmol==1.8.0
     - stmol==0.0.7
     - st-click-detector
     - sphinx-rtd-theme
