@@ -29,7 +29,7 @@ dependencies:
   - pip:
     #- zenodo-get
     - py3Dmol==1.8.1
-    - stmol
+    - stmol==0.0.7
     - st-click-detector
     - sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
