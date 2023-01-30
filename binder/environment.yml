@@ -11,7 +11,7 @@ dependencies:
   - blas=*=*mkl
   - numpy
   - scipy
-  - matplotlib
+  - matplotlib=4.3.4
   - font-ttf-ubuntu
   - mdanalysis
   - gromacs=2021.3
@@ -19,20 +19,18 @@ dependencies:
   - pocl
   - jupyterlab
   - nglview
-#  - ipywidgets
   # support for streamlit and the jupyter proxy
   - streamlit
   - jupyter-server-proxy
   # support for documentation creation
-#  - sphinx
+  #- sphinx
   # finally, install the glycan data and the present package in editable mode
   - pip:
     #- zenodo-get
     - py3Dmol==2.0.0.post2
     - stmol==0.0.9
     - st-click-detector
-#    - sphinx-rtd-theme
+    #- sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
-#    - -e ../glycoshield-data-download-helper/
     - -e ../
 
