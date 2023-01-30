@@ -1,7 +1,7 @@
 # postBuild script for Binder, running right before the Docker container launch
 
 # download the Glycan data
-python3 ../glycan_library_downloader.py
+python3 ~/glycan_library_downloader.py
 
 # tweak Jupyter configuration
 mkdir -p ~/.jupyter
