@@ -7,11 +7,13 @@ dependencies:
   # base packages for command line usage
   - python=3.9
   - pip
-  - mkl
-  - blas=*=*mkl
+  - setuptools
+  #- mkl
+  #- blas=*=*mkl
   - numpy
   - scipy
-  - matplotlib=4.3.4
+  # it seems that we need specifically that mpl version
+  - matplotlib=3.4.3
   - font-ttf-ubuntu
   - mdanalysis
   - gromacs=2021.3
@@ -25,6 +27,7 @@ dependencies:
   # support for documentation creation
   #- sphinx
   # finally, install the glycan data and the present package in editable mode
+  #- pyodbc>=4.0.35
   - pip:
     #- zenodo-get
     - py3Dmol==2.0.0.post2
@@ -32,5 +35,5 @@ dependencies:
     - st-click-detector
     #- sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
-    - -e ../
+    #- -e ../
 
