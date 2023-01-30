@@ -1,6 +1,12 @@
 # postBuild script for Binder, running right before the Docker container launch
+
+# download the Glycan data
+python3 ../glycan_library_downloader.py
+
+# tweak Jupyter configuration
 mkdir -p ~/.jupyter
 cat <<EOF >>~/.jupyter/jupyter_notebook_config.py
 c.NotebookApp.terminals_enabled = False
 c.JupyterHub.shutdown_on_logout = True
 EOF
+

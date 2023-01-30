@@ -11,7 +11,7 @@ import configparser
 
 cfg = configparser.ConfigParser()
 cfg_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                        "download_helper.cfg")
+                        "glycan_library_downloader.cfg")
 cfg.read(cfg_file)
 doi = cfg["config"]["doi"]
 src = cfg["config"]["src"]
@@ -19,7 +19,7 @@ git = cfg["config"]["git"]
 
 # data folder for the glycan library, default is relative to the base directory of the 'glycoshield' package
 out = os.path.join(
-    os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")),
+    os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".")),
     "GLYCAN_LIBRARY")
 # temporary directory prefix for git clone
 tmp = os.path.expanduser("~")
@@ -80,3 +80,4 @@ if __name__ == "__main__":
     make_directory()
     download()
     unpack()
+

@@ -5,13 +5,13 @@ channels:
   - bioconda
 dependencies:
   # base packages for command line usage
-  - python=3.8
+  - python=3.9
   - pip
   - mkl
   - blas=*=*mkl
   - numpy
   - scipy
-  - matplotlib=3.4.3
+  - matplotlib
   - font-ttf-ubuntu
   - mdanalysis
   - gromacs=2021.3
@@ -19,19 +19,20 @@ dependencies:
   - pocl
   - jupyterlab
   - nglview
-  - ipywidgets
+#  - ipywidgets
   # support for streamlit and the jupyter proxy
-  - streamlit=1.10.0
+  - streamlit
   - jupyter-server-proxy
   # support for documentation creation
-  - sphinx
+#  - sphinx
   # finally, install the glycan data and the present package in editable mode
   - pip:
     #- zenodo-get
-    - py3Dmol==1.8.0
-    - stmol==0.0.7
+    - py3Dmol==2.0.0.post2
+    - stmol==0.0.9
     - st-click-detector
-    - sphinx-rtd-theme
+#    - sphinx-rtd-theme
     - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
-    - -e ../glycoshield-data-download-helper/
+#    - -e ../glycoshield-data-download-helper/
     - -e ../
+
