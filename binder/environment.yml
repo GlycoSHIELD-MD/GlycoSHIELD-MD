@@ -5,7 +5,7 @@ channels:
   - bioconda
 dependencies:
   # base packages for command line usage
-  - python=3.9
+  - python=3.8
   - pip
   - setuptools
   #- mkl
@@ -22,7 +22,7 @@ dependencies:
   - jupyterlab
   - nglview
   # support for streamlit and the jupyter proxy
-  - streamlit
+  - streamlit=1.13.0
   - jupyter-server-proxy
   # support for documentation creation
   #- sphinx

@@ -301,7 +301,13 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
 
     # Get output for visualisation
     cfg = get_config()
-    sasas = np.array(cfg["sasas"])
+    #print(cfg["sasas"])
+
+    #sasas = np.array(cfg["sasas"])
+    sasas_dict = {}
+    for S in cfg["sasas"]:
+        p = S[4]
+        sasas_dict[p] = S
 
     with open(pdb, 'r') as fp:
         data = fp.read()
@@ -313,11 +319,14 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
     )
     probe = float(probe)
 
-    occupancy = sasas[sasas[:, 4] == probe][0][5]
-    residues = sasas[sasas[:, 4] == probe][0][0]
-    maxSASA = sasas[sasas[:, 4] == probe][0][2] * 100 # This reflects the B-factor actual values
+    #occupancy = sasas[sasas[:, 4] == probe][0][5]
+    #residues = sasas[sasas[:, 4] == probe][0][0]
+    #maxSASA = sasas[sasas[:, 4] == probe][0][2] * 100 # This reflects the B-factor actual values
+    occupancy = sasas_dict[probe][0][5]
+    residues = sasas_dict[probe][0][0]
+    maxSASA = sasas_dict[probe][0][2] * 100 # This reflects the B-factor actual values
 
-    cut = 100.  # max for colormap displ. maxSASA is 0-1, so cut at 100 gives the same scale for all proteins
+    cut = 100. # max for colormap displ. maxSASA is 0-1, so cut at 100 gives the same scale for all proteins
     mid = 50. # Midpoint
 
     sel_notocc = {'resi': residues[occupancy < 1].tolist()}  # Not accessible
