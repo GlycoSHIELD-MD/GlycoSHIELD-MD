@@ -1,8 +1,17 @@
 from setuptools import setup
-#from distutils.core import setup
+
 setup(
     name='GlycoSHIELD',
+    url='http://glycoshield.eu/',
     version='0.1',
-    #py_modules=['glycoshield',],
-    packages=['glycoshield',],
+    packages=[
+        'glycoshield',
+    ],
+    install_requires=[
+        'numpy',
+        'scipy',
+        'matplotlib',
+        'mdanalysis',
+    ],
 )
+
