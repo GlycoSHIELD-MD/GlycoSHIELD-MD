@@ -299,15 +299,12 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
     from stmol import showmol
     import py3Dmol
 
-    # Get output for visualisation
+    # get output for visualisation
     cfg = get_config()
-    #print(cfg["sasas"])
-
-    #sasas = np.array(cfg["sasas"])
     sasas_dict = {}
-    for S in cfg["sasas"]:
-        p = S[4]
-        sasas_dict[p] = S
+    for blob in cfg["sasas"]:
+        probe = blob[4]
+        sasas_dict[probe] = blob
 
     with open(pdb, 'r') as fp:
         data = fp.read()
@@ -317,14 +314,11 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
         width=width,
         height=height
     )
-    probe = float(probe)
 
-    #occupancy = sasas[sasas[:, 4] == probe][0][5]
-    #residues = sasas[sasas[:, 4] == probe][0][0]
-    #maxSASA = sasas[sasas[:, 4] == probe][0][2] * 100 # This reflects the B-factor actual values
-    occupancy = sasas_dict[probe][0][5]
-    residues = sasas_dict[probe][0][0]
-    maxSASA = sasas_dict[probe][0][2] * 100 # This reflects the B-factor actual values
+    probe = float(probe)
+    occupancy = np.array(sasas_dict[probe][5])
+    residues = np.array(sasas_dict[probe][0])
+    maxSASA = np.array(sasas_dict[probe][2]) * 100. # This reflects the B-factor actual values
 
     cut = 100. # max for colormap displ. maxSASA is 0-1, so cut at 100 gives the same scale for all proteins
     mid = 50. # Midpoint
