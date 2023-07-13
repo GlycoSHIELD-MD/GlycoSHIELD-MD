@@ -26,7 +26,7 @@ n_procs = st.number_input(label="Processes", min_value=1, max_value=app.get_n_pr
     help="Set the number of processes to be used for the SASA computation. Note that more processes may speed up the computation but will at the same time consume more memory."
 )
 
-enable_viz = st.checkbox("Enable 3d visualization", value=False)
+# enable_viz = st.checkbox("Enable 3d visualization", value=False)
 
 glycosasa_progressbar = st.progress(0)
 if st.button("Run glycoSASA ..."):
@@ -48,19 +48,35 @@ if cfg["have_sasa"]:
     )
     st.image(os.path.join(app.get_config()["output_dir"], f"ResidueSASA_probe_{probe}.png"))
 
-    if enable_viz:
-        app.visualize_sasa(
-            os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
-            probe
-        )
-        st.markdown(f"""<p style="background-color:#ffffff;color:#000000;font-size:24px;border-radius:2%;display:inline;text-align:center">Shielding:&nbsp&nbsp</p>
-                    <p style="background-color:#BB0103;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp0&nbsp&nbsp&nbsp%&nbsp</p>
-                    <p style="background-color:#DB7A7B;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                    <p style="background-color:#FFFEFE;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                    <p style="background-color:#8F88D2;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
-                    <p style="background-color:#1207A3;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp100&nbsp%&nbsp</p>
-                    <p style="background-color:#999999;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbspNot Accessible&nbsp</p>""",
-                    unsafe_allow_html=True)
+
+# enable_viz = st.checkbox("Enable 3d visualization", value=False)
+viz_options = ("off", "360x640", "640x480", "720x520", "1024x768", "1600x1200")
+viz_select = st.selectbox("3d visualization", viz_options, index=0)
+if viz_select == "off":
+    enable_viz = False
+    resolution = tuple(viz_options[1].split('x'))
+else:
+    enable_viz = True
+    resolution = tuple(viz_select.split('x'))
+
+if cfg["have_sasa"] and enable_viz:
+    # Parameters for vis (can we make it dynamic?)
+    width = int(resolution[0])
+    height = int(resolution[1])
+    app.visualize_sasa(
+        os.path.join(app.get_config()["output_dir"], f"maxResidueSASA_probe_{probe}.pdb"),
+        probe,
+        width,
+        height
+    )
+    st.markdown(f"""<p style="background-color:#ffffff;color:#000000;font-size:24px;border-radius:2%;display:inline;text-align:center">Shielding:&nbsp&nbsp</p>
+                <p style="background-color:#BB0103;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp0&nbsp&nbsp&nbsp%&nbsp</p>
+                <p style="background-color:#DB7A7B;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                <p style="background-color:#FFFEFE;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                <p style="background-color:#8F88D2;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</p>
+                <p style="background-color:#1207A3;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbsp100&nbsp%&nbsp</p>
+                <p style="background-color:#999999;color:#ffffff;font-size:24px;border-radius:2%;display:inline;text-align:center">&nbspNot Accessible&nbsp</p>""",
+                unsafe_allow_html=True)
 else:
     st.write("You need to run the SASA calculation before you can see the visualization.")
 

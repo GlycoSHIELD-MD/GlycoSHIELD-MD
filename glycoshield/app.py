@@ -170,7 +170,7 @@ def run_glycoshield(bar, mode="CG", threshold=3.5, skip=1):
     cfg = get_config()
     pdbtraj = os.path.join(cfg["output_dir"], "test_pdb.pdb")
     pdbtrajframes = 30
-    
+
     gs = glycoshield(
         protpdb=cfg["pdb_input"],
         protxtc=None,
@@ -295,7 +295,7 @@ def check_glycosasa(bar):
     return cfg["glycosasa_done"]
 
 
-def visualize_sasa(pdb, probe, height=800, width=1200):
+def visualize_sasa(pdb, probe, width=1200, height=800):
     from stmol import showmol
     import py3Dmol
 
@@ -318,7 +318,7 @@ def visualize_sasa(pdb, probe, height=800, width=1200):
     probe = float(probe)
     occupancy = np.array(sasas_dict[probe][5])
     residues = np.array(sasas_dict[probe][0])
-    maxSASA = np.array(sasas_dict[probe][2]) * 100. # This reflects the B-factor actual values
+    # maxSASA = np.array(sasas_dict[probe][2]) * 100. # This reflects the B-factor actual values
 
     cut = 100. # max for colormap displ. maxSASA is 0-1, so cut at 100 gives the same scale for all proteins
     mid = 50. # Midpoint
@@ -483,7 +483,7 @@ def get_glycan_library_old():
     return lib
 
 
-@st.cache
+@st.cache_data
 def get_glycan_library():
     lib = {}
     cfg = get_config()
@@ -500,7 +500,7 @@ def get_glycan_library():
     return lib
 
 
-@st.cache
+@st.cache_data
 def get_glycan_clickable_image_html(glycan_lib, glycan_type, n_cols=4):
     # create table with clickable images
     html_figs = []

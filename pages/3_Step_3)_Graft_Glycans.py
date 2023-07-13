@@ -39,8 +39,6 @@ with but3:
 with but4:
     glycotraj_skip_str = st.text_input(label="Use only every n-th glycan conformer", value="10", help="Note: Smaller value will generate more complete shields, at a risk of exceeding the application memory for large proteins")
 
-enable_viz = st.checkbox("Enable 3d visualization", value=False)
-
 glycoshield_threshold = float(glycoshield_threshold_str)
 glycotraj_numpdbframes = int(glycotraj_numpdbframes_str)
 glycotraj_skip = int(glycotraj_skip_str)
@@ -53,15 +51,26 @@ app.check_glycoshield(glycoshield_progressbar)
 app.check_glycotraj(glycostraj_progressbar_1, glycostraj_progressbar_2)
 app.display_image(app.glycoshield_logo_still, progress_image_obj, image_style=app.glyco_logo_image_style)
 
+# enable_viz = st.checkbox("Enable 3d visualization", value=False)
+viz_options = ("off", "360x640", "640x480", "720x520", "1024x768", "1600x1200")
+viz_select = st.selectbox("3d visualization", viz_options, index=0)
+if viz_select == "off":
+    enable_viz = False
+    resolution = tuple(viz_options[1].split('x'))
+else:
+    enable_viz = True
+    resolution = tuple(viz_select.split('x'))
+
 if enable_viz:
     if cfg["glycotraj_done"]:
         VIS = app.visPy3Dmol(app.get_config()["output_dir"] + "/")
         chainlist = cfg["gs"].chainlist
         reslist = cfg["gs"].reslist
         actual_pdbtrajframes = cfg["glycotraj_actualpdbtrajframes"]
+
         # Parameters for vis (can we make it dynamic?)
-        width = 1200
-        height = 800
+        width = int(resolution[0])
+        height = int(resolution[1])
 
         for (chain, resid) in zip(chainlist, reslist):
             VIS.add_sugar(app.get_config()["output_dir"] + '/{}_{}.pdb'.format(chain, resid),

@@ -50,9 +50,6 @@ if clicked == "":
 d, raw_label, image_file = glycan_lib[glycan_type][clicked]
 new_line = app.create_input_line(chain, resid, raw_label)
 
-st.write('Preview of input line')
-st.text(new_line)
-
 button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
 if button_col1.button("Add"):
@@ -75,13 +72,19 @@ if button_col3.button("Add default glycosylation", help="By default, we will app
         app.add_input_line(line)
         cfg['have_inputs'] = True
 
-if button_col4.button("Clear all input lines"):
+if button_col4.button("Clear all input"):
     app.clear_input_lines()
     cfg['have_inputs'] = False
 
 inputs = "\n".join(app.get_input_lines())
-st.write('Current input lines')
-st.text(inputs)
+
+if st.checkbox("Show advanced input options"):
+    st.text_area("Preview of current input line",
+                 value=new_line,
+                 help="Preview of the input line as it would be generated currently by the above input generator.")
+    inputs = st.text_area("All current GlycoSHIELD input lines (press Ctrl+Enter to apply changes after manual editing)",
+                          value=inputs,
+                          help="This text area shows all current input lines for GlycoSHIELD. You can edit them manually or copy-and-paste your input. Please press Ctrl+Enter to apply changes after manual editing!")
 
 app.store_inputs(inputs)
 if cfg['have_inputs']:
