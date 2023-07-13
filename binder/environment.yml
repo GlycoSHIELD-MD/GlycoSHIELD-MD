@@ -22,7 +22,7 @@ dependencies:
   - jupyterlab
   - nglview
   # support for streamlit and the jupyter proxy
-  - streamlit=1.13.0
+  - streamlit=1.24.0
   - jupyter-server-proxy
   # support for documentation creation
   #- sphinx
