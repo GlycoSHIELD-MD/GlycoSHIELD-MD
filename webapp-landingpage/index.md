@@ -11,5 +11,4 @@ Welcome to GlycoSHIELD!
 
 # Launch web application
 
-[GlycoSHIELD web application](https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2FMPIBP-Hummer%2Fglycoshield-md-binder-launchpad.git/HEAD?urlpath=streamlit)
-
+[GlycoSHIELD web application](https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2FMPIBP-Hummer%2Fglycoshield-md.git/webapp_online?urlpath=streamlit)
