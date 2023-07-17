@@ -24,11 +24,11 @@ The glycan conformers can be visualised using the standard visualisation tools, 
 if app.webapp_output_ready():
     # always offer the comparably small PDB trajectory
     app.zip_pdb_trajectory()
-    data_pdb, size_pdb = app.get_webapp_output_pdbtraj()
+    file_handle_pdb, size_pdb = app.get_webapp_output_pdbtraj()
     st.download_button(
         label=f"Download zipped pdb file ({size_pdb:.1f} MB)",
         help="Download the zipped multi-model pdb file containing the protein and multiple glycan conformers.",
-        data=data_pdb,
+        data=file_handle_pdb,
         file_name=app.get_config()["pdbtrajfile_zip"],
         mime="application/zip"
     )
@@ -36,11 +36,11 @@ if app.webapp_output_ready():
     if st.button("Create zip file with full GlycoSHIELD output ...",
                  help="Create a zip file with the full output and offer it for download. Zipping may take a while ..."):
         app.zip_webapp_output()
-        data, size = app.get_webapp_output()
+        file_handle, size = app.get_webapp_output()
         st.download_button(
             label=f"Download zip file with full GlycoSHIELD output ({size:.1f} MB)",
             help="Download the complete output data as a zip file.",
-            data=data,
+            data=file_handle,
             file_name=app.get_config()["output_zip"],
             mime="application/zip"
         )

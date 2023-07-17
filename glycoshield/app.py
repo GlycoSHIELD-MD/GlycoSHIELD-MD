@@ -137,11 +137,13 @@ def get_webapp_output_pdbtraj():
     cfg = get_config()
     if webapp_output_ready():
         zipfile = os.path.join(cfg["output_dir"], cfg["pdbtrajfile_zip"])
-        with open(zipfile, "rb") as f:
-            data = f.read()
+        # with open(zipfile, "rb") as f:
+        #     data = f.read()
+        # do not read data into buffer, rather pass file handle to streamlit, ultimately rely on garbage collector to close the file
+        data = open(zipfile, "rb")
         size = os.path.getsize(zipfile) / 1024. / 1024.
     else:
-        data = ""
+        data = None
         size = 0
     return data, size
 
@@ -150,11 +152,13 @@ def get_webapp_output():
     cfg = get_config()
     if webapp_output_ready():
         zipfile = os.path.join(cfg["work_dir"], cfg["output_zip"])
-        with open(zipfile, "rb") as f:
-            data = f.read()
+        # with open(zipfile, "rb") as f:
+        #     data = f.read()
+        # do not read data into buffer, rather pass file handle to streamlit, ultimately rely on garbage collector to close the file
+        data = open(zipfile, "rb")
         size = os.path.getsize(zipfile) / 1024. / 1024.
     else:
-        data = ""
+        data = None
         size = 0
     return data, size
 
