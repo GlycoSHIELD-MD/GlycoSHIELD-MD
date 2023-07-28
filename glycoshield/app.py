@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import MDAnalysis as mda
+#import pymol2   # import done within function, only if needed
 from . import lib
 from .lib import glycoshield, glycotraj, glycosasa, clean_pdb
 
@@ -673,3 +674,13 @@ def show_sidebar():
 
 def on_binder():
     return getpass.getuser() == "jovyan"
+
+
+def cif_to_pdb(cif_file_name):
+    # convert a file protein.cif to protein.pdb, using pymol2
+    import pymol2
+    with pymol2.PyMOL() as pymol:
+        pymol.cmd.load(cif_file_name, 'myprotein')
+        pdb_file_name = cif_file_name.lower().replace('.cif', '.pdb')
+        pymol.cmd.save(pdb_file_name, selection='myprotein')
+        return pdb_file_name

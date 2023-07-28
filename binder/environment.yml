@@ -22,6 +22,8 @@ dependencies:
   # support for streamlit and the jupyter proxy
   - streamlit=1.24.0
   - jupyter-server-proxy
+  # for the conversion of CIF to PDB
+  - pymol-open-source
   # support for documentation creation
   - pip:
     #- zenodo-get

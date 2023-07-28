@@ -17,7 +17,7 @@ if not cfg["have_input"]:
     app.use_default_input()
 
 st.write(
-    "Upload a protein structure in Protein Data Bank (PDB) format using the uploader below. "
+    "Upload a protein structure in Protein Data Bank (PDB) or CIF format using the uploader below. "
     "As a default, the IG-domain of Mouse N-cadherin is used (EC5, PDBid 3Q2W)."
 )
 
@@ -25,7 +25,7 @@ st.write(
 
 
 uploaded_file = st.file_uploader(
-    label="Upload PDB file",
+    label="Upload PDB or CIF file",
     accept_multiple_files=False)
 if uploaded_file is not None:
     app.store_uploaded_file(uploaded_file)
@@ -39,9 +39,15 @@ if st.button("Use default protein", help="Use the 5th IG-domain of Mouse N-cadhe
 #~ st.write("aaa [link](Step_2_Select_Glycans)",unsafe_allow_html=True)
 
 if cfg["clicked_file"] == True:
+    # handle cif format
+    # TODO while the conversion appears to work, the subsequent clean routine seems to blow up!  Keep commented for now.
+    # uploaded_file = cfg["pdb_input"]
+    # if uploaded_file.lower().endswith('.cif'):
+    #     uploaded_file = app.cif_to_pdb(uploaded_file)
+    #     cfg["pdb_input"] = uploaded_file
     # Clean up PDB file...
     app.clean_input_pdb()
-    st.write("PDB file ready, please go to Step 2 on the left")
+    st.write("Input file ready, please go to Step 2 on the left")
 
 else:
     st.write("Please upload a file or select the default...")
