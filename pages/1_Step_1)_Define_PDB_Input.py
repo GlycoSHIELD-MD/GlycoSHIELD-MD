@@ -39,12 +39,11 @@ if st.button("Use default protein", help="Use the 5th IG-domain of Mouse N-cadhe
 #~ st.write("aaa [link](Step_2_Select_Glycans)",unsafe_allow_html=True)
 
 if cfg["clicked_file"] == True:
-    # handle cif format
-    # TODO while the conversion appears to work, the subsequent clean routine seems to blow up!  Keep commented for now.
-    # uploaded_file = cfg["pdb_input"]
-    # if uploaded_file.lower().endswith('.cif'):
-    #     uploaded_file = app.cif_to_pdb(uploaded_file)
-    #     cfg["pdb_input"] = uploaded_file
+    # if necessary, handle cif format
+    uploaded_file = cfg["pdb_input"]
+    if uploaded_file.lower().endswith('.cif'):
+        uploaded_file = app.cif_to_pdb(uploaded_file)
+        cfg["pdb_input"] = uploaded_file
     # Clean up PDB file...
     app.clean_input_pdb()
     st.write("Input file ready, please go to Step 2 on the left")
