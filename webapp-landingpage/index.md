@@ -18,5 +18,5 @@ or on the image below.
 
 Please note that the interactive Cloud session that runs the web
 application is completely ephemeral, and all files will be deleted
-after its termination. Please download a Zip archive with your
-session data which is offered by the web GUI, if necessary.
+after its termination. If necessary, download a Zip archive with your
+session data which is offered by the web GUI.
