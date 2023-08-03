@@ -1,5 +1,8 @@
 GLYCAN_LIBRARY/
 
+webapp_output/
+webapp_work/
+
 tmp_files/input_sugaring
 tmp_files/merged_traj.pdb
 tmp_files/merged_traj.xtc
