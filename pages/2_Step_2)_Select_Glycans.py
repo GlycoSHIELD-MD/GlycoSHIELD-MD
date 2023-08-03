@@ -21,7 +21,7 @@ If you selected the default protein in the previous step, you can use a default 
 """
 )
 
-st.write("Select Protein Chain and Residue")
+st.markdown("#### Select Protein Chain and Residue")
 
 chain_resids = app.get_chain_resids()
 glycan_lib = app.get_glycan_library()
@@ -48,20 +48,29 @@ if clicked == "":
     clicked = list(glycan_lib[glycan_type].keys())[0]
 
 d, raw_label, image_file = glycan_lib[glycan_type][clicked]
+
+# print("§§§", chain, resid, glycan_type, d, raw_label, clicked, image_file)
+# TODO clean up redundancy that was introduced with the table
+#                Chain  Residue  Glycan_Type   Glycan   Icon
+new_table_row = (chain, resid,   glycan_type,  clicked, image_file)
+
 new_line = app.create_input_line(chain, resid, raw_label)
 
 button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
 if button_col1.button("Add"):
     app.add_input_line(new_line)
+    app.add_input_row(new_table_row)
     cfg['have_inputs'] = True
 
 if button_col2.button("Remove"):
     app.rem_input_line(new_line)
+    app.rem_input_row(new_table_row)
     if len(app.get_input_lines()) == 0:
         cfg['have_inputs'] = False
 if button_col3.button("Add default glycosylation", help="By default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain"):
     app.clear_input_lines()
+    app.clear_input_table()
     # Update to reflect the real names of glycans (?)
     default_input = [
         '#',
@@ -74,8 +83,16 @@ if button_col3.button("Add default glycosylation", help="By default, we will app
 
 if button_col4.button("Clear all input"):
     app.clear_input_lines()
+    app.clear_input_table()
     cfg['have_inputs'] = False
 
+table_html = app.get_input_table_html()
+# print(table_html)
+st.markdown("#### Overview on current manually selected inputs:")
+st.markdown(table_html, unsafe_allow_html=True)
+st.markdown("##")
+
+# handling of string-based inputs below
 inputs = "\n".join(app.get_input_lines())
 
 if st.checkbox("Show advanced input options"):

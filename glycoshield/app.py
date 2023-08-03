@@ -45,7 +45,10 @@ def init_config():
     cfg["glycosasa_done"] = False
     cfg["have_input"] = False
     cfg["have_sasa"] = False
-    cfg["input_lines"] = ['#']
+    cfg["input_lines"] = ['#']   # raw input lines representing the present input
+    # Table for the GUI showing the present input, somewhat redundant with 'input_lines',
+    # first line is the labels of the table.
+    cfg["input_table"] = _get_empty_input_table()
     cfg["init"] = True
 
 
@@ -510,7 +513,7 @@ def get_glycan_clickable_image_html(glycan_lib, glycan_type, n_cols=4):
     # create table with clickable images
     html_figs = []
     for image_label, (d, raw_label, image_file) in glycan_lib[glycan_type].items():
-        image_data = load_image(image_file)
+        image_data, _image_type = load_image(image_file)
         html_figs.append(
             clickable_image_html(image_label, image_data)
         )
@@ -576,7 +579,6 @@ def add_input_line(line):
     if line not in cfg["input_lines"]:
         cfg["input_lines"].append(line)
 
-
 def rem_input_line(line):
     cfg = get_config()
     try:
@@ -584,47 +586,102 @@ def rem_input_line(line):
     except:
         pass
 
-
 def get_input_lines():
     cfg = get_config()
     return cfg["input_lines"]
-
 
 def clear_input_lines():
     cfg = get_config()
     cfg["input_lines"] = ['#']
 
 
+def get_input_table():
+    cfg = get_config()
+    return cfg["input_table"]
+
+def clear_input_table():
+    cfg = get_config()
+    cfg["input_table"] = _get_empty_input_table()
+
+def _get_empty_input_table():
+    return [('Chain','Residue','Glycan Type','Glycan','Icon'),]
+
+def add_input_row(row):
+    cfg = get_config()
+    if row not in cfg["input_table"]:
+        cfg["input_table"].append(row)
+
+def rem_input_row(row):
+    cfg = get_config()
+    try:
+        cfg["input_table"].remove(row)
+    except:
+        pass
+
+
+def get_input_table_html():
+    cfg = get_config()
+    table = cfg["input_table"]
+    html = []
+    # html.append('<br>\n')
+    html.append('<table>\n')
+    for i, row in enumerate(table):
+        html.append('<tr>')
+        if i == 0:
+            td = 'th'
+        else:
+            td = 'td'
+        for j, elem in enumerate(row):
+            html.append(f'<{td}>')
+            if (i > 0) and (j == 4):
+                item = embed_image_into_html(elem)
+            else:
+                item = str(elem)
+            html.append(item)
+            html.append(f'</{td}>')
+        html.append('</tr>\n')
+    html.append('</table>\n')
+    # html.append('<br>\n')
+    return ''.join(html)
+
+
 def display_image(image_file, streamlit_handle=st, image_style="", href=None):
-    with open(image_file, "rb") as fp:
-        _filename, extension = os.path.splitext(image_file)
-        image_type = extension[1:]
-        assert(image_type in ('gif', 'png'))
-        image_data = base64.b64encode(fp.read()).decode("utf-8")
-        html = []
-        if href is not None:
-            html.append(f'<a href="{href}" target="_blank">')
-        html.append(f'<img src="data:image/{image_type};base64,{image_data}" style="{image_style}" alt="{image_file}"/>')
-        if href is not None:
-            html.append(f'</a>')
-        streamlit_handle.markdown(
-            "".join(html),
-            unsafe_allow_html=True
-        )
+    html_string = embed_image_into_html(image_file, image_style, href)
+    streamlit_handle.markdown(
+        html_string,
+        unsafe_allow_html=True
+    )
+
+def embed_image_into_html(image_file, image_style="", href=None, image_height="96px"):
+    html = []
+    image_data, image_type = load_image(image_file)
+    if href is not None:
+        html.append(f'<a href="{href}" target="_blank">')
+    if image_data is not None:
+        html.append(f'<img src="data:image/{image_type};base64,{image_data}" height="{image_height}" style="{image_style}" alt="{image_file}"/>')
+    if href is not None:
+        html.append(f'</a>')
+    return "".join(html)
 
 
 def load_image(image_file):
-    with open(image_file, "rb") as fp:
-        _filename, extension = os.path.splitext(image_file)
-        image_type = extension[1:]
-        assert(image_type in ('gif', 'png'))
-        image_data = base64.b64encode(fp.read()).decode("utf-8")
-    return image_data
+    image_data = None
+    image_type = None
+    try:
+        with open(image_file, "rb") as fp:
+            _filename, extension = os.path.splitext(image_file)
+            image_type = extension[1:].lower()
+            assert(image_type in ('gif', 'png'))
+            image_data = base64.b64encode(fp.read()).decode("utf-8")
+    except:
+        pass
+    finally:
+        return image_data, image_type
 
 
-def clickable_image_html(image_label, image_data, image_type="png"):
+def clickable_image_html(image_label, image_data, image_type="png", image_height="96px"):
     return ("<figure>"
-            f"<a href='#' id='{image_label}'><img height='96px' src='data:image/{image_type};base64,{image_data}'></a>"
+            f"<a href='#' id='{image_label}'><img height='{image_height}' src='data:image/{image_type};base64,{image_data}'></a>"
             f"<figcaption>{image_label}</figcaption>"
             "</figure>"
             )

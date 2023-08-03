@@ -3,6 +3,8 @@ GLYCAN_LIBRARY/
 webapp_output/
 webapp_work/
 
+TUTORIAL/EC5.pdb
+
 tmp_files/input_sugaring
 tmp_files/merged_traj.pdb
 tmp_files/merged_traj.xtc
