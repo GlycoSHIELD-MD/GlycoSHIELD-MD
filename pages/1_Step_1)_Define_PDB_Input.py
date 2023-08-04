@@ -22,8 +22,6 @@ st.write(
 )
 
 
-
-
 uploaded_file = st.file_uploader(
     label="Upload PDB or CIF file",
     accept_multiple_files=False)
@@ -46,9 +44,9 @@ if cfg["clicked_file"] == True:
         cfg["pdb_input"] = uploaded_file
     # Clean up PDB file...
     app.clean_input_pdb()
-    st.write("Input file ready, please go to Step 2 on the left")
+    st.write("Input file ready, please go to Step 2 on the left!")
 
 else:
-    st.write("Please upload a file or select the default...")
+    st.write("Please upload a file or select the default ...")
 
 app.show_sidebar()

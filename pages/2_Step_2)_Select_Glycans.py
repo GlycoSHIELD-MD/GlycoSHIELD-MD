@@ -53,22 +53,28 @@ d, raw_label, image_file = glycan_lib[glycan_type][clicked]
 # TODO clean up redundancy that was introduced with the table
 #                Chain  Residue  Glycan_Type   Glycan   Icon
 new_table_row = (chain, resid,   glycan_type,  clicked, image_file)
-
 new_line = app.create_input_line(chain, resid, raw_label)
+
+st.markdown(f"**{chain}, {resid}, {glycan_type}, {clicked}**",
+    help="Current selection of Chain, Residue, Glycan_Type, and Glycan.", unsafe_allow_html=True)
 
 button_col1, button_col2, button_col3, button_col4 = st.columns(4)
 
-if button_col1.button("Add"):
+if button_col1.button("Add",
+        help="Add the current selection to the glycosylation."):
     app.add_input_line(new_line)
     app.add_input_row(new_table_row)
     cfg['have_inputs'] = True
 
-if button_col2.button("Remove"):
+if button_col2.button("Remove",
+        help="Remove the current selection from the glycosylation."):
     app.rem_input_line(new_line)
     app.rem_input_row(new_table_row)
     if len(app.get_input_lines()) == 0:
         cfg['have_inputs'] = False
-if button_col3.button("Add default glycosylation", help="By default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain"):
+
+if button_col3.button("Add default glycosylation",
+        help="Using this default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain."):
     app.clear_input_lines()
     app.clear_input_table()
     # Update to reflect the real names of glycans (?)
@@ -86,13 +92,15 @@ if button_col4.button("Clear all input"):
     app.clear_input_table()
     cfg['have_inputs'] = False
 
+
+
 table_html = app.get_input_table_html()
 # print(table_html)
-st.markdown("#### Overview on current manually selected inputs:")
-st.markdown(table_html, unsafe_allow_html=True)
+st.markdown("##")
+st.markdown(table_html, unsafe_allow_html=True, help="Current manually selected inputs")
 st.markdown("##")
 
-# handling of string-based inputs below
+# handling of string-based inputs for GlycoSHIELD below
 inputs = "\n".join(app.get_input_lines())
 
 if st.checkbox("Show advanced input options"):
@@ -105,8 +113,7 @@ if st.checkbox("Show advanced input options"):
 
 app.store_inputs(inputs)
 if cfg['have_inputs']:
-
-    st.write("If happy with the input, please go to Step 3 on the left")
+    st.write("If happy with the input, please go to Step 3 on the left!")
 else:
     st.write("Select at least one residue and glycan type for grafting...")
 
