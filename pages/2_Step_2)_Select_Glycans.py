@@ -86,6 +86,10 @@ if button_col3.button("Add default glycosylation",
     for line in default_input:
         app.add_input_line(line)
         cfg['have_inputs'] = True
+    # add as well to overview table, this redundancy should be removed
+    for res in (463,492):
+        new_table_row = ('A', res, 'M', 'Man5', 'GLYCAN_LIBRARY/gs.1.M.Man5/thumbnail.png')
+        app.add_input_row(new_table_row)
 
 if button_col4.button("Clear all input"):
     app.clear_input_lines()
