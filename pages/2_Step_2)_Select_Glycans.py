@@ -77,19 +77,34 @@ if button_col3.button("Add default glycosylation",
         help="Using this default, we will apply Man5 glycan onto residues 463 and 492 of the N-cadherin domain."):
     app.clear_input_lines()
     app.clear_input_table()
-    # Update to reflect the real names of glycans (?)
+
+#    # Update to reflect the real names of glycans (?)
+#    default_input = [
+#        '#',
+#        f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_463.pdb {app.get_config()["output_dir"]}/A_463.xtc',
+#        f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_492.pdb {app.get_config()["output_dir"]}/A_492.xtc',
+#    ]
+#    for line in default_input:
+#        app.add_input_line(line)
+#        cfg['have_inputs'] = True
+#    # add as well to overview table, this redundancy should be removed
+#    for res in (463,492):
+#        new_table_row = ('A', res, 'M', 'Man5', 'GLYCAN_LIBRARY/gs.1.M.Man5/thumbnail.png')
+#        app.add_input_row(new_table_row)
+
     default_input = [
-        '#',
-        f'A 462,463,464 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_463.pdb {app.get_config()["output_dir"]}/A_463.xtc',
-        f'A 491,492,493 1,2,3 GLYCAN_LIBRARY/Man5.pdb GLYCAN_LIBRARY/Man5_dt1000.xtc {app.get_config()["output_dir"]}/A_492.pdb {app.get_config()["output_dir"]}/A_492.xtc',
+        ('A', 463, 'M', 'Man5'),
+        ('A', 492, 'M', 'Man5'),
     ]
-    for line in default_input:
-        app.add_input_line(line)
-        cfg['have_inputs'] = True
-    # add as well to overview table, this redundancy should be removed
-    for res in (463,492):
-        new_table_row = ('A', res, 'M', 'Man5', 'GLYCAN_LIBRARY/gs.1.M.Man5/thumbnail.png')
+    for item in default_input:
+        (chain, resid, glycan_type, clicked) = item
+        d, raw_label, image_file = glycan_lib[glycan_type][clicked]
+        new_table_row = (chain, resid,   glycan_type,  clicked, image_file)
+        new_line = app.create_input_line(chain, resid, raw_label)
+        app.add_input_line(new_line)
         app.add_input_row(new_table_row)
+        cfg['have_inputs'] = True
+
 
 if button_col4.button("Clear all input"):
     app.clear_input_lines()
