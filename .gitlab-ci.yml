@@ -2,7 +2,8 @@
 notify-launchpad:
   image: gitlab-registry.mpcdf.mpg.de/mpcdf/module-image
   only:
-    - webapp_online
+    #- webapp_online
+    - DISABLE
   script:
     - module load git
     - git clone https://oauth2:${DEPLOYTOKEN}@gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md-binder-launchpad.git
@@ -23,10 +24,11 @@ notify-launchpad:
 
 # create the GS landing page using jekyll
 pages:
-  image: gitlab-registry.mpcdf.mpg.de/mpibp-hummer/glycoshield-md/jekyll-202209
+  image: gitlab-registry.mpcdf.mpg.de/dioscuri-biophysics/glycoshield-md/jekyll
   stage: deploy
   tags:
-    - docker
+    - cloud
+    - 1core
   script:
     - cd webapp-landingpage
     - jekyll build
