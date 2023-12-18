@@ -9,10 +9,10 @@ layout: home
 
 Use GlycoSHIELD to graft glycan conformers on protein structures.
 To launch the web application, please click
-[here](https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2FMPIBP-Hummer%2Fglycoshield-md.git/webapp_online?urlpath=streamlit)
+[here](https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2Fdioscuri-biophysics%2Fglycoshield-md.git/webapp_online?urlpath=streamlit)
 or on the image below.
 
-<a href="https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2FMPIBP-Hummer%2Fglycoshield-md.git/webapp_online?urlpath=streamlit">
+<a href="https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2Fdioscuri-biophysics%2Fglycoshield-md.git/webapp_online?urlpath=streamlit">
     <img src="GSlogo-large.png" style="border:2px solid #3792cb;" alt="GS">
 </a>
 
