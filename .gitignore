@@ -5,6 +5,7 @@ webapp_output/
 webapp_work/
 
 tmp_files/
+tmp_files_AF/
 
 __pycache__/
 *.py[cod]
