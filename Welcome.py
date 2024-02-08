@@ -28,7 +28,7 @@ Please support us by citing our work
 [https://doi.org/10.1101/2021.08.04.455134](https://doi.org/10.1101/2021.08.04.455134)
 
 The GlycoSHIELD source code as well as scripts to use GlycoSHIELD are available on
-[GitLab](https://gitlab.mpcdf.mpg.de/MPIBP-Hummer/glycoshield-md/-/tree/refactoring).
+[GitLab](https://gitlab.mpcdf.mpg.de/dioscuri-biophysics/glycoshield-md).
 """
 )
 
