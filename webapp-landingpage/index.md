@@ -20,17 +20,17 @@ To launch the GlycoSHIELD web application, please click the image below.
     <img src="GSlogo-large.png" style="border:2px solid #3792cb;" alt="GS">
 </a>
 
-## Web application usage hints
+### Usage hints
 
 Please **quit the web application by clicking the button** on the left before
 leaving it to free resources for other users.
 
-Please note that the Cloud environment that hosts the interactive web
+Please note that the Cloud environment which hosts the interactive web
 application has **limited resources** and might not be able to handle large
-setups.  In that case, we advise users to use a powerful local workstation on
-HPC resources.
+setups. In that case, we advise users to use a powerful local workstation or
+local HPC resources.
 
 Moreover, please note that the Cloud session is completely ephemeral, and **all
 files will be deleted** after its termination. If necessary, download a Zip
-archive with your data which is offered by the web GUI.
+archive with your data which is offered by the web GUI before closing the app.
 
