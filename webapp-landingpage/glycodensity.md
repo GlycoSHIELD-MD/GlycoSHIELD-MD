@@ -1,10 +1,9 @@
 ---
 layout: page
 title: GlycoDENSITY
-permalink: /glycodensity/
 ---
 
-GlycoDENSITY is awesome and can be downloaded after accepting the license:
-
-<https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/>
+GlycoDENSITY is released under a specific license and is therefore not distributed with GlycoSHIELD.
+GlycoDENSITY is available for download
+[here](https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/){:target="_blank"}.
 
