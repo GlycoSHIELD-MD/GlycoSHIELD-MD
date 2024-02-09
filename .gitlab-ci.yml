@@ -24,7 +24,7 @@ notify-launchpad:
 
 # create the GS landing page using jekyll
 pages:
-  image: gitlab-registry.mpcdf.mpg.de/dioscuri-biophysics/glycoshield-md/jekyll
+  image: gitlab-registry.mpcdf.mpg.de/dioscuri-biophysics/glycoshield-md/jekyll:20240209
   stage: deploy
   tags:
     - cloud
