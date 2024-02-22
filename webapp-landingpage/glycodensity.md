@@ -1,6 +1,6 @@
 ---
 title: GlycoDENSITY
-layout: home
+layout: page
 ---
 
 # Welcome to GlycoDENSITY!
