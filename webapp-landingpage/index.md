@@ -4,7 +4,7 @@
 layout: home
 ---
 
-# Welcome to GlycoSHIELD!
+# Welcome to GlycoSHIELD
 
 Use GlycoSHIELD to graft glycan conformers on protein structures.
 The source code is freely available under the GPL3 license at
