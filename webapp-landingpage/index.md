@@ -17,7 +17,7 @@ The source code is freely available under the GPL3 license at
 To launch the GlycoSHIELD web application, please click the image below.
 
 <a href="https://notebooks.mpcdf.mpg.de/binder/v2/git/https%3A%2F%2Fgitlab.mpcdf.mpg.de%2Fdioscuri-biophysics%2Fglycoshield-md.git/webapp_online?urlpath=streamlit" target="_blank">
-    <img src="GSlogo-large.png" style="border:2px solid #3792cb;" alt="GS">
+<img src="GSlogo-large.png" style="border:2px solid #3792cb;" alt="GS">
 </a>
 
 ### Usage hints
