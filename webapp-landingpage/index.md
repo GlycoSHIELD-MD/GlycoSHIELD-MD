@@ -5,10 +5,6 @@
 layout: home
 ---
 
-<p>
-<img src="glycoshield-logos-cropped-720.png" alt="GlycoSHIELD Institute Logos">
-</p>
-
 # Welcome to GlycoSHIELD!
 
 Use GlycoSHIELD to graft glycan conformers on protein structures.
