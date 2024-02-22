@@ -15,7 +15,7 @@ GlycoDENSITY is released under a specific license and is available for
 [download here](https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/){:target="_blank"}.
 By downloading the code you acknowledge having read and accepted the terms of the license.
 
-## GlycoSHIELD use case
+## Use case
 
 <a href="https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/" target="_blank">
 <img src="glycodensity-large-logo.png" alt="GlycoDENSITY">
