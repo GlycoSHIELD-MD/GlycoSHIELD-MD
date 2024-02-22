@@ -3,14 +3,20 @@ layout: page
 title: GlycoDENSITY
 ---
 
-# Welcome to GlycoDENSITY!
+<p>
+<img src="glycoshield-logos-cropped-720.png" alt="GlycoSHIELD Institute Logos">
+</p>
 
+<p>
 GlycoDENSITY is an open-source program that refines GlycoSHIELD predictions using experimental (volumetric) data, such as
 cryoEM, cryoET maps, or X-ray electron density maps. GlycoDENSITY sorts glycan conformers grafted with GlycoSHIELD according to
 their fit to the underlying experimental data.
+</p>
 
 <p>
+<a href="https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/" target="_blank">
 <img src="glycodensity-large-logo.png" alt="GlycoDENSITY">
+</a>
 <em>GlycoSHIELD ensemble refinement. Here we used SARS-CoV-2 Spike protein in its post-fusion state (red). Associated map contains
 low resolution information about glycans (e.g. marked in magenta box), which is only allowing to trace first monosaccharides of
 a glycan (first image in the bottom row, density is shown as outline, glycan as sticks). The remaining low resolution density
@@ -20,9 +26,9 @@ blue, brown, red). Finally, we can generate a synthetic density map based on the
 experimental density.</em>
 </p>
 
-## Get GlycoDENSITY 
-
+<p>
 GlycoDENSITY is released under a specific license and is available for
 [download here](https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/){:target="_blank"}.
 By downloading the code you acknowledge having read and accepted the terms of the license.
+</p>
 
