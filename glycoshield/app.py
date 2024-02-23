@@ -712,9 +712,9 @@ def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True,
         # display_image(mpcdf_logo, streamlit_handle=header_col3,
         #               image_style=logo_image_style + "margin-left:auto;margin-right:24px;",
         #               href=href["mpcdf"])
-        header_col1 = st.columns(1)
+        header_col = st.columns(1)
         logo_image_style = "vertical-align:middle;display:block;"
-        display_image(combined_logo, streamlit_handle=header_col1,
+        display_image(combined_logo, streamlit_handle=header_col[0],
                       image_style=logo_image_style + "margin-left:auto;margin-right:auto;")
     st.title(title)
     if show_glycoshield_logo:
