@@ -19,6 +19,7 @@ glycoshield_logo_anim = "webapp/glycoshield_anim.gif"
 mpibp_logo = "webapp/mpibp-logo.png"
 mpcdf_logo = "webapp/mpcdf-logo.png"
 inserm_logo = "webapp/inserm-logo.png"
+combined_logo = "webapp/glycoshield-logos-cropped-720.png"
 glyco_logo_image_style = "width:256px;min_width:128px;vertical-align:middle;margin:24px 24px"
 
 
@@ -690,27 +691,31 @@ def clickable_image_html(image_label, image_data, image_type="png", image_height
 def show_header(title="GlycoSHIELD Web Application", show_institute_logo=True,
                 show_glycoshield_logo=True, enable_institute_links=False):
     if show_institute_logo:
-        if enable_institute_links:
-            href = {
-                "mpibp": "https://www.biophys.mpg.de/",
-                "inserm": "https://www.inserm.fr/",
-                "mpcdf": "https://www.mpcdf.mpg.de/"
-            }
-        else:
-            href = {
-                "mpibp": None, "inserm": None, "mpcdf": None
-            }
-        header_col1, header_col2, header_col3 = st.columns(3)
-        logo_image_style = "height:48px;vertical-align:middle;display:block;"
-        display_image(mpibp_logo, streamlit_handle=header_col1,
-                      image_style=logo_image_style + "margin-left:24px;margin-right:auto;",
-                      href=href["mpibp"])
-        display_image(inserm_logo, streamlit_handle=header_col2,
-                      image_style=logo_image_style + "margin-left:auto;margin-right:auto;",
-                      href=href["inserm"])
-        display_image(mpcdf_logo, streamlit_handle=header_col3,
-                      image_style=logo_image_style + "margin-left:auto;margin-right:24px;",
-                      href=href["mpcdf"])
+        # if enable_institute_links:
+        #     href = {
+        #         "mpibp": "https://www.biophys.mpg.de/",
+        #         "inserm": "https://www.inserm.fr/",
+        #         "mpcdf": "https://www.mpcdf.mpg.de/"
+        #     }
+        # else:
+        #     href = {
+        #         "mpibp": None, "inserm": None, "mpcdf": None
+        #     }
+        # header_col1, header_col2, header_col3 = st.columns(3)
+        # logo_image_style = "height:48px;vertical-align:middle;display:block;"
+        # display_image(mpibp_logo, streamlit_handle=header_col1,
+        #               image_style=logo_image_style + "margin-left:24px;margin-right:auto;",
+        #               href=href["mpibp"])
+        # display_image(inserm_logo, streamlit_handle=header_col2,
+        #               image_style=logo_image_style + "margin-left:auto;margin-right:auto;",
+        #               href=href["inserm"])
+        # display_image(mpcdf_logo, streamlit_handle=header_col3,
+        #               image_style=logo_image_style + "margin-left:auto;margin-right:24px;",
+        #               href=href["mpcdf"])
+        header_col1 = st.columns(1)
+        logo_image_style = "vertical-align:middle;display:block;"
+        display_image(combined_logo, streamlit_handle=header_col1,
+                      image_style=logo_image_style + "margin-left:auto;margin-right:auto;")
     st.title(title)
     if show_glycoshield_logo:
         display_image(glycoshield_logo_still, image_style=glyco_logo_image_style)

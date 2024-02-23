@@ -7,13 +7,13 @@ layout: page
 cryoEM, cryoET maps, or X-ray electron density maps. GlycoDENSITY sorts glycan conformers grafted with GlycoSHIELD according to
 their fit to the underlying experimental data.
 
-### Download
+#### Download
 
 GlycoDENSITY is released under a specific license and is available for
 [download here](https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/){:target="_blank"}.
 By downloading the code you acknowledge having read and accepted the terms of the license.
 
-### Use case
+#### Use case
 
 <a href="https://dioscuri-biophysics.pages.mpcdf.de/glycodensity/" target="_blank">
 <img src="glycodensity-large-logo.png" alt="GlycoDENSITY">

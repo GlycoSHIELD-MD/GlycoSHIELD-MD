@@ -4,7 +4,12 @@
 layout: home
 ---
 
+### Introduction
+
 Use **GlycoSHIELD** to graft glycan conformers on protein structures.
+
+See our publication for more details:
+[https://doi.org/10.1101/2021.08.04.455134](https://doi.org/10.1101/2021.08.04.455134){:target="_blank"}
 
 ### Download
 
