@@ -3,7 +3,9 @@ title: GlycoDENSITY
 layout: page
 ---
 
-**GlycoDENSITY** is an open-source program that refines GlycoSHIELD predictions using experimental (volumetric) data, such as
+#### GlycoDENSITY
+
+GlycoDENSITY is an open-source program that refines GlycoSHIELD predictions using experimental (volumetric) data, such as
 cryoEM, cryoET maps, or X-ray electron density maps. GlycoDENSITY sorts glycan conformers grafted with GlycoSHIELD according to
 their fit to the underlying experimental data.
 
