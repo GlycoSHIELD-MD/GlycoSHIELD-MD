@@ -25,7 +25,7 @@ use the arrow to show the side bar.
 This application was developed as an open-access community resource and is
 maintained by Klaus Reuter, Matt Sikora and Cyril Hanus.
 Please support us by citing our paper
-[Tsai et al., 2024, Cell 187, 1–16, February 29, 2024](https://doi.org/10.1016/j.cell.2024.01.034).
+[Tsai et al., Cell, 187 (5), 1296-1311.e26, 2024](https://doi.org/10.1016/j.cell.2024.01.034).
 
 The GlycoSHIELD source code as well as scripts to use GlycoSHIELD are available on
 [GitLab](https://gitlab.mpcdf.mpg.de/dioscuri-biophysics/glycoshield-md).
