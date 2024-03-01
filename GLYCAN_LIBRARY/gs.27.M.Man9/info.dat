@@ -1,0 +1,34 @@
+<COMPOSITION>
+GlcNAc(2),Man(9)
+</COMPOSITION>
+
+
+<CHARMM>
+charmm-gui-4734986818
+</CHARMM>
+
+
+<GRS>
+1 BGLCNA
+2 - 14B: BGLCNA
+3 - - 14B: BMAN
+4 - - - 16A: AMAN
+5 - - - - 16A: AMAN
+6 - - - - - 12A: AMAN
+7 - - - - 13A: AMAN 
+8 - - - - - 12A: AMAN   
+9 - - - 13A: AMAN
+10 - - - - 12A: AMAN
+11 - - - - - 12A: AMAN
+</GRS>
+
+
+<IUPAC>
+
+</IUPAC>
+
+
+
+<GLYCAM>
+
+</GLYCAM>

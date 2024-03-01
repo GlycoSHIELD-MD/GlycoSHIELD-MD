@@ -1,5 +1,10 @@
 # GlycoSHIELD
-A simple MD pipeline to generate realistic glycoprotein models
+
+GlycoSHIELD is a simple MD pipeline to generate realistic glycoprotein models.
+A [web application](http://glycoshield.eu) is available to try GlycoSHIELD in
+the Cloud.
+
+Reference: [Tsai et al., Cell, 187 (5), 1296-1311.e26, 2024](https://doi.org/10.1016/j.cell.2024.01.034)
 
 ## GlycoSHIELD tutorial
 

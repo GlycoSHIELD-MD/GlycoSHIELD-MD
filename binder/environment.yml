@@ -1,0 +1,35 @@
+# Conda environment recipe for GlycoSHIELD, to be used locally or with Binder
+name: glycoshield
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # base packages for command line usage
+  - python=3.8
+  - pip
+  - setuptools
+  - numpy
+  - scipy
+  # for now it seems that we need specifically that mpl version
+  - matplotlib=3.4.3
+  - font-ttf-ubuntu
+  - mdanalysis
+  - gromacs=2021.3
+  # support for interactive jupyter notebooks
+  - pocl
+  - jupyterlab
+  - nglview
+  # support for streamlit and the jupyter proxy
+  - streamlit=1.24.0
+  - jupyter-server-proxy
+  # for the conversion of CIF to PDB
+  - pymol-open-source
+  # support for documentation creation
+  - pip:
+    #- zenodo-get
+    - py3Dmol==2.0.0.post2
+    - stmol==0.0.9
+    - st-click-detector
+    - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-streamlit-proxy.git
+    - git+https://gitlab.mpcdf.mpg.de/khr/jupyter-download-proxy.git
+    - -e ../
